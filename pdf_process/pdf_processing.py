@@ -1,13 +1,10 @@
-from pypdf import PdfReader
+import pdfplumber
 
-def parse_pdf(file_path):
-    pdf = PdfReader(file_path)
-    text = ''
-    for page in pdf.pages:
-        text += page.extract_text()
-    return text
+from pdf_process.resume import *
 
 if __name__ == '__main__':
     pdf_file_path = input("What is the filepath?")
-    parsed_text = parse_pdf(pdf_file_path)
-    print(parsed_text)
+
+    resume = Resume("Joe Smith", pdf_file_path)
+
+    print(resume.get_pdf_content())
