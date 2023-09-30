@@ -7,6 +7,7 @@ import { HomeComponent } from './Pages/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JobModalComponent } from './Components/job-modal/job-modal.component';
 import { CardComponent } from './Components/card/card.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CardComponent } from './Components/card/card.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
