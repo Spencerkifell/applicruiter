@@ -1,10 +1,10 @@
 import pdfplumber
+import json
 
 class Resume:
     candidate_name = ""
     pdf_location = ""
     pdf_content = None
-
 
     def __init__(self, candidate_name, pdf_location):
         self.candidate_name = candidate_name
@@ -27,3 +27,12 @@ class Resume:
 
     def get_pdf_content(self):
         return self.pdf_content
+
+    # To be used in the future for storing json.
+    def to_json(self):
+        resume_dict = {
+            "candidate_name": self.candidate_name,
+            "pdf_location": self.pdf_location,
+            "pdf_content": self.pdf_content
+        }
+        return json.dumps(resume_dict)
