@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 
 @Component({
@@ -10,4 +10,5 @@ import { Component } from '@angular/core';
 
 export class CardComponent {
   position = "balls";
-}
+  @Input() posting: any;
+} 

@@ -1,4 +1,6 @@
 <div>
     <app-job-modal></app-job-modal>
-    <app-card></app-card>
+    <div *ngFor="let _ of [1,2,3]">
+        <app-card [posting]="posting"></app-card>
+    </div>
 </div>

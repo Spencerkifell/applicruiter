@@ -1,11 +1,15 @@
 <mat-card >
     <mat-card-header>
-        <h1 id="position-title" class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">Position: {{position}}</h1>
+        <h1 id="position-title">Position: {{posting['position-title']}}</h1>
+        <!-- city, state, title, level(senior,entry,etc) -->
+       
+        
+      
     </mat-card-header>
     <mat-card-content>
-
-
-
+        <h2>{{posting['level']}}</h2>
+        <h3>{{posting['city']}}, {{posting['state']}}</h3>
+        
     </mat-card-content>
     
 

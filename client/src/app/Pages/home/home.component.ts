@@ -8,8 +8,15 @@ import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.compon
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
-  constructor() { }
+  posting:any;
+  constructor() { 
+    this.posting = {
+      "position-title" : "Software Engineer", 
+      "city":"San Francisco",
+      "state":"CA",
+      "level":"Entry",
+    };
+  }
 
   ngOnInit(): void {
   }

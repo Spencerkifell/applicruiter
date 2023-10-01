@@ -9,6 +9,7 @@ import { JobModalComponent } from './Components/job-modal/job-modal.component';
 import {MatCardModule} from '@angular/material/card';
 import { CardComponent } from './Components/card/card.component';
 import { MatButtonModule } from '@angular/material/button';
+import {MatChipsModule} from '@angular/material/chips';
 
 
 @NgModule({
@@ -24,8 +25,11 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     MatButtonModule,
     MatCardModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  
+}
