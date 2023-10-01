@@ -2,7 +2,7 @@
     <div class="parent-container">
         <div class="grid-container">
             <div class="grid-item" *ngFor="let posting of jobCollection | paginate: { itemsPerPage: 9, currentPage: p }">
-                <app-card [postings]="posting"></app-card>
+                <app-card [jobPosting]="posting"></app-card>
             </div>
         </div>
         <pagination-controls class="pagination-container" (pageChange)="p = $event"></pagination-controls>     
