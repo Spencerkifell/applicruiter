@@ -1,6 +1,8 @@
 import pdfplumber
 import os
 
+from server.sort_jobs import JobSorting
+
 from pdf_process.resume import *
 
 pdfs_folder = "D:\\AI_Projects\\Mais2023\\archive\\data\\data\\DESIGNER"
@@ -21,3 +23,4 @@ if __name__ == '__main__':
 
         # Print or process the content as needed.
 
+    JobSorting.rank_jobs(resumes.values())
