@@ -2,26 +2,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
 similarityModel = SentenceTransformer('model')
-# sentimentAnalysisModel = pipeline('sentiment-analysis', 'distilbert-base-uncased-finetuned-sst-2-english')
 
-jobs1 = ["We are looking for a frontend programmer."]
-
-resumes1 = ["I am a programmer who can do frontend.",
-           "Banana-eating world champion 2013-2023. One decade, baby.",
-           "I am a programmer who can do backend.",
-           "I am a programmer who can do frontend and backend.",
-           "I have done an intro to Python class!",
-           "I am a programmer who who knows Angular, with 20 years of experience.",
-           "I designed and coded a website for my friend's business."]
-
-
-
-'''
-# Sentiment analysis
-for resume in resumes:
-    sentimentResult = sentimentAnalysisModel(resume)
-    print(sentimentResult[0]['label'], sentimentResult[0]['score'])
-'''
+jobs1 = ["We are looking for a person to make us a lasagne."]
 
 maxResumeResults = 10;
 

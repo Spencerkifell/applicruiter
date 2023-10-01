@@ -3,7 +3,7 @@ import os
 from resume import Resume
 from sort_jobs import JobSorting
 
-pdfs_folder = "D:\\AI_Projects\\Mais2023\\archive\\data\\data\\DESIGNER"
+pdfs_folder = "dataset/data/data/Test"
 
 resumes = dict()
 
@@ -20,5 +20,4 @@ if __name__ == '__main__':
         resumes[resume.get_candidate_name()] = resume
 
         # Print or process the content as needed.
-
     JobSorting.rank_jobs(resumes.values())
