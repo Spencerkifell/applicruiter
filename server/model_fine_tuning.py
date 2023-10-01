@@ -35,10 +35,7 @@ model_save_path = "model"
 
 model = SentenceTransformer('all-mpnet-base-v2')
 
-'''train_examples = [InputExample(texts=['My first sentence', 'My second sentence'], label=0.8),
-                  InputExample(texts=['Another pair', 'Unrelated sentence'], label=0.3)]'''
-train_batch_size = 16
-train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=train_batch_size)
+train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=8)
 train_loss = losses.CosineSimilarityLoss(model=model)
 
 evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(train_examples, name='sts-eval')
