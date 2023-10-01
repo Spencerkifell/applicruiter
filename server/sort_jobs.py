@@ -3,7 +3,8 @@ from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 from pdf_process.resume import *
 
-similarityModel = SentenceTransformer('multi-qa-mpnet-base-dot-v1')
+similarityModel = SentenceTransformer('all-mpnet-base-v2')
+similarityModel.load('model')
 # sentimentAnalysisModel = pipeline('sentiment-analysis', 'distilbert-base-uncased-finetuned-sst-2-english')
 
 jobs1 = ["We are looking for a frontend programmer."]

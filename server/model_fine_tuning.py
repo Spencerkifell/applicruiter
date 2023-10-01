@@ -10,7 +10,7 @@ else:
 print("Using device:", device)
 
 category_resume_dict = {}
-with open('test.csv', 'r', newline='', encoding='utf-8') as file:
+with open('ResumeDataSet.csv', 'r', newline='', encoding='utf-8') as file:
     csv_reader = csv.reader(file)
     next(csv_reader, None)
     for row in csv_reader:
@@ -31,10 +31,6 @@ for category in category_resume_dict:
 print()
 print(train_examples_print)
 
-train_examples = [InputExample(texts=['software 1', 'software 2'], label=0.8),
-                  InputExample(texts=['software 3', 'software 4'], label=0.8),
-                  InputExample(texts=['artist 1', 'artist 2'], label=0.8)]
-
 model_save_path = "model"
 
 model = SentenceTransformer('all-mpnet-base-v2')
@@ -45,8 +41,9 @@ train_loss = losses.CosineSimilarityLoss(model=model)
 evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(train_examples, name='sts-eval')
 
 model.fit(train_objectives=[(train_dataloader, train_loss)],
-          evaluator=evaluator,
+          # evaluator=evaluator,
           epochs=5,
-          evaluation_steps=1000,
-          warmup_steps=5,
+          # evaluation_steps=5,
+          warmup_steps=100,
+          steps_per_epoch=5,
           output_path=model_save_path)
