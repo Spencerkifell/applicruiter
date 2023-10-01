@@ -44,7 +44,7 @@ class JobSorting:
 
             resumeSimilarityList.sort(key=lambda x: x[1], reverse=True)
 
-            # Implement KNN to get the top maxResumeResults resumes.
+            # Todo: Implement KNN to get the top maxResumeResults resumes.
 
             for i in range(min(maxResults, len(resumeSimilarityList))):
                 resumeSimilarity = resumeSimilarityList[i]
@@ -69,7 +69,7 @@ class JobSorting:
         resumeSimilarityList = []
 
         for resumeData in resumes:
-            resume = pdf_processing.processPDF(resumeData[2], resumeData[3])
+            resume = pdf_processing.processPDF(resumeData[2], resumeData[3], resumeData[0])
 
             if resume.ranked:
                 resumeContent = resume.get_pdf_content()
@@ -97,6 +97,7 @@ class JobSorting:
 
             resultRanking[i+1] = resumeSimilarityList[i][2].to_json()
 
+        print(resultRanking)
         return json.dumps(resultRanking)
 
     @staticmethod
@@ -125,6 +126,7 @@ class JobSorting:
         )
         return connection
 
+    @staticmethod
     def set_similarity_score(resume_id, score):
         # Create a connection object
         connection = mysql.connector.connect(**db_config)
@@ -142,3 +144,24 @@ class JobSorting:
         # Close the cursor and database connection
         cursor.close()
         connection.close()
+
+    @staticmethod
+    def rank_resume(resumeData, job):
+        print(1)
+        jobDesc = job[2]
+        print(2)
+        jobEmbedding = similarityModel.encode(jobDesc)
+        print(3)
+        jobEmbedding = jobEmbedding.reshape(1, -1)
+        print(4)
+
+        resume = pdf_processing.processPDF(resumeData[2], resumeData[3], resumeData[0])
+
+        if resume.ranked:
+            return
+        else:
+            resumeContent = resume.get_pdf_content()
+            resumeEmbedding = similarityModel.encode(resumeContent)
+            resumeEmbedding = resumeEmbedding.reshape(1, -1)
+            similarity = cosine_similarity(resumeEmbedding, jobEmbedding)[0][0]
+            JobSorting.set_similarity_score(resumeData[0], similarity.astype(float))

@@ -109,8 +109,13 @@ def insert_resume_data(cursor, job_id, file_path):
         query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA, SIMILARITY_SCORE) VALUES (%s, %s, %s)"
         values = (job_id, file_path, -1)
         cursor.execute(query, values)
+
+        # print("====================================================================================================", job_id, "start")
+        # # sort_jobs.JobSorting.rank_resume(get_resumes_by_path(file_path)[0], get_jobs_by_job_id(job_id)[0])
+        # print("===================================================================================", job_id, "end")
     except Exception as e:
         print("Error:", str(e))
+        # print("===================================================================================", job_id, "error")
 
 def insert_job_data(title, description, level, country, city, skills):
     try:
@@ -179,6 +184,25 @@ def get_resumes_by_job_id(job_id):
     # Execute the SQL query to retrieve resumes with the specified job ID
     query = "SELECT * FROM RESUMES WHERE JOB_ID = %s"
     cursor.execute(query, (job_id,))
+
+    # Fetch all the rows returned by the query
+    resumes = cursor.fetchall()
+
+    # Close the cursor and database connection
+    cursor.close()
+    connection.close()
+
+    return resumes
+
+def get_resumes_by_path(path):
+
+    # Create a cursor object to execute SQL queries
+    connection = mysql.connector.connect(**db_config)
+    cursor = connection.cursor()
+
+    # Execute the SQL query to retrieve resumes with the specified job ID
+    query = "SELECT * FROM RESUMES WHERE PDF_DATA = %s"
+    cursor.execute(query, (path,))
 
     # Fetch all the rows returned by the query
     resumes = cursor.fetchall()
