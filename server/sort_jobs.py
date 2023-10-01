@@ -5,16 +5,14 @@ similarityModel = SentenceTransformer('model')
 
 jobs1 = ["We are looking for a person to make us a lasagne."]
 
-maxResumeResults = 10;
-
 class JobSorting:
 
     @staticmethod
     def rank_jobs(resumes):
-        JobSorting.rank_jobs1(resumes, jobs1)
+        JobSorting.rank_jobs1(resumes, jobs1, 10)
 
     @staticmethod
-    def rank_jobs1(resumes, jobs):
+    def rank_jobs1(resumes, jobs, maxResults):
         jobEmbeddings = similarityModel.encode(jobs)
         for job, jobEmbedding in zip(jobs, jobEmbeddings):
             jobEmbedding = jobEmbedding.reshape(1, -1)
@@ -33,7 +31,7 @@ class JobSorting:
 
             # Implement KNN to get the top maxResumeResults resumes.
 
-            for i in range(min(maxResumeResults, len(resumeSimilarityList))):
+            for i in range(min(maxResults, len(resumeSimilarityList))):
                 resumeSimilarity = resumeSimilarityList[i]
                 print(i + 1, ":", sep="")
                 print('Resume:', resumeSimilarity[0])
