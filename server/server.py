@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-import MySQLdb.connections
+import mysql.connector
 from werkzeug.utils import secure_filename
 import os
 import hashlib
@@ -111,7 +111,7 @@ def insert_resume_data(cursor, job_id, file_path):
 
 def insert_job_data(title, description, level, country, city, skills):
     try:
-        connection = MySQLdb.connect(**db_config)
+        connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
 
         query = "INSERT INTO JOBS (TITLE, DESCRIPTION, LEVEL, COUNTRY, CITY, SKILLS) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -131,7 +131,7 @@ def insert_job_data(title, description, level, country, city, skills):
             
 def get_all_jobs():
     try:
-        connection = MySQLdb.connect(**db_config)
+        connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor(dictionary=True)
 
         # Replace 'jobs' with your actual table name
@@ -156,8 +156,8 @@ def get_all_jobs():
             cursor.close()
             connection.close()
 
-@app.route('/resume-ranking', methods=['POST'])
-def resume_ranking():
+@app.route('/resume-ranking/<int:job_id>', methods=['POST'])
+def resume_ranking(job_id):
     # Retrieve the request data
     data = request.json
 

@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 
 import server
 
-import MySQLdb.connections
+import mysql.connector
 
 similarityModel = SentenceTransformer('model')
 

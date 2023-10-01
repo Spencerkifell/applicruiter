@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import { DataService } from '../data/data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestService {
-  private dataSubscription: Subscription; 
+  private dataSubscription: Subscription;
   jobCollection: any = [];
 
   constructor(
     private httpClient: HttpClient,
     private dataProvider: DataService
-  ) { 
+  ) {
     this.dataSubscription = this.dataProvider.sharedJobList.subscribe(data => {
       this.jobCollection = data;
     });
@@ -25,17 +25,17 @@ export class RestService {
         let { title, description, country, city, level, skills, job_id } = data.job;
         this.jobCollection.push({
           job_id: job_id,
-          title: title, 
-          description: description, 
-          country: country, 
-          city: city, 
-          level: level, 
+          title: title,
+          description: description,
+          country: country,
+          city: city,
+          level: level,
           skills: skills
         });
         this.dataProvider.updateJobList(this.jobCollection);
       },
       error: async (exception: any) => alert(exception.error.message)
-    });  
+    });
   }
 
   createResumes(job_id: any, resumes: File[]) {
@@ -69,5 +69,12 @@ export class RestService {
       },
       error: async (exception: any) => alert(exception.error.message)
     });
+  }
+
+  rankResumes(jobId: any): Observable<any[]> {
+    // Make an HTTP request to the server to get ranked resumes
+    const url = `http://127.0.0.1:5000/api/resume-ranking/${jobId}`;
+
+    return this.httpClient.get<any[]>(url);
   }
 }

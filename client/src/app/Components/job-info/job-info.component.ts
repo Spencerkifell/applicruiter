@@ -2,6 +2,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RestService } from 'src/app/Services/rest/rest.service';
+import {Observer} from "rxjs";
 
 @Component({
   selector: 'app-job-info',
@@ -28,9 +29,9 @@ export class JobInfoComponent implements OnInit {
   onFileSelect(event: any): void {
     const files = event.target.files;
     const filesFormArray = this.fileForm.get('files') as FormArray;
-  
+
     filesFormArray.clear();
-  
+
     for (const file of files) {
       const fileControl = this._formBuilder.control(file);
       filesFormArray.push(fileControl);
@@ -52,5 +53,23 @@ export class JobInfoComponent implements OnInit {
       const selectedFiles: File[] = filesFormArray.value;
 
       this._restService.createResumes(this.data.job_id, selectedFiles);
+  }
+
+  rankResumes(): void {
+    const observer: Observer<any[]> = {
+      next: (rankedResumes: any[]) => {
+        console.log('Ranked Resumes:', rankedResumes);
+        // Do something with the ranked resumes
+      },
+      error: (error: any) => {
+        console.error('Error fetching ranked resumes:', error);
+        // Handle error
+      },
+      complete: () => {
+        // Optional: Handle
+      }
+    };
+
+    this._restService.rankResumes(this.data.job_id).subscribe(observer);
   }
 }
