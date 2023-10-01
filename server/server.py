@@ -4,6 +4,7 @@ import mysql.connector
 from werkzeug.utils import secure_filename
 import os
 import hashlib
+import sort_jobs
 
 db_config = {
     'host': 'localhost',
@@ -156,19 +157,35 @@ def get_all_jobs():
             cursor.close()
             connection.close()
 
-@app.route('/resume-ranking/<int:job_id>', methods=['POST'])
+@app.route('/resume-ranking/<int:job_id>', methods=['GET'])
 def resume_ranking(job_id):
-    # Retrieve the request data
-    data = request.json
-
-    # Extract the job ID from the request data
-    job_id = data.get('job_id')
 
     # Perform the resume ranking logic using the job ID
     # ...
 
+    rankedJobs = sort_jobs.JobSorting.rank_resumes(get_resumes_by_job_id(job_id), job_id, 10)
+
     # Return the response
-    return {'result': f'Ranked resumes for job ID: {job_id}'}
+    return rankedJobs
+
+def get_resumes_by_job_id(job_id):
+
+    # Create a cursor object to execute SQL queries
+    connection = mysql.connector.connect(**db_config)
+    cursor = connection.cursor()
+
+    # Execute the SQL query to retrieve resumes with the specified job ID
+    query = "SELECT * FROM RESUMES WHERE JOB_ID = %s"
+    cursor.execute(query, (job_id,))
+
+    # Fetch all the rows returned by the query
+    resumes = cursor.fetchall()
+
+    # Close the cursor and database connection
+    cursor.close()
+    connection.close()
+
+    return resumes
 
 if __name__ == '__main__':
     app.config['UPLOAD_FOLDER'] = 'uploads'
