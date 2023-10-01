@@ -6,6 +6,8 @@ import os
 import hashlib
 import sort_jobs
 
+import pdb
+
 db_config = {
     'host': 'localhost',
     'port': 3306,
@@ -157,13 +159,13 @@ def get_all_jobs():
             cursor.close()
             connection.close()
 
-@app.route('/resume-ranking/<int:job_id>', methods=['GET'])
+@app.route('/api/resume-ranking/<int:job_id>', methods=['GET'])
 def resume_ranking(job_id):
-
+    print("hi")
     # Perform the resume ranking logic using the job ID
     # ...
 
-    rankedJobs = sort_jobs.JobSorting.rank_resumes(get_resumes_by_job_id(job_id), job_id, 10)
+    rankedJobs = sort_jobs.JobSorting.rank_resumes(get_resumes_by_job_id(job_id), get_jobs_by_job_id(job_id)[0], 10)
 
     # Return the response
     return rankedJobs
@@ -186,6 +188,25 @@ def get_resumes_by_job_id(job_id):
     connection.close()
 
     return resumes
+
+def get_jobs_by_job_id(job_id):
+
+    # Create a cursor object to execute SQL queries
+    connection = mysql.connector.connect(**db_config)
+    cursor = connection.cursor()
+
+    # Execute the SQL query to retrieve resumes with the specified job ID
+    query = "SELECT * FROM JOBS WHERE JOB_ID = %s"
+    cursor.execute(query, (job_id,))
+
+    # Fetch all the rows returned by the query
+    jobs = cursor.fetchall()
+
+    # Close the cursor and database connection
+    cursor.close()
+    connection.close()
+
+    return jobs
 
 if __name__ == '__main__':
     app.config['UPLOAD_FOLDER'] = 'uploads'

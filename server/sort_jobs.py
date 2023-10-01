@@ -4,6 +4,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
 import server
+import pdf_processing
 
 import mysql.connector
 
@@ -48,13 +49,20 @@ class JobSorting:
     def rank_resumes(resumes, job, maxResults):
         resultRanking = dict()
 
-        jobEmbedding = similarityModel.encode(job)
+        # Extract info from job data
+        print(job)
+        jobDesc = job[2]
+
+
+        jobEmbedding = similarityModel.encode(jobDesc)
         jobEmbedding = jobEmbedding.reshape(1, -1)
-        print('Job:', job)
+        print('Job:', jobDesc)
         print('')
         resumeSimilarityList = []
 
-        for resume in resumes:
+        for resumeData in resumes:
+            resume = pdf_processing.processPDF(resumeData[2])
+
             resumeContent = resume.get_pdf_content()
             resumeEmbedding = similarityModel.encode(resumeContent)
             resumeEmbedding = resumeEmbedding.reshape(1, -1)

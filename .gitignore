@@ -132,3 +132,4 @@ dist
 .idea
 /server/model/
 /server/dataset/
+/server/uploads/
