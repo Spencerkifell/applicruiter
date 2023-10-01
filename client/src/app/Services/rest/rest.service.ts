@@ -22,8 +22,9 @@ export class RestService {
   createJob(job: any) {
     this.httpClient.post('http://127.0.0.1:5000/api/jobs', job).subscribe({
       next: async (data: any) => {
-        let { title, description, country, city, level, skills } = data.job;
+        let { title, description, country, city, level, skills, job_id } = data.job;
         this.jobCollection.push({
+          job_id: job_id,
           title: title, 
           description: description, 
           country: country, 
