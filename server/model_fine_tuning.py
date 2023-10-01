@@ -10,7 +10,7 @@ else:
 print("Using device:", device)
 
 category_resume_dict = {}
-with open('ResumeDataSet.csv', 'r', newline='', encoding='utf-8') as file:
+with open('test.csv', 'r', newline='', encoding='utf-8') as file:
     csv_reader = csv.reader(file)
     next(csv_reader, None)
     for row in csv_reader:
@@ -21,15 +21,19 @@ with open('ResumeDataSet.csv', 'r', newline='', encoding='utf-8') as file:
 
 similarity_amount = 0.8
 train_examples = []
+train_examples_print = []
 for category in category_resume_dict:
-    for i in range(0, len(category_resume_dict[category]) - 1):
+    for i in range(0, len(category_resume_dict[category]) - 1, 2):
         if len(category_resume_dict[category]) <= 1:
             break
-        train_examples.append(InputExample(texts=[category_resume_dict[category][i], category_resume_dict[category][i + 1]], label=similarity_amount))
-        '''train_examples.append((category_resume_dict[category][i], category_resume_dict[category][i + 1], similarity_amount))
+        train_examples.append(InputExample(texts=[category_resume_dict[category][i], category_resume_dict[category][i + 1]], label=0.6))
+        train_examples_print.append((category_resume_dict[category][i], category_resume_dict[category][i + 1], similarity_amount))
 print()
-print(train_examples)'''
+print(train_examples_print)
 
+train_examples = [InputExample(texts=['software 1', 'software 2'], label=0.8),
+                  InputExample(texts=['software 3', 'software 4'], label=0.8),
+                  InputExample(texts=['artist 1', 'artist 2'], label=0.8)]
 
 model_save_path = "model"
 
