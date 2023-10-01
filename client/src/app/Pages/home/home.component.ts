@@ -4,6 +4,7 @@ import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.compon
 import { ModalService } from 'src/app/Services/modal/modal.service';
 import { DataService } from 'src/app/Services/data/data.service';
 import { HttpClient } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-home',
@@ -24,15 +25,20 @@ export class HomeComponent implements OnInit {
   constructor(
     private _modalService: ModalService,
     private _dataService: DataService,
-    private _httpClient: HttpClient
-
-    ) { 
+    private _httpClient: HttpClient,
+    private _matSnackBar: MatSnackBar
+  ) { 
     this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {
       this.jobCollection = data;
     });
     this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
       if (data) {
         this.modalRef.close();
+        this._matSnackBar.open('Job created successfully!', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
         this._dataService.modalIsCompleted(false);
       }     
     });

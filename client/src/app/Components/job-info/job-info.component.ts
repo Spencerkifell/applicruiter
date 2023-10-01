@@ -2,6 +2,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RestService } from 'src/app/Services/rest/rest.service';
+import { DataService } from 'src/app/Services/data/data.service';
 import {Observer} from "rxjs";
 
 @Component({
@@ -15,7 +16,12 @@ export class JobInfoComponent implements OnInit {
   selectedFiles: File[] = [];
   selectedFilesCount: number = 0;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private _formBuilder: FormBuilder, private _restService: RestService) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any, 
+    private _formBuilder: FormBuilder, 
+    private _restService: RestService,
+    private _dataService: DataService
+  ) {
     this.fileForm = this._formBuilder.group({
       files: this._formBuilder.array([], Validators.required),
     });
@@ -53,6 +59,7 @@ export class JobInfoComponent implements OnInit {
       const selectedFiles: File[] = filesFormArray.value;
 
       this._restService.createResumes(this.data.job_id, selectedFiles);
+      this._dataService.resumeModalIsCompleted(true);
   }
 
   rankResumes(): void {

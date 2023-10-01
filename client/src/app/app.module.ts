@@ -19,6 +19,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { JobInfoComponent } from './Components/job-info/job-info.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
@@ -48,6 +50,8 @@ import { JobInfoComponent } from './Components/job-info/job-info.component';
     NgxPaginationModule,
     FormsModule,
     ReactiveFormsModule,
+    MatSnackBarModule,
+    MatToolbarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
