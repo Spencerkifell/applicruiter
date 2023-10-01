@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { RestService } from 'src/app/Services/rest/rest.service';
-// import { Subscription } from 'rxjs';
-// import { BehaviorSubject } from 'rxjs';
+import { DataService } from 'src/app/Services/data/data.service';
 
 @Component({
   selector: 'app-job-modal',
@@ -10,8 +9,6 @@ import { RestService } from 'src/app/Services/rest/rest.service';
   styleUrls: ['./job-modal.component.css']
 })
 export class JobModalComponent implements OnInit {
-  // private modalStatusSubscripton: Subscription;
-
   firstFormGroup = this._formBuilder.group({
     title: ['', Validators.required],
     description: ['', Validators.required],
@@ -24,7 +21,11 @@ export class JobModalComponent implements OnInit {
     skills: ['', Validators.required],
   });
 
-  constructor(private _formBuilder: FormBuilder, private _restService: RestService) { }
+  constructor(
+    private _formBuilder: FormBuilder, 
+    private _restService: RestService,
+    private _dataService: DataService
+  ) { }
 
   ngOnInit(): void {
   }
@@ -42,5 +43,6 @@ export class JobModalComponent implements OnInit {
     };
 
     this._restService.createJob(jobData);
+    this._dataService.modalIsCompleted(true);
   }
 }

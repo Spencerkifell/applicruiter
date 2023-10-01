@@ -13,14 +13,26 @@ import { HttpClient } from '@angular/common/http';
 export class HomeComponent implements OnInit {
   private jobSubscripton: Subscription;
   jobCollection: any = [];
+
+  private modalSubscription: Subscription;
+  modalStatus: boolean = false;
+
+  modalRef: any = null;
   
   constructor(
     private _modalService: ModalService,
     private _dataService: DataService,
     private _httpClient: HttpClient
-    ) 
-  { 
-    this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {this.jobCollection = data;});
+
+    ) { 
+    this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {
+      this.jobCollection = data;
+    });
+    this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
+      if (data) 
+        this.modalRef.close();
+        this._dataService.modalIsCompleted(false);
+    });
   }
 
   ngOnInit(): void {
@@ -29,10 +41,11 @@ export class HomeComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.jobSubscripton.unsubscribe();
+    this.modalSubscription.unsubscribe();
   }
 
   openModal() {
-    const modalRef = this._modalService.openModal(JobModalComponent);
+    this.modalRef = this._modalService.openModal(JobModalComponent);
   }
 
   getJobs() {
