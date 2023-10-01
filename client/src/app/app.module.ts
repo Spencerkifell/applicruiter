@@ -45,7 +45,9 @@ import { JobInfoComponent } from './Components/job-info/job-info.component';
     HttpClientModule,
     MatCardModule,
     MatChipsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
