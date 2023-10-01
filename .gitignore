@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 .idea
+/server/model/
+/server/dataset/
