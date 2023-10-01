@@ -21,6 +21,7 @@ def hello_world():
     return 'TalentWave.AI API'
 
 @app.route('/api/jobs', methods=['POST'])
+@cross_origin()
 def insert_data_route():
     try:
         data = request.json
@@ -32,7 +33,9 @@ def insert_data_route():
         skills = data.get('skills')
         
         if all([title, description, level, country, city, skills]):
-            if insert_job_data(title, description, level, country, city, skills):
+            returned_id = insert_job_data(title, description, level, country, city, skills)
+            if returned_id:
+                data['job_id'] = returned_id
                 return jsonify({"message": "Data inserted successfully", "job": data}), 201
             else:
                 return jsonify({"error": "Failed to insert data"}), 500
@@ -42,6 +45,7 @@ def insert_data_route():
         return jsonify({"error": "An error occurred"}), 500
     
 @app.route('/api/jobs', methods=['GET'])
+@cross_origin()
 def get_jobs_route():
     try:
         jobs = get_all_jobs()
@@ -50,6 +54,7 @@ def get_jobs_route():
         return jsonify({"error": "An error occurred"}), 500
     
 @app.route('/api/upload_resume/<int:job_id>', methods=['POST'])
+@cross_origin()
 def upload_resume(job_id):
     try:
         if 'resumes' not in request.files:
@@ -114,8 +119,8 @@ def insert_job_data(title, description, level, country, city, skills):
 
         cursor.execute(query, values)
         connection.commit()
-
-        return True
+        
+        return cursor.lastrowid
     except Exception as e:
         print("Error:", str(e))
         return False
