@@ -11,12 +11,13 @@ db_config = {
 }
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/api')
 def hello_world():
     return 'TalentWave.AI API'
 
-@app.route('/api/job', methods=['POST'])
+@app.route('/api/jobs', methods=['POST'])
 def insert_data_route():
     try:
         data = request.json
@@ -26,10 +27,10 @@ def insert_data_route():
         country = data.get('country')
         city = data.get('city')
         skills = data.get('skills')
-
+        
         if all([title, description, level, country, city, skills]):
-            if insert_data(title, description, level, country, city, skills):
-                return jsonify({"message": "Data inserted successfully"}), 201
+            if insert_job_data(title, description, level, country, city, skills):
+                return jsonify({"message": "Data inserted successfully", "job": data}), 201
             else:
                 return jsonify({"error": "Failed to insert data"}), 500
         else:
@@ -37,7 +38,15 @@ def insert_data_route():
     except Exception as e:
         return jsonify({"error": "An error occurred"}), 500
     
-def insert_data(title, description, level, country, city, skills):
+@app.route('/api/jobs', methods=['GET'])
+def get_jobs_route():
+    try:
+        jobs = get_all_jobs()
+        return jsonify({"message": "Job data retrieved successfully", "jobs": jobs}), 200
+    except Exception as e:
+        return jsonify({"error": "An error occurred"}), 500
+    
+def insert_job_data(title, description, level, country, city, skills):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
@@ -56,8 +65,33 @@ def insert_data(title, description, level, country, city, skills):
         if connection.is_connected():
             cursor.close()
             connection.close()
+            
+def get_all_jobs():
+    import mysql.connector
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(dictionary=True)
 
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+        # Replace 'jobs' with your actual table name
+        query = '''
+            SELECT 
+                title, 
+                description,
+                level,
+                country,
+                city,
+                skills
+            FROM JOBS
+        '''
+        
+        cursor.execute(query)
+        return cursor.fetchall()
+    except Exception as e:
+        raise Exception("Error retrieving jobs:", str(e))
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
 
 @app.route('/resume-ranking', methods=['POST'])
 def resume_ranking():
