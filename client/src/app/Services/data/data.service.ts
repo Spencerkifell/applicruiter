@@ -11,6 +11,9 @@ export class DataService {
   private jobModalStatus = new BehaviorSubject<boolean>(false);
   sharedJobModalStatus = this.jobModalStatus.asObservable();
 
+  private resumeModalStatus = new BehaviorSubject<boolean>(false);
+  sharedResumeModalStatus = this.resumeModalStatus.asObservable();
+
   constructor() { }
 
   updateJobList(data: any) {
@@ -19,5 +22,9 @@ export class DataService {
 
   modalIsCompleted(data: boolean) {
     this.jobModalStatus.next(data);
+  }
+
+  resumeModalIsCompleted(data: boolean) {
+    this.resumeModalStatus.next(data);
   }
 }
