@@ -9,5 +9,5 @@ import { Component } from '@angular/core';
 })
 
 export class CardComponent {
-  position = "position name";
+  position = "balls";
 }
