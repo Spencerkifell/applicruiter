@@ -1,9 +1,7 @@
-import pdfplumber
 import os
 
-from server.sort_jobs import JobSorting
-
-from pdf_process.resume import *
+from resume import Resume
+from sort_jobs import JobSorting
 
 pdfs_folder = "D:\\AI_Projects\\Mais2023\\archive\\data\\data\\DESIGNER"
 

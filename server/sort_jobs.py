@@ -1,10 +1,7 @@
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
-from transformers import pipeline
-from pdf_process.resume import *
 
-similarityModel = SentenceTransformer('all-mpnet-base-v2')
-similarityModel.load('model')
+similarityModel = SentenceTransformer('model')
 # sentimentAnalysisModel = pipeline('sentiment-analysis', 'distilbert-base-uncased-finetuned-sst-2-english')
 
 jobs1 = ["We are looking for a frontend programmer."]
