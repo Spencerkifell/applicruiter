@@ -9,6 +9,5 @@ import { Component, Input } from '@angular/core';
 })
 
 export class CardComponent {
-  position = "balls";
-  @Input() posting: any;
+  @Input() postings: any = [];
 } 

@@ -41,6 +41,6 @@ export class JobModalComponent implements OnInit {
       skills: this.secondFormGroup.get('skills')?.value
     };
 
-    this._restService.createCategory(jobData);
+    this._restService.createJob(jobData);
   }
 }

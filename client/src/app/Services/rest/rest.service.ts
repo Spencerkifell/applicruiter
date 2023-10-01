@@ -19,10 +19,10 @@ export class RestService {
     });
   }
 
-  createCategory(job: any) {
-    this.httpClient.post('http://127.0.0.1:5000/api/job', job).subscribe({
+  createJob(job: any) {
+    this.httpClient.post('http://127.0.0.1:5000/api/jobs', job).subscribe({
       next: async (data: any) => {
-        let { title, description, country, city, level, skills } = data.payload.category;
+        let { title, description, country, city, level, skills } = data.job;
         this.jobCollection.push({
           title: title, 
           description: description, 
@@ -31,7 +31,7 @@ export class RestService {
           level: level, 
           skills: skills
         });
-        this.dataProvider.updateCategoryList(this.jobCollection);
+        this.dataProvider.updateJobList(this.jobCollection);
       },
       error: async (exception: any) => alert(exception.error.message)
     });  
