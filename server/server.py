@@ -106,8 +106,8 @@ def upload_resume(job_id):
 
 def insert_resume_data(cursor, job_id, file_path):
     try:
-        query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA) VALUES (%s, %s)"
-        values = (job_id, file_path)
+        query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA, SIMILARITY_SCORE) VALUES (%s, %s, %s)"
+        values = (job_id, file_path, -1)
         cursor.execute(query, values)
     except Exception as e:
         print("Error:", str(e))

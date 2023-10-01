@@ -12,6 +12,14 @@ similarityModel = SentenceTransformer('model')
 
 jobs1 = ["We are looking for a person to make us a lasagne."]
 
+db_config = {
+    'host': 'localhost',
+    'port': 3306,
+    'user': 'root',
+    'password': 'root',
+    'database': 'MAIS2023'
+}
+
 class JobSorting:
 
     @staticmethod
@@ -61,13 +69,20 @@ class JobSorting:
         resumeSimilarityList = []
 
         for resumeData in resumes:
-            resume = pdf_processing.processPDF(resumeData[2])
+            resume = pdf_processing.processPDF(resumeData[2], resumeData[3])
 
-            resumeContent = resume.get_pdf_content()
-            resumeEmbedding = similarityModel.encode(resumeContent)
-            resumeEmbedding = resumeEmbedding.reshape(1, -1)
-            similarity = cosine_similarity(resumeEmbedding, jobEmbedding)[0][0]
-            resumeSimilarityList.append((resumeContent, similarity, resume))
+            if resume.ranked:
+                resumeContent = resume.get_pdf_content()
+                resumeSimilarityList.append((resumeContent, resume.similarityScore, resume))
+            else:
+                resumeContent = resume.get_pdf_content()
+                resumeEmbedding = similarityModel.encode(resumeContent)
+                resumeEmbedding = resumeEmbedding.reshape(1, -1)
+                similarity = cosine_similarity(resumeEmbedding, jobEmbedding)[0][0]
+                resumeSimilarityList.append((resumeContent, similarity, resume))
+                JobSorting.set_similarity_score(resumeData[0], similarity.astype(float))
+
+
 
         resumeSimilarityList.sort(key=lambda x: x[1], reverse=True)
 
@@ -109,3 +124,21 @@ class JobSorting:
             database="MAIS2023"
         )
         return connection
+
+    def set_similarity_score(resume_id, score):
+        # Create a connection object
+        connection = mysql.connector.connect(**db_config)
+
+        # Create a cursor object to execute SQL queries
+        cursor = connection.cursor()
+
+        # Execute the SQL query to update the similarity score of the resume with the specified ID
+        query = "UPDATE RESUMES SET SIMILARITY_SCORE = %s WHERE ID = %s"
+        cursor.execute(query, (score, resume_id))
+
+        # Commit the changes to the database
+        connection.commit()
+
+        # Close the cursor and database connection
+        cursor.close()
+        connection.close()
