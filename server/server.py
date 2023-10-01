@@ -67,7 +67,6 @@ def insert_job_data(title, description, level, country, city, skills):
             connection.close()
             
 def get_all_jobs():
-    import mysql.connector
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor(dictionary=True)
