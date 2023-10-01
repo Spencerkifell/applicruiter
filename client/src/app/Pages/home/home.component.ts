@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
 import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.component';
+import { ModalService } from 'src/app/Services/modal/modal.service';
 
 @Component({
   selector: 'app-home',
@@ -9,9 +9,13 @@ import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.compon
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private _modalService: ModalService) { }
 
   ngOnInit(): void {
+
   }
 
+  openModal() {
+    const modalRef = this._modalService.openModal(JobModalComponent);
+  }
 }
