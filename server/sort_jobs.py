@@ -1,33 +1,63 @@
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
+from transformers import pipeline
+from pdf_process.resume import *
 
-model = SentenceTransformer('multi-qa-mpnet-base-dot-v1')
+similarityModel = SentenceTransformer('multi-qa-mpnet-base-dot-v1')
+# sentimentAnalysisModel = pipeline('sentiment-analysis', 'distilbert-base-uncased-finetuned-sst-2-english')
 
-jobs = ["We are looking for a professional banana eater with decades of experience."]
+jobs1 = ["We are looking for a frontend programmer."]
 
-resumes = ["I have many skills, such as eating 2 bananas at once.",
-           "I've eaten bananas before, I guess, but I'm not too confident.",
+resumes1 = ["I am a programmer who can do frontend.",
            "Banana-eating world champion 2013-2023. One decade, baby.",
-           "ligma balls"]
+           "I am a programmer who can do backend.",
+           "I am a programmer who can do frontend and backend.",
+           "I have done an intro to Python class!",
+           "I am a programmer who who knows Angular, with 20 years of experience.",
+           "I designed and coded a website for my friend's business."]
 
-jobEmbeddings = model.encode(jobs)
-resumeEmbeddings = model.encode(resumes)
 
-for job, jobEmbedding in zip(jobs, jobEmbeddings):
-    jobEmbedding = jobEmbedding.reshape(1, -1)
-    print("Job:", job)
-    print("")
-    for resume, resumeEmbedding in zip(resumes, resumeEmbeddings):
-        resumeEmbedding = resumeEmbedding.reshape(1, -1)
-        similarity = cosine_similarity(resumeEmbedding, jobEmbedding)[0][0]
-        print("Resume:", resume)
-        print("Similarity:", similarity)
-        print("")
 
 '''
-embedding1 = model.encode(sentence1).reshape(1, -1)
-embedding2 = model.encode(sentence2).reshape(1, -1)
-
-similarity = cosine_similarity(embedding1, embedding2)[0][0]
-print(similarity)
+# Sentiment analysis
+for resume in resumes:
+    sentimentResult = sentimentAnalysisModel(resume)
+    print(sentimentResult[0]['label'], sentimentResult[0]['score'])
 '''
+
+maxResumeResults = 10;
+
+class JobSorting:
+
+    @staticmethod
+    def rank_jobs(resumes):
+        JobSorting.rank_jobs1(resumes, jobs1)
+
+    @staticmethod
+    def rank_jobs1(resumes, jobs):
+        jobEmbeddings = similarityModel.encode(jobs)
+        for job, jobEmbedding in zip(jobs, jobEmbeddings):
+            jobEmbedding = jobEmbedding.reshape(1, -1)
+            print('Job:', job)
+            print('')
+            resumeSimilarityList = []
+
+            for resume in resumes:
+                resumeContent = resume.get_pdf_content()
+                resumeEmbedding = similarityModel.encode(resumeContent)
+                resumeEmbedding = resumeEmbedding.reshape(1, -1)
+                similarity = cosine_similarity(resumeEmbedding, jobEmbedding)[0][0]
+                resumeSimilarityList.append((resumeContent, similarity))
+
+            resumeSimilarityList.sort(key=lambda x: x[1], reverse=True)
+
+            # Implement KNN to get the top maxResumeResults resumes.
+
+            for i in range(min(maxResumeResults, len(resumeSimilarityList))):
+                resumeSimilarity = resumeSimilarityList[i]
+                print(i + 1, ":", sep="")
+                print('Resume:', resumeSimilarity[0])
+                print('Similarity:', resumeSimilarity[1])
+                print('')
+
+

@@ -1,5 +1,6 @@
 import pdfplumber
 import json
+import re
 
 class Resume:
     candidate_name = ""
@@ -17,7 +18,7 @@ class Resume:
             text = ""
             for page in pdf.pages:
                 text += page.extract_text()
-        return text
+        return self.cleanResume(text)
 
     def set_candidate_name(self, name):
         self.candidate_name = name
@@ -36,3 +37,13 @@ class Resume:
             "pdf_content": self.pdf_content
         }
         return json.dumps(resume_dict)
+
+    def cleanResume(self, text):
+        returnText = re.sub('http\S+\s*', ' ', text)
+        returnText = re.sub('RT|cc', ' ', returnText)
+        returnText = re.sub('#\S+', '', returnText)
+        returnText = re.sub('@\S+', '  ', returnText)
+        returnText = re.sub('[%s]' % re.escape("""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""), ' ', returnText)
+        returnText = re.sub(r'[^\x00-\x7f]', r' ', returnText)
+        returnText = re.sub('\s+', ' ', returnText)
+        return returnText

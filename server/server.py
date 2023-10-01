@@ -59,5 +59,19 @@ def insert_data(title, description, level, country, city, skills):
 
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+@app.route('/resume-ranking', methods=['POST'])
+def resume_ranking():
+    # Retrieve the request data
+    data = request.json
+
+    # Extract the job ID from the request data
+    job_id = data.get('job_id')
+
+    # Perform the resume ranking logic using the job ID
+    # ...
+
+    # Return the response
+    return {'result': f'Ranked resumes for job ID: {job_id}'}
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

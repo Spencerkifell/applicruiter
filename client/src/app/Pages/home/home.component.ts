@@ -8,8 +8,15 @@ import { ModalService } from 'src/app/Services/modal/modal.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
-  constructor(private _modalService: ModalService) { }
+  // posting:any;
+  constructor(private _modalService: ModalService) { 
+    // this.posting = {
+    //   "position-title" : "Software Engineer", 
+    //   "city":"San Francisco",
+    //   "state":"CA",
+    //   "level":"Entry",
+    // };
+  }
 
   ngOnInit(): void {
 
