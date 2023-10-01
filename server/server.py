@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import mysql.connector
+from werkzeug.utils import secure_filename
+import os
+import hashlib
 
 db_config = {
     'host': 'localhost',
@@ -46,6 +49,61 @@ def get_jobs_route():
     except Exception as e:
         return jsonify({"error": "An error occurred"}), 500
     
+@app.route('/api/upload_resume/<int:job_id>', methods=['POST'])
+def upload_resume(job_id):
+    try:
+        if 'resumes' not in request.files:
+            return jsonify({"error": "No resume files uploaded"}), 400
+
+        uploaded_resumes = request.files.getlist('resumes')
+
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+
+        for resume in uploaded_resumes:
+            if resume.filename == '':
+                return jsonify({"error": "One or more resume files have no selected file"}), 400
+
+            # Securely generate a unique filename (Removes unsafe characters)
+            safe_filename = secure_filename(resume.filename)
+
+            # Generates a hash based off the file name to produce a unique file name
+            filename_hash = hashlib.md5(resume.filename.encode()).hexdigest()
+
+            # Combine the hash and the original filename (with an underscore)
+            unique_filename = f"{filename_hash}_{safe_filename}".lower()
+
+            resume_dir = os.path.join(app.config['UPLOAD_FOLDER'], str(job_id))
+
+            if not os.path.exists(resume_dir):
+                os.makedirs(resume_dir)
+
+            # Save the file in the job's directory
+            file_path = os.path.join(resume_dir, unique_filename)
+            resume.save(file_path)
+
+            # Insert the file path into the database
+            insert_resume_data(cursor, job_id, file_path)
+
+        # Commit the changes to the database
+        connection.commit()
+
+        return jsonify({"message": "Resumes uploaded and data inserted successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": "An error occurred"}), 500
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+def insert_resume_data(cursor, job_id, file_path):
+    try:
+        query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA) VALUES (%s, %s)"
+        values = (job_id, file_path)
+        cursor.execute(query, values)
+    except Exception as e:
+        print("Error:", str(e))
+
 def insert_job_data(title, description, level, country, city, skills):
     try:
         connection = mysql.connector.connect(**db_config)
@@ -74,6 +132,7 @@ def get_all_jobs():
         # Replace 'jobs' with your actual table name
         query = '''
             SELECT 
+                job_id,
                 title, 
                 description,
                 level,
@@ -107,4 +166,9 @@ def resume_ranking():
     return {'result': f'Ranked resumes for job ID: {job_id}'}
 
 if __name__ == '__main__':
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+    
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+    
     app.run(port=5000, debug=True)
