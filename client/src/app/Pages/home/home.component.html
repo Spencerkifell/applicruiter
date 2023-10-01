@@ -1,6 +1,10 @@
-<div>
+<div class="example-button-container">
+    <button mat-fab color="primary" aria-label="Click to add a new job posting" (click)="this.openModal()">
+        <mat-icon>add</mat-icon>
+    </button>
+<!-- <div>
     <app-job-modal></app-job-modal>
     <div *ngFor="let _ of [1,2,3]">
         <app-card [posting]="posting"></app-card>
     </div>
-</div>
+</div> -->

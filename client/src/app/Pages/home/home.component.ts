@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
 import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.component';
+import { ModalService } from 'src/app/Services/modal/modal.service';
 
 @Component({
   selector: 'app-home',
@@ -8,17 +8,21 @@ import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.compon
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  posting:any;
-  constructor() { 
-    this.posting = {
-      "position-title" : "Software Engineer", 
-      "city":"San Francisco",
-      "state":"CA",
-      "level":"Entry",
-    };
+  // posting:any;
+  constructor(private _modalService: ModalService) { 
+    // this.posting = {
+    //   "position-title" : "Software Engineer", 
+    //   "city":"San Francisco",
+    //   "state":"CA",
+    //   "level":"Entry",
+    // };
   }
 
   ngOnInit(): void {
+
   }
 
+  openModal() {
+    const modalRef = this._modalService.openModal(JobModalComponent);
+  }
 }

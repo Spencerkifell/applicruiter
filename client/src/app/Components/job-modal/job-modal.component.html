@@ -1,6 +1,56 @@
 <div>
-    <!-- <p class="">Create New Job</p> -->
-    <form>
-
-    </form>
+    <mat-card>
+        <mat-stepper [linear]="true" #stepper>
+            <mat-step [stepControl]="firstFormGroup">
+                <form [formGroup]="firstFormGroup" style="display: flex;flex-direction: column;">
+                <ng-template matStepLabel>Basic Job Information</ng-template>
+                <mat-form-field>
+                    <mat-label>Job Title</mat-label>
+                    <input matInput placeholder="Job Title" formControlName="title" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Country</mat-label>
+                    <input matInput placeholder="Country" formControlName="country" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>City</mat-label>
+                    <input matInput placeholder="City" formControlName="city" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Job Description</mat-label>
+                    <textarea matInput style="min-height: 100px;max-height: 100px;" splaceholder="Job Description" formControlName="description" required></textarea>
+                </mat-form-field>
+                <div>
+                    <button mat-button color="primary" matStepperNext>Next</button>
+                </div>
+                </form>
+            </mat-step>
+            <mat-step>
+                <form [formGroup]="secondFormGroup" style="display: flex;flex-direction: column;">
+                    <ng-template matStepLabel>Required Skills</ng-template>
+                    <mat-form-field>
+                        <mat-label>Position Level</mat-label>
+                        <mat-select formControlName="level" required>
+                            <mat-option value="entry">
+                                Entry Level
+                            </mat-option>
+                            <mat-option value="associate">
+                                Associate Level
+                            </mat-option>
+                            <mat-option value="senior">
+                                Senior Level
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Skills</mat-label>
+                        <input matInput placeholder="Skills" formControlName="skills" required>
+                    </mat-form-field>
+                    <div>
+                        <button mat-button color="primary" (click)="onClick()">Create Job</button>
+                    </div>
+                </form>
+            </mat-step>
+        </mat-stepper>
+    </mat-card>
 </div>
