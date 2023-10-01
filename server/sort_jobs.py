@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 
 similarityModel = SentenceTransformer('multi-qa-mpnet-base-dot-v1')
-sentimentAnalysisModel = pipeline('sentiment-analysis', 'distilbert-base-uncased-finetuned-sst-2-english')
+# sentimentAnalysisModel = pipeline('sentiment-analysis', 'distilbert-base-uncased-finetuned-sst-2-english')
 
 jobs = ["We are looking for a frontend programmer."]
 
@@ -12,7 +12,8 @@ resumes = ["I am a programmer who can do frontend.",
            "I am a programmer who can do backend.",
            "I am a programmer who can do frontend and backend.",
            "I have done an intro to Python class!",
-           "I am a programmer who can do frontend and backend with 20 years of experience."]
+           "I am a programmer who who knows Angular, with 20 years of experience.",
+           "I designed and coded a website for my friend's business."]
 
 jobEmbeddings = similarityModel.encode(jobs)
 resumeEmbeddings = similarityModel.encode(resumes)
