@@ -10,7 +10,7 @@ export class DataService {
 
   constructor() { }
 
-  updateCategoryList(data: any) {
+  updateJobList(data: any) {
     this.jobList.next(data);
   }
 }
