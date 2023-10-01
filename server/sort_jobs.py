@@ -1,6 +1,10 @@
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
+import server
+
+import MySQLdb.connections
+
 similarityModel = SentenceTransformer('model')
 
 jobs1 = ["We are looking for a person to make us a lasagne."]
@@ -40,4 +44,28 @@ class JobSorting:
                 print('Similarity:', resumeSimilarity[1])
                 print('')
 
+    @staticmethod
+    def get_jobs():
+        connection = JobSorting.get_connection()
 
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM JOBS"
+        cursor.execute(query)
+
+        jobs = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        return jobs
+
+    @staticmethod
+    def get_connection():
+        connection = mysql.connector.connect(
+            host="your_host",
+            user="your_user",
+            password="your_password",
+            database="MAIS2023"
+        )
+        return connection

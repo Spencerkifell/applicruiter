@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-import mysql.connector
+import MySQLdb.connections
 
 db_config = {
     'host': 'localhost',
@@ -48,7 +48,7 @@ def get_jobs_route():
     
 def insert_job_data(title, description, level, country, city, skills):
     try:
-        connection = mysql.connector.connect(**db_config)
+        connection = MySQLdb.connect(**db_config)
         cursor = connection.cursor()
 
         query = "INSERT INTO JOBS (TITLE, DESCRIPTION, LEVEL, COUNTRY, CITY, SKILLS) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -68,7 +68,7 @@ def insert_job_data(title, description, level, country, city, skills):
             
 def get_all_jobs():
     try:
-        connection = mysql.connector.connect(**db_config)
+        connection = MySQLdb.connect(**db_config)
         cursor = connection.cursor(dictionary=True)
 
         # Replace 'jobs' with your actual table name

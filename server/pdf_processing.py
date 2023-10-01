@@ -3,7 +3,7 @@ import os
 from resume import Resume
 from sort_jobs import JobSorting
 
-pdfs_folder = "dataset/data/data/Test"
+pdfs_folder = "dataset/data/data/CHEF"
 
 resumes = dict()
 
@@ -20,4 +20,7 @@ if __name__ == '__main__':
         resumes[resume.get_candidate_name()] = resume
 
         # Print or process the content as needed.
+
+    print("======================DONE PREPROCESSING DATA======================")
+
     JobSorting.rank_jobs(resumes.values())
