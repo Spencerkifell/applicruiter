@@ -18,10 +18,9 @@ export class HomeComponent implements OnInit {
     private _modalService: ModalService,
     private _dataService: DataService,
     private _httpClient: HttpClient
-    ) { 
-    this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {
-      this.jobCollection = data;
-    });
+    ) 
+  { 
+    this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {this.jobCollection = data;});
   }
 
   ngOnInit(): void {
