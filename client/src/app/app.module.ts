@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select'; 
 import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
-
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -42,7 +42,8 @@ import { MatChipsModule } from '@angular/material/chips';
     MatSelectModule,
     HttpClientModule,
     MatCardModule,
-    MatChipsModule
+    MatChipsModule,
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]

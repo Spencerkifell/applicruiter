@@ -18,6 +18,8 @@ export class HomeComponent implements OnInit {
   modalStatus: boolean = false;
 
   modalRef: any = null;
+
+  p = 1;
   
   constructor(
     private _modalService: ModalService,
@@ -29,9 +31,10 @@ export class HomeComponent implements OnInit {
       this.jobCollection = data;
     });
     this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
-      if (data) 
+      if (data) {
         this.modalRef.close();
         this._dataService.modalIsCompleted(false);
+      }     
     });
   }
 

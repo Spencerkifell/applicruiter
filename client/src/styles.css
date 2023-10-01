@@ -1,0 +1,12 @@
+body {
+    background-color: #A2A3BB
+}
+
+.ngx-pagination a{
+    color: black !important;
+}
+
+.ngx-pagination .current {
+    background-color: #B3B7EE !important;
+    color: black !important;
+}

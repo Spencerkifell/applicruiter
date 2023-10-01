@@ -1,8 +1,13 @@
 <div>
-    <div *ngFor="let posting of jobCollection">
-        <app-card [postings]="posting"></app-card>
+    <div class="parent-container">
+        <div class="grid-container">
+            <div class="grid-item" *ngFor="let posting of jobCollection | paginate: { itemsPerPage: 9, currentPage: p }">
+                <app-card [postings]="posting"></app-card>
+            </div>
+        </div>
+        <pagination-controls class="pagination-container" (pageChange)="p = $event"></pagination-controls>     
     </div>
-    <button mat-fab color="primary" aria-label="Click to add a new job posting" (click)="this.openModal()">
+    <button mat-fab color="primary" aria-label="Click to add a new job posting" (click)="this.openModal()" class="fab-bottom-right">
         <mat-icon>add</mat-icon>
     </button>
 </div>
