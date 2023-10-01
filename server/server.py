@@ -4,6 +4,9 @@ import mysql.connector
 from werkzeug.utils import secure_filename
 import os
 import hashlib
+import sort_jobs
+
+import pdb
 
 db_config = {
     'host': 'localhost',
@@ -103,8 +106,8 @@ def upload_resume(job_id):
 
 def insert_resume_data(cursor, job_id, file_path):
     try:
-        query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA) VALUES (%s, %s)"
-        values = (job_id, file_path)
+        query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA, SIMILARITY_SCORE) VALUES (%s, %s, %s)"
+        values = (job_id, file_path, -1)
         cursor.execute(query, values)
     except Exception as e:
         print("Error:", str(e))
@@ -156,19 +159,54 @@ def get_all_jobs():
             cursor.close()
             connection.close()
 
-@app.route('/resume-ranking/<int:job_id>', methods=['POST'])
+@app.route('/api/resume-ranking/<int:job_id>', methods=['GET'])
 def resume_ranking(job_id):
-    # Retrieve the request data
-    data = request.json
-
-    # Extract the job ID from the request data
-    job_id = data.get('job_id')
-
+    print("hi")
     # Perform the resume ranking logic using the job ID
     # ...
 
+    rankedJobs = sort_jobs.JobSorting.rank_resumes(get_resumes_by_job_id(job_id), get_jobs_by_job_id(job_id)[0], 10)
+
     # Return the response
-    return {'result': f'Ranked resumes for job ID: {job_id}'}
+    return rankedJobs
+
+def get_resumes_by_job_id(job_id):
+
+    # Create a cursor object to execute SQL queries
+    connection = mysql.connector.connect(**db_config)
+    cursor = connection.cursor()
+
+    # Execute the SQL query to retrieve resumes with the specified job ID
+    query = "SELECT * FROM RESUMES WHERE JOB_ID = %s"
+    cursor.execute(query, (job_id,))
+
+    # Fetch all the rows returned by the query
+    resumes = cursor.fetchall()
+
+    # Close the cursor and database connection
+    cursor.close()
+    connection.close()
+
+    return resumes
+
+def get_jobs_by_job_id(job_id):
+
+    # Create a cursor object to execute SQL queries
+    connection = mysql.connector.connect(**db_config)
+    cursor = connection.cursor()
+
+    # Execute the SQL query to retrieve resumes with the specified job ID
+    query = "SELECT * FROM JOBS WHERE JOB_ID = %s"
+    cursor.execute(query, (job_id,))
+
+    # Fetch all the rows returned by the query
+    jobs = cursor.fetchall()
+
+    # Close the cursor and database connection
+    cursor.close()
+    connection.close()
+
+    return jobs
 
 if __name__ == '__main__':
     app.config['UPLOAD_FOLDER'] = 'uploads'

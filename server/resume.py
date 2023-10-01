@@ -7,11 +7,20 @@ class Resume:
     pdf_location = ""
     pdf_content = None
 
-    def __init__(self, candidate_name, pdf_location):
+    ranked = False
+    similarityScore = -1
+
+    def __init__(self, candidate_name, pdf_location, similarityScore = -1):
         self.candidate_name = candidate_name
         self.pdf_location = pdf_location
         self.pdf_content = None
         self.pdf_content = self.extract_pdf_content()
+
+        # If is scored already.
+        if similarityScore != -1:
+            ranked = True
+            self.similarityScore = similarityScore
+
 
     def extract_pdf_content(self):
         with pdfplumber.open(self.pdf_location) as pdf:
