@@ -1,0 +1,26 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content>
+            <div class="header">
+                <mat-card-title>{{ data.title }}</mat-card-title>
+                <mat-card-subtitle>{{ data.level }}</mat-card-subtitle>
+            </div>
+            <div class="content">
+                <p><strong>Country:</strong> {{ data.country }}</p>
+                <p><strong>City:</strong> {{ data.city }}</p>
+                <p><strong>Description:</strong></p>
+                <p>{{ data.description }}</p>
+                <p><strong>Skills:</strong></p>
+                <mat-chip-list>
+                    <mat-chip *ngFor="let skill of skills">{{ skill }}</mat-chip>
+                </mat-chip-list>
+            </div>
+            <!-- <div class="pdf-upload">
+                <mat-form-field appearance="fill">
+                  <mat-label>Select PDFs to Upload</mat-label>
+                  <input type="file" id="pdfInput" accept=".pdf" multiple>
+                </mat-form-field>
+            </div> -->
+        </mat-card-content>
+    </mat-card>
+</div>
