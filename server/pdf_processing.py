@@ -6,10 +6,10 @@ pdfs_folder = "dataset/data/data/CHEF"
 
 
 
-def processPDF(pdf_path, similarityScore = -1):
+def processPDF(pdf_path, similarityScore = -1, id=-1):
     resumes = dict()
 
-    resume = Resume(pdf_path.split('\\')[0], pdf_path, similarityScore)
+    resume = Resume(pdf_path.split('\\')[0], pdf_path, similarityScore, id)
 
     return resume
 

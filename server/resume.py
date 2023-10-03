@@ -10,11 +10,14 @@ class Resume:
     ranked = False
     similarityScore = -1
 
-    def __init__(self, candidate_name, pdf_location, similarityScore = -1):
+    id = -1
+
+    def __init__(self, candidate_name, pdf_location, similarityScore = -1, id=-1):
         self.candidate_name = candidate_name
         self.pdf_location = pdf_location
         self.pdf_content = None
         self.pdf_content = self.extract_pdf_content()
+        self.id = id
 
         # If is scored already.
         if similarityScore != -1:
