@@ -80,7 +80,7 @@ class JobSorting:
                 resumeEmbedding = resumeEmbedding.reshape(1, -1)
                 similarity = cosine_similarity(resumeEmbedding, jobEmbedding)[0][0]
                 resumeSimilarityList.append((resumeContent, similarity, resume))
-                JobSorting.set_similarity_score(resumeData[0], similarity.astype(float))
+                JobSorting.set_similarity_score(resumeData[0], float(similarity))
 
 
 

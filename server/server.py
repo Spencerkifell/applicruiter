@@ -161,10 +161,6 @@ def get_all_jobs():
 
 @app.route('/api/resume-ranking/<int:job_id>', methods=['GET'])
 def resume_ranking(job_id):
-    print("hi")
-    # Perform the resume ranking logic using the job ID
-    # ...
-
     rankedJobs = sort_jobs.JobSorting.rank_resumes(get_resumes_by_job_id(job_id), get_jobs_by_job_id(job_id)[0], 10)
 
     # Return the response
