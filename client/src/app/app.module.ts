@@ -21,6 +21,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { JobInfoComponent } from './Components/job-info/job-info.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { DataTableComponent } from './Components/data-table/data-table.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -28,7 +32,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     HomeComponent,
     JobModalComponent,
     CardComponent,
-    JobInfoComponent
+    JobInfoComponent,
+    DataTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +57,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     ReactiveFormsModule,
     MatSnackBarModule,
     MatToolbarModule,
+    NgxDatatableModule,
+    MatTableModule,
+    MatPaginatorModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

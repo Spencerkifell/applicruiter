@@ -1,23 +1,6 @@
 <div>
-    <mat-toolbar color="primary" class="navbar">
-        <span class="title">TalentWave.AI</span>
-        <div class="icons">
-            <a mat-icon-button href="https://github.com/Spencerkifell/mais-hacks-2023" target="_blank" aria-label="GitHub">
-                <mat-icon>code</mat-icon>
-            </a>
-            <a mat-icon-button href="https://devpost.com/software/talentwave-ai" target="_blank" aria-label="Devpost">
-                <mat-icon>description</mat-icon>
-            </a>
-        </div>
-    </mat-toolbar>
-
     <div *ngIf="jobCollection.length > 0" class="parent-container">
-        <div class="grid-container">
-            <div class="grid-item" *ngFor="let posting of jobCollection | paginate: { itemsPerPage: 9, currentPage: p }">
-                <app-card [jobPosting]="posting"></app-card>
-            </div>
-        </div>
-        <pagination-controls class="pagination-container" (pageChange)="p = $event"></pagination-controls>
+        <app-data-table></app-data-table>
     </div>
 
     <!-- Display a card when no job postings are available -->

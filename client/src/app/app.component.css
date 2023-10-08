@@ -5,3 +5,17 @@ body {
 .mat-typography {
     margin: 0;
 }
+
+.mat-toolbar {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+}
+
+.icons {
+    margin-left: 25px;
+    margin-right: 25px;
+}

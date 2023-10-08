@@ -13,11 +13,9 @@ body {
 }
 
 .parent-container {
-    min-height: 85vh;
-    height: 85vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: auto;
+    width: 85%;
+    margin-top: 50px;
 }
 
 .conditional {
@@ -44,20 +42,6 @@ ul {
     transform: translateX(-50%);
     z-index: 999;
     text-align: center;
-}
-
-.mat-toolbar {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-}
-
-.icons {
-    margin-left: 25px;
-    margin-right: 25px;
 }
 
 .large-button {
