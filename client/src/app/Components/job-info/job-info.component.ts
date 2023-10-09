@@ -28,7 +28,7 @@ export class JobInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.skills = this.data.skills.split(',')
+    this.skills = this.data.skills.split(',').map((skill: string) => skill.trim().charAt(0).toUpperCase() + skill.slice(1));
   }
 
 
@@ -43,13 +43,13 @@ export class JobInfoComponent implements OnInit {
       filesFormArray.push(fileControl);
     }
 
-    this.selectedFilesCount = filesFormArray.length;
+    this.selectedFilesCount = filesFormArray.length;      
   }
 
   clear(): void {
     const filesFormArray = this.fileForm.get('files') as FormArray;
     filesFormArray.clear();
-    this.selectedFilesCount = 0;
+    this.selectedFilesCount = filesFormArray.length;
   }
 
   onSubmit() {

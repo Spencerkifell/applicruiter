@@ -1,0 +1,18 @@
+<mat-card style="height: 500px; margin-bottom: 50px;">
+    <mat-card-title style="margin-bottom: 25px;">Candidate Rankings</mat-card-title>
+    <mat-card>
+    <mat-card-content>
+        <mat-form-field appearance="fill">
+            <mat-label>Select Job Requisition</mat-label>
+            <mat-select>
+                <mat-option>
+                    None
+                </mat-option>
+                <mat-option *ngFor="let job of jobCollection" [value]="job.job_id">
+                    {{job.job_id}} - {{job.title}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </mat-card-content>
+</mat-card>
+</mat-card>

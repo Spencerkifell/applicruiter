@@ -65,10 +65,6 @@ export class DataTableComponent implements AfterViewInit {
     this.jobInfoModalSubscription.unsubscribe();
   }
 
-  // onRowClick(row: JobPosting) {
-  //   alert(row.job_id)
-  // }
-
   openJobDetails(row: JobPosting) {
     this.detailModalRef = this._modalService.openModal(JobInfoComponent, row);
   }

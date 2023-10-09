@@ -25,6 +25,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { DataTableComponent } from './Components/data-table/data-table.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { RankingsComponent } from './Components/rankings/rankings.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     CardComponent,
     JobInfoComponent,
     DataTableComponent,
+    RankingsComponent,
   ],
   imports: [
     BrowserModule,
