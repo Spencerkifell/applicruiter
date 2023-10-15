@@ -1,4 +1,4 @@
-# TalentWave.AI
+# TalentWave
 ## A Different Approach to Automated Tracking Systems for Businesses
 
 ### Summary
