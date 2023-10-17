@@ -3,8 +3,7 @@ import json
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
-import server
-import pdf_processing
+import routes.utils.pdf_processing as pdf_processing
 
 import mysql.connector
 
