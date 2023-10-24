@@ -7,3 +7,9 @@ export interface JobPosting {
     city: string;
     skills: string;
 }
+
+export interface ResumeRanking {
+    id: number;
+    pdf_data: string;
+    singularity_score: number;
+}

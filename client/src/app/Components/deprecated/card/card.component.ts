@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ModalService } from 'src/app/Services/modal/modal.service';
-import { JobInfoComponent } from '../job-info/job-info.component';
+import { JobInfoComponent } from '../../job-info/job-info.component';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
