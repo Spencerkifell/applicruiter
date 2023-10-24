@@ -20,7 +20,7 @@ export class RestService {
   }
 
   createJob(job: any) {
-    this.httpClient.post('http://127.0.0.1:5000/api/jobs', job).subscribe({
+    this.httpClient.post('http://127.0.0.1:5000/api/job', job).subscribe({
       next: async (data: any) => {
         let { title, description, country, city, level, skills, job_id } = data.job;
         this.jobCollection.push({
@@ -39,7 +39,7 @@ export class RestService {
   }
 
   createResumes(job_id: any, resumes: File[]) {
-    let url = `http://127.0.0.1:5000/api/upload_resume/${job_id}`;
+    let url = `http://127.0.0.1:5000/api/resume/upload/${job_id}`;
 
     // Create a DataTransfer object
     const dataTransfer = new DataTransfer();
@@ -73,8 +73,14 @@ export class RestService {
 
   rankResumes(jobId: any): Observable<any[]> {
     // Make an HTTP request to the server to get ranked resumes
-    const url = `http://127.0.0.1:5000/api/resume-ranking/${jobId}`;
+    const url = `http://127.0.0.1:5000/api/resume/rank/${jobId}`;
 
     return this.httpClient.get<any[]>(url);
   }
+
+  // getRankedResumes(jobId: any): Observable<any[]> {
+  //   const url = `http://127.0.0.1:5000/api/resume-ranking/${jobId}`;
+
+  //   return this.httpClient.get<any[]>(url);
+  // }
 }
