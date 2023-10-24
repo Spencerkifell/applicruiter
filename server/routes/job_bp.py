@@ -73,7 +73,6 @@ def get_all_jobs():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor(dictionary=True)
 
-        # Replace 'jobs' with your actual table name
         query = '''
             SELECT 
                 job_id,
