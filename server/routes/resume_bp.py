@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request, current_app
 from flask_cors import cross_origin, CORS
 from werkzeug.utils import secure_filename
-from PyPDF2 import PdfReader
+# from PyPDF2 import PdfReader
+# from spacy.matcher import Matcher
 import hashlib
 import global_utils
 import mysql.connector
@@ -23,7 +24,15 @@ def upload_resume(job_id):
 
         uploaded_resumes = request.files.getlist('resumes')
     
+        # Load the spacy model to be used to extract crucial information from the resume to store
         # nlp = spacy.load("en_core_web_sm")
+
+        # initialize matcher with a vocab
+        # matcher = Matcher(nlp.vocab)
+        # First name and Last name are always Proper Nouns
+        # pattern = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
+        # matcher.add('NAME', [pattern])
+
         for resume in uploaded_resumes:
             if resume.filename == '':
                 return jsonify({"error": "One or more resume files have no selected file"}), 400
@@ -47,19 +56,18 @@ def upload_resume(job_id):
             resume.save(file_path)
             
             abs_path = os.path.abspath(file_path)
-
-            # Load the spacy model to be used to extract crucial information from the resume to store
-            # candidate_name = process_resume_data(abs_path, nlp)
+            
+            # candidate_name = process_resume_data(abs_path, nlp, matcher)
 
             # Insert the file path into the database
-            # insert_resume_data(job_id, candidate_name, abs_path)
             insert_resume_data(job_id, abs_path)
+            # insert_resume_data(job_id, abs_path)
 
         return jsonify({"message": "Resumes uploaded and data inserted successfully"}), 201
     except Exception as e:
         return jsonify({"error": "An error occurred"}), 500
 
-def insert_resume_data(job_id, candidate_name, file_path):
+def insert_resume_data(job_id, file_path):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
@@ -79,18 +87,14 @@ def insert_resume_data(job_id, candidate_name, file_path):
             cursor.close()
             connection.close()
             
-# def process_resume_data(file_path, nlp) -> str:
+# def process_resume_data(file_path, nlp, matcher) -> str:
 #     try:
 #         text = extract_text_from_pdf(file_path)
 #         doc = nlp(text)
-        
+#         matches = matcher(doc)
 #         import pdb
-#         ents = []
-#         for ent in doc.ents:
-#             if ent.label_ == "PERSON":
-#                 ents.append(ent)
 #         pdb.set_trace()
-#         return next((ent.text for ent in doc.ents if ent.label_ == "PERSON"), None)
+#         return None if not matches else doc[matches[0][1]:matches[0][2]]
 #     except Exception as e:
 #         raise Exception("Error Processing Resume Data:", str(e))
     
