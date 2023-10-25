@@ -133,4 +133,5 @@ dist
 /server/model/
 /server/dataset/
 /server/uploads/
-server/model.zip
+/server/model.zip
+/server/training/data/source/
