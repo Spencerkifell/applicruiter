@@ -11,5 +11,5 @@ export interface JobPosting {
 export interface ResumeRanking {
     id: number;
     pdf_data: string;
-    singularity_score: number;
+    similarity_score: number | undefined;
 }
