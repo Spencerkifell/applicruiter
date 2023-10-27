@@ -12,6 +12,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Create the server
 server = Server(app, config)
+s3_client = server.aws_session.client('s3')
 
 # TODO - Redirect this route to API documentation
 @server.app.route('/api')
