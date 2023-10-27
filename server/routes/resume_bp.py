@@ -164,8 +164,7 @@ def get_all_rankings_by_job_id(job_id):
                 id,
                 pdf_data,
                 similarity_score
-            FROM RESUMES
-            WHERE SIMILARITY_SCORE IS NOT NULL;
+            FROM RESUMES;
         '''
         
         cursor.execute(query)

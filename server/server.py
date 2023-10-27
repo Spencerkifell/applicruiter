@@ -1,32 +1,30 @@
-from flask import Flask
-from flask_cors import CORS
 import os
+import boto3
 from routes.job_bp import job_bp
 from routes.resume_bp import resume_bp
+from app_config import AppConfig
 
-db_config = {
-    'host': 'localhost',
-    'port': 3306,
-    'user': 'root',
-    'password': 'root',
-    'database': 'MAIS2023'
-}
-
-app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-# Register modular blueprints / routes
-app.register_blueprint(resume_bp, url_prefix='/api/resume')
-app.register_blueprint(job_bp, url_prefix='/api/job')
-
-@app.route('/api')
-def hello_world():
-    return 'TalentWave.AI API'
-
-if __name__ == '__main__':
-    app.config['UPLOAD_FOLDER'] = 'uploads'
+class Server:
+    def __init__(self, app, config: AppConfig):
+        self.app = app
+        self.config = config
+        self.aws_session = self._get_aws_session()
+        self._configure_app()
+        self._register_blueprints()
     
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
+    def _configure_app(self):
+        self.app.config['UPLOAD_FOLDER'] = 'uploads'
+        if not os.path.exists(self.app.config['UPLOAD_FOLDER']):
+            os.makedirs(self.app.config['UPLOAD_FOLDER'])
+     
+    def _get_aws_session(self):
+        # Initialize and return an AWS session
+        return boto3.Session(**self.config.s3_client_credentials)
     
-    app.run(port=5000, debug=True)
+    def _register_blueprints(self):
+        # Register modular blueprints / routes
+        self.app.register_blueprint(resume_bp, url_prefix='/api/resume')
+        self.app.register_blueprint(job_bp, url_prefix='/api/job')
+        
+    def run(self):
+        self.app.run(port=5000, debug=True)
