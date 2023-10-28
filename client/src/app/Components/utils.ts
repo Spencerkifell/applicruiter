@@ -12,4 +12,5 @@ export interface ResumeRanking {
     id: number;
     pdf_data: string;
     similarity_score: number | undefined;
+    signed_url: string | undefined;
 }

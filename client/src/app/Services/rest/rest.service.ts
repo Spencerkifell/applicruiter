@@ -78,9 +78,8 @@ export class RestService {
     return this.httpClient.get<any[]>(url);
   }
 
-  // getRankedResumes(jobId: any): Observable<any[]> {
-  //   const url = `http://127.0.0.1:5000/api/resume-ranking/${jobId}`;
-
-  //   return this.httpClient.get<any[]>(url);
-  // }
+  getSignedResumeURL(filePath: string): Observable<any> {
+    const url = `http://127.0.0.1:5000/api/aws/resume/url`;
+    return this.httpClient.post<any>(url, { path: filePath });
+  }
 }
