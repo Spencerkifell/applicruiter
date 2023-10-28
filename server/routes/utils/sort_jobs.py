@@ -1,23 +1,15 @@
 import json
-
+import mysql.connector
+import routes.utils.pdf_processing as pdf_processing
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
+from global_utils import config
 
-import routes.utils.pdf_processing as pdf_processing
 
-import mysql.connector
 
 similarityModel = SentenceTransformer('model')
 
 jobs1 = ["We are looking for a person to make us a lasagne."]
-
-db_config = {
-    'host': 'localhost',
-    'port': 3306,
-    'user': 'root',
-    'password': 'root',
-    'database': 'MAIS2023'
-}
 
 class JobSorting:
 
@@ -128,7 +120,7 @@ class JobSorting:
     @staticmethod
     def set_similarity_score(resume_id, score):
         # Create a connection object
-        connection = mysql.connector.connect(**db_config)
+        connection = mysql.connector.connect(**config.db_config)
 
         # Create a cursor object to execute SQL queries
         cursor = connection.cursor()

@@ -1,9 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from flask_cors import cross_origin, CORS
-import global_utils
+from global_utils import config
 import mysql.connector
 
-db_config = global_utils.db_config
 job_bp = Blueprint("job", __name__, url_prefix='/api/job')
 CORS(job_bp, resources={r"/api/*": {"origins": "*"}})
 
@@ -36,7 +35,7 @@ def insert_data_route():
     
 def insert_job_data(title, description, level, country, city, skills):
     try:
-        connection = mysql.connector.connect(**db_config)
+        connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
 
         query = "INSERT INTO JOBS (TITLE, DESCRIPTION, LEVEL, COUNTRY, CITY, SKILLS) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -70,7 +69,7 @@ def get_jobs_route():
     
 def get_all_jobs():
     try:
-        connection = mysql.connector.connect(**db_config)
+        connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor(dictionary=True)
 
         query = '''
@@ -101,7 +100,7 @@ def get_all_jobs():
 def get_jobs_by_job_id(job_id):
 
     # Create a cursor object to execute SQL queries
-    connection = mysql.connector.connect(**db_config)
+    connection = mysql.connector.connect(**config.db_config)
     cursor = connection.cursor()
 
     # Execute the SQL query to retrieve resumes with the specified job ID

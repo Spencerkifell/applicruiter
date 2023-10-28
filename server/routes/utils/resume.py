@@ -1,6 +1,9 @@
+from global_utils import get_signed_s3_url, parse_s3_location
 import pdfplumber
 import json
 import re
+import requests
+import io
 
 class Resume:
     candidate_name = ""
@@ -25,8 +28,10 @@ class Resume:
             self.similarityScore = similarityScore
 
 
-    def extract_pdf_content(self):
-        with pdfplumber.open(self.pdf_location) as pdf:
+    def extract_pdf_content(self):        
+        s3_file = get_signed_s3_url(**parse_s3_location(self.pdf_location))
+        pdf_file = self._parse_file_content(s3_file)
+        with pdfplumber.open(pdf_file) as pdf:
             text = ""
             for page in pdf.pages:
                 text += page.extract_text()
@@ -59,3 +64,17 @@ class Resume:
         returnText = re.sub(r'[^\x00-\x7f]', r' ', returnText)
         returnText = re.sub('\s+', ' ', returnText)
         return returnText
+    
+    def _parse_file_content(self, file):
+        file_content = self._request_resume_content(file)
+        file = io.BytesIO()
+        file.write(file_content)
+        return file
+    
+    @staticmethod
+    def _request_resume_content(url):
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception(f"Unable to retrieve resume from url: {url}")
+        return response.content
+    
