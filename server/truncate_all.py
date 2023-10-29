@@ -16,7 +16,6 @@ def truncate_s3_bucket(client, bucket):
     except Exception as e:
         raise Exception("Error truncating S3 bucket:", str(e))
 
-# TODO Figure out why this is not working...
 def truncate_database_tables(db_config: dict, file_path: str = './database/truncate_tables.sql'): 
     connection = mysql.connector.connect(**db_config)
     cursor = connection.cursor()
@@ -24,7 +23,6 @@ def truncate_database_tables(db_config: dict, file_path: str = './database/trunc
         with open(file_path, 'r') as f:
             query = f.read()
         cursor.execute(query, multi=True)
-        connection.commit()
     except Exception as e:
         raise Exception("Error truncating database:", str(e))
     finally:
