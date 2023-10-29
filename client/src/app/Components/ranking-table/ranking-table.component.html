@@ -8,9 +8,9 @@
         </ng-container>
 
         <ng-container matColumnDef="pdf_data">
-            <th mat-header-cell *matHeaderCellDef> PDF Data </th>
+            <th mat-header-cell *matHeaderCellDef> Resume </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-button color="primary" (click)="openResume(element)"> {{ element.pdf_data }} </button>
+                <button mat-raised-button color="primary" (click)="openResume(element)">View Candidate Resume</button>
             </td>
             <!-- <td mat-cell *matCellDef="let element" (click)="onElementClick(element)"> <a [href]="element.pdf_data" target="_blank">{{ element.pdf_data }}</a> </td> -->
         </ng-container>

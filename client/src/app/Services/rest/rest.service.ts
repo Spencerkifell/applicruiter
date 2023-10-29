@@ -71,11 +71,9 @@ export class RestService {
     });
   }
 
-  rankResumes(jobId: any): Observable<any[]> {
-    // Make an HTTP request to the server to get ranked resumes
+  rankResumes(jobId: number, jobDesc: string): Observable<any[]> {
     const url = `http://127.0.0.1:5000/api/resume/rank/${jobId}`;
-
-    return this.httpClient.get<any[]>(url);
+    return this.httpClient.post<any>(url, { job_description: jobDesc });
   }
 
   getSignedResumeURL(filePath: string): Observable<any> {

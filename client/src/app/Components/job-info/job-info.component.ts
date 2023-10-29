@@ -3,7 +3,6 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { DataService } from 'src/app/Services/data/data.service';
-import { Observer } from "rxjs";
 
 @Component({
   selector: 'app-job-info',
@@ -60,23 +59,5 @@ export class JobInfoComponent implements OnInit {
 
       this._restService.createResumes(this.data.job_id, selectedFiles);
       this._dataService.resumeModalIsCompleted(true);
-  }
-
-  rankResumes(): void {
-    const observer: Observer<any[]> = {
-      next: (rankedResumes: any[]) => {
-        console.log('Ranked Resumes:', rankedResumes);
-        // Do something with the ranked resumes
-      },
-      error: (error: any) => {
-        console.error('Error fetching ranked resumes:', error);
-        // Handle error
-      },
-      complete: () => {
-        // Optional: Handle
-      }
-    };
-
-    this._restService.rankResumes(this.data.job_id).subscribe(observer);
   }
 }

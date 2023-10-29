@@ -1,12 +1,10 @@
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin, CORS
 from werkzeug.utils import secure_filename
 from global_utils import config, upload_file_to_s3
-# from PyPDF2 import PdfReader
-# from spacy.matcher import Matcher
 import hashlib
 import mysql.connector
-# import spacy
+import uuid
 
 resume_bp = Blueprint("resume", __name__)
 CORS(resume_bp, resources={r"/api/*": {"origins": "*"}})
@@ -22,15 +20,6 @@ def upload_resume(job_id):
             return jsonify({"error": "No resume files uploaded"}), 400
 
         uploaded_resumes = request.files.getlist('resumes')
-    
-        # Load the spacy model to be used to extract crucial information from the resume to store
-        # nlp = spacy.load("en_core_web_sm")
-
-        # initialize matcher with a vocab
-        # matcher = Matcher(nlp.vocab)
-        # First name and Last name are always Proper Nouns
-        # pattern = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
-        # matcher.add('NAME', [pattern])
 
         for resume in uploaded_resumes:
             if resume.filename == '':
@@ -40,10 +29,12 @@ def upload_resume(job_id):
             safe_filename = secure_filename(resume.filename)
 
             # Generates a hash based off the file name to produce a unique file name
-            filename_hash = hashlib.md5(resume.filename.encode()).hexdigest()
+            filename_hash = hashlib.md5(safe_filename.encode()).hexdigest()
+            
+            unique_id = str(uuid.uuid4())
 
             # Combine the hash and the original filename (with an underscore)
-            unique_filename = f"{filename_hash}_{safe_filename}".lower()
+            unique_filename = f"{unique_id}{filename_hash}".lower()
             
             s3_bucket_name = 'talentwave'
             s3_desired_dir = f'uploads/{job_id}/{unique_filename}'
@@ -63,7 +54,13 @@ def insert_resume_data(job_id, file_path):
         connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
         
-        query = "INSERT INTO RESUMES (JOB_ID, PDF_DATA, SIMILARITY_SCORE) VALUES (%s, %s, %s)"
+        query = """
+            insert into resumes (
+                job_id, 
+                pdf_data, 
+                similarity_score
+            ) values (%s, %s, %s)
+        """
         values = (job_id, file_path, None)
         
         cursor.execute(query, values)
@@ -71,71 +68,107 @@ def insert_resume_data(job_id, file_path):
 
         return cursor.lastrowid
     except Exception as e:
-        print("Error:", str(e))
-        return False
+        raise Exception("Error Inserting Resume Data:", str(e))
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
             
-# def process_resume_data(file_path, nlp, matcher) -> str:
-#     try:
-#         text = extract_text_from_pdf(file_path)
-#         doc = nlp(text)
-#         matches = matcher(doc)
-#         import pdb
-#         pdb.set_trace()
-#         return None if not matches else doc[matches[0][1]:matches[0][2]]
-#     except Exception as e:
-#         raise Exception("Error Processing Resume Data:", str(e))
-    
-# def extract_text_from_pdf(pdf_path):
-#     try:
-#         pdf_file = open(pdf_path, "rb")
-
-#         pdf_reader = PdfReader(pdf_file)
-        
-#         all_text = ""
-#         for page in pdf_reader.pages:
-#             text = page.extract_text()
-#             all_text += text
-
-#         return all_text
-#     except Exception as e:
-#         raise Exception("Error Extracting Text from PDF:", str(e))
-#     finally:
-#         pdf_file.close()
-
+def _extract_email(text):
+    import re
+    email = re.findall(r'[\w\.-]+@[\w\.-]+', text)
+    return email[0] if email else None
 
 # endregion
 
 # region Ranked Resumes
 
-@resume_bp.route('/rank/<int:job_id>', methods=['GET'])
+# TODO FIX ENTIRE METHOD SINCE SHOULD BE A POST
+@resume_bp.route('/rank/<int:job_id>', methods=['POST'])
 def rank_resumes(job_id):
-    from routes.job_bp import get_jobs_by_job_id
-    from routes.utils.sort_jobs import JobSorting
-    rankedJobs = JobSorting.rank_resumes(get_resumes_by_job_id(job_id), get_jobs_by_job_id(job_id)[0], 10)
-    # Return the response
-    return rankedJobs
+    from routes.utils.sort_jobs import rank_resumes
+    
+    data: dict = request.get_json()
+    job_description = data.get("job_description", None)
+        
+    raw_resumes = get_resumes_by_job_id(job_id)
+    parsed_resumes = get_parsed_resumes(raw_resumes)
+    
+    # TODO fix all return statements to follow specific format
+    if parsed_resumes is None or len(parsed_resumes) == 0 or job_description is None:
+        return jsonify({"error": "No resumes found"}), 401
+    
+    updated_resumes = rank_resumes(parsed_resumes, job_description)
+    
+    if updated_resumes is None or len(updated_resumes) == 0:
+        return jsonify({"message": "No resumes requiring update"}), 200
+    
+    set_similarity_score(updated_resumes)
+    
+    return jsonify({
+        "message": "Resumes ranked successfully", 
+        "updated_resumes": updated_resumes
+    }), 200
+
+def set_similarity_score(updated_resumes):
+    try:
+        # Create a connection object
+        connection = mysql.connector.connect(**config.db_config)
+
+        # Create a cursor object to execute SQL queries
+        cursor = connection.cursor()
+
+        # Execute the SQL query to update the similarity score of the resume with the specified ID
+        query = """
+            UPDATE RESUMES 
+            SET SIMILARITY_SCORE = %s 
+            WHERE ID = %s
+        """
+        cursor.executemany(query, updated_resumes)
+        connection.commit()
+    except Exception as e:
+        raise Exception("Error Setting Similarity Score:", str(e))
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+def get_parsed_resumes(resume_data):
+    parsed_resumes = []
+    if not resume_data:
+        return parsed_resumes
+    for resume in resume_data:
+        parsed_resumes.append({
+            'id': resume[0],
+            'job_id': resume[1],
+            'pdf_data': resume[2],
+            'similarity_score': resume[3]
+        })
+    return parsed_resumes
 
 def get_resumes_by_job_id(job_id):
-    # Create a cursor object to execute SQL queries
-    connection = mysql.connector.connect(**config.db_config)
-    cursor = connection.cursor()
+    try:
+        connection = mysql.connector.connect(**config.db_config)
+        cursor = connection.cursor()
 
-    # Execute the SQL query to retrieve resumes with the specified job ID
-    query = "SELECT * FROM RESUMES WHERE JOB_ID = %s"
-    cursor.execute(query, (job_id,))
+        query = """
+            select
+                id,
+                job_id,
+                pdf_data,
+                similarity_score
+            from resumes
+            where job_id = %s
+        """
+        cursor.execute(query, (job_id,))
 
-    # Fetch all the rows returned by the query
-    resumes = cursor.fetchall()
-
-    # Close the cursor and database connection
-    cursor.close()
-    connection.close()
-
-    return resumes
+        return cursor.fetchall()
+    except Exception as e:
+        raise Exception("Error Retrieving Resumes:", str(e))
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
 
 @resume_bp.route('/get/ranking/<int:job_id>', methods=['GET'])
 def get_ranked_resumes(job_id):
@@ -151,11 +184,11 @@ def get_all_rankings_by_job_id(job_id):
         cursor = connection.cursor(dictionary=True)
 
         query = '''
-            SELECT 
+            select 
                 id,
                 pdf_data,
                 similarity_score
-            FROM RESUMES;
+            from resumes;
         '''
         
         cursor.execute(query)

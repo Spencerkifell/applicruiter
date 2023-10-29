@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin, CORS
 from global_utils import config
 import mysql.connector
@@ -38,7 +38,16 @@ def insert_job_data(title, description, level, country, city, skills):
         connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
 
-        query = "INSERT INTO JOBS (TITLE, DESCRIPTION, LEVEL, COUNTRY, CITY, SKILLS) VALUES (%s, %s, %s, %s, %s, %s)"
+        query = """
+            insert into jobs (
+                title, 
+                description, 
+                level, 
+                country, 
+                city, 
+                skills
+            ) values (%s, %s, %s, %s, %s, %s)
+        """
         values = (title, description, level, country, city, skills)
 
         cursor.execute(query, values)
@@ -73,15 +82,15 @@ def get_all_jobs():
         cursor = connection.cursor(dictionary=True)
 
         query = '''
-            SELECT 
+            select 
                 job_id,
-                title, 
+                title,
                 description,
                 level,
                 country,
                 city,
                 skills
-            FROM JOBS
+            from jobs
         '''
         
         cursor.execute(query)
@@ -97,23 +106,47 @@ def get_all_jobs():
 
 # region Get Job Data by ID
 
-def get_jobs_by_job_id(job_id):
+def get_parsed_jobs(job_data):
+    parsed_jobs = []
+    if not job_data:
+        return parsed_jobs
+    for job in job_data:
+        parsed_jobs.append({
+            'job_id': job[0],
+            'title': job[1],
+            'description': job[2],
+            'level': job[3],
+            'country': job[4],
+            'city': job[5],
+            'skills': job[6]
+        })
+    return parsed_jobs
 
-    # Create a cursor object to execute SQL queries
-    connection = mysql.connector.connect(**config.db_config)
-    cursor = connection.cursor()
+def get_jobs_by_id(job_id):
+    try:
+        connection = mysql.connector.connect(**config.db_config)
+        cursor = connection.cursor()
 
-    # Execute the SQL query to retrieve resumes with the specified job ID
-    query = "SELECT * FROM JOBS WHERE JOB_ID = %s"
-    cursor.execute(query, (job_id,))
-
-    # Fetch all the rows returned by the query
-    jobs = cursor.fetchall()
-
-    # Close the cursor and database connection
-    cursor.close()
-    connection.close()
-
-    return jobs
+        # Execute the SQL query to retrieve resumes with the specified job ID
+        query = """
+            select 
+                job_id,
+                title,
+                description,
+                level,
+                country,
+                city,
+                skills
+            from jobs where job_id = %s
+        """
+        
+        cursor.execute(query, (job_id,))
+        return cursor.fetchall()
+    except Exception as e:
+        raise Exception("Error retrieving jobs by id:", str(e))
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
 
 # endregion

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
+import { RestService } from 'src/app/Services/rest/rest.service';
 import { JobPosting } from '../utils';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ResumeRanking } from '../utils';
@@ -14,7 +15,11 @@ import { HttpClient } from '@angular/common/http';
 export class RankingsComponent implements OnInit {
   private jobSubscripton: Subscription;
   jobCollection: JobPosting[] = [];
+  
   valueChangesSubscription: Subscription;
+
+  private resumeRankingSubscription!: Subscription;
+  resumeRankings: [] | undefined = undefined;
 
   resumeRankingCollection: ResumeRanking[] = [];
 
@@ -23,7 +28,7 @@ export class RankingsComponent implements OnInit {
     job: ['', Validators.required],
   });
 
-  constructor(private _dataService: DataService, private _httpClient: HttpClient, private _formBuilder: FormBuilder) { 
+  constructor(private _dataService: DataService, private _httpClient: HttpClient, private _formBuilder: FormBuilder, private _restService: RestService) { 
     this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {
       this.jobCollection = data;
     });
@@ -50,6 +55,26 @@ export class RankingsComponent implements OnInit {
   updateRankingsView(): void {
     // We are going to retrieve the resumes from the database with the job_id of optionValue
     // 1. Update routes to include a new route for retrieving resumes by job_id where singularity is not null
+  }
+
+  // TODO Finish this function
+  setResumeRankings(): void {
+    var selectedJob = this.getCurrentJob();
+    if (!this.optionValue || !selectedJob || !selectedJob.description) return;
+    this.resumeRankingSubscription = this._restService.rankResumes(Number(this.optionValue), selectedJob.description).subscribe({
+      next: (data: any) => {
+        // this.resumeRankings = data?.resume_data;
+        // this._dataService.updateResumeList(this.resumeRankings);
+      },
+      error: async (exception: any) => console.log(exception.error.message),
+      complete: () => {
+        this.resumeRankingSubscription.unsubscribe();
+      }
+    });
+  }
+
+  getCurrentJob(): JobPosting | undefined {
+    return this.jobCollection.find(job => job.job_id === Number(this.optionValue));
   }
 
   getResumesByJobId(job_id: number): void {
