@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Subscription, combineLatest } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { JobPosting } from '../utils';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ResumeRanking } from '../utils';
 import { HttpClient } from '@angular/common/http';
+import { RankingTableComponent } from '../ranking-table/ranking-table.component';
 
 @Component({
   selector: 'app-rankings',
@@ -13,14 +14,15 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./rankings.component.css']
 })
 export class RankingsComponent implements OnInit {
-  private jobSubscripton: Subscription;
-  jobCollection: JobPosting[] = [];
-  
+  @ViewChild('rankingTable') rankingTable?: RankingTableComponent;
+
+  private combinedSubscription: Subscription;
   valueChangesSubscription: Subscription;
 
-  private resumeRankingSubscription!: Subscription;
-  resumeRankings: [] | undefined = undefined;
+  private updatedRankedResumes!: Subscription;
+  updatedResumeRankings: [] | undefined = undefined;
 
+  jobCollection: JobPosting[] = [];
   resumeRankingCollection: ResumeRanking[] = [];
 
   optionValue: string | null = null;
@@ -29,8 +31,12 @@ export class RankingsComponent implements OnInit {
   });
 
   constructor(private _dataService: DataService, private _httpClient: HttpClient, private _formBuilder: FormBuilder, private _restService: RestService) { 
-    this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {
-      this.jobCollection = data;
+    this.combinedSubscription = combineLatest([
+      this._dataService.sharedJobList,
+      this._dataService.sharedResumeList
+    ]).subscribe(([jobData, resumeData]) => {
+      this.jobCollection = jobData;
+      this.resumeRankingCollection = resumeData;
     });
     this.valueChangesSubscription = this.selectGroup.controls['job'].valueChanges.subscribe(value => {
       if (!value) {
@@ -48,27 +54,34 @@ export class RankingsComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.jobSubscripton.unsubscribe();
+    this.combinedSubscription.unsubscribe();
     this.valueChangesSubscription.unsubscribe();
   }
 
-  updateRankingsView(): void {
-    // We are going to retrieve the resumes from the database with the job_id of optionValue
-    // 1. Update routes to include a new route for retrieving resumes by job_id where singularity is not null
-  }
-
-  // TODO Finish this function
+  // TODO FIX ERROR HANDLING ACROSS PROJECT
   setResumeRankings(): void {
     var selectedJob = this.getCurrentJob();
     if (!this.optionValue || !selectedJob || !selectedJob.description) return;
-    this.resumeRankingSubscription = this._restService.rankResumes(Number(this.optionValue), selectedJob.description).subscribe({
+    this.updatedRankedResumes = this._restService.rankResumes(Number(this.optionValue), selectedJob.description).subscribe({
       next: (data: any) => {
-        // this.resumeRankings = data?.resume_data;
-        // this._dataService.updateResumeList(this.resumeRankings);
+        if (!this.rankingTable) return;
+
+        const dataToUpdate: [] = data?.updated_resumes;
+        if (!dataToUpdate || dataToUpdate.length == 0) return;
+        
+        dataToUpdate.forEach(data => {
+          const foundResume = this.resumeRankingCollection.find(resume => resume.id == data[1]);
+          if (foundResume)
+            foundResume.similarity_score = parseFloat(parseFloat(data[0]).toFixed(6));
+        });
+
+        const currentPage = this.rankingTable.paginator.pageIndex;
+        this._dataService.updateResumeList(this.resumeRankingCollection);
+        this.rankingTable.paginator.pageIndex = currentPage;
       },
       error: async (exception: any) => console.log(exception.error.message),
       complete: () => {
-        this.resumeRankingSubscription.unsubscribe();
+        this.updatedRankedResumes.unsubscribe();
       }
     });
   }

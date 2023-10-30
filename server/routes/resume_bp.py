@@ -101,7 +101,10 @@ def rank_resumes(job_id):
     updated_resumes = rank_resumes(parsed_resumes, job_description)
     
     if updated_resumes is None or len(updated_resumes) == 0:
-        return jsonify({"message": "No resumes requiring update"}), 200
+        return jsonify({
+            "message": "No resumes requiring update",
+            "updated_resumes": []
+        }), 200
     
     set_similarity_score(updated_resumes)
     

@@ -29,7 +29,6 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
       this.resumeRankingCollection = data;
       this.dataSource.data = this.resumeRankingCollection;
       let size = this.dataSource.paginator?.pageSize;
-      this.dataSource.paginator?.firstPage();
       if (this.dataSource.paginator)
         this.dataSource.paginator.pageSize = size;
     }); 
@@ -58,7 +57,6 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
     }
 
     // TODO - Loading indidcator in case the request takes a while
-
     this.signedUrlSubscription = this._restService.getSignedResumeURL(element.pdf_data).subscribe({
       next: (body: any) => {
         if (this.signedUrlSubscription.closed) return;

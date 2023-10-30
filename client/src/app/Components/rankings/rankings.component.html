@@ -1,6 +1,6 @@
-<mat-card style="height: 500px; margin-bottom: 50px;">
+<mat-card style="height: fit-content; max-height: 700px; margin-bottom: 50px;">
     <mat-card-title style="margin-bottom: 25px;">Candidate Rankings</mat-card-title>
-    <mat-card >
+    <mat-card class="tw-mb-10">
         <mat-card-content>
             <div class="tw-flex tw-items-center tw-justify-between">
                 <mat-form-field appearance="fill" [ngClass]="'custom-no-underline'" class="tw-items-center tw-self-center tw-align-middle" [formGroup]="selectGroup">
@@ -18,5 +18,5 @@
             </div>
         </mat-card-content>
     </mat-card>
-    <app-ranking-table></app-ranking-table>
+    <app-ranking-table #rankingTable></app-ranking-table>
 </mat-card>
