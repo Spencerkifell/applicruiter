@@ -14,13 +14,13 @@ CORS(resume_bp, resources={r"/api/*": {"origins": "*"}})
 @resume_bp.route('/upload/<int:job_id>', methods=['POST'])
 @cross_origin()
 def upload_resume(job_id):
-    import os
     try:
         if 'resumes' not in request.files:
             return jsonify({"error": "No resume files uploaded"}), 400
 
         uploaded_resumes = request.files.getlist('resumes')
 
+        resume_data = []
         for resume in uploaded_resumes:
             if resume.filename == '':
                 return jsonify({"error": "One or more resume files have no selected file"}), 400
@@ -43,9 +43,14 @@ def upload_resume(job_id):
             
             # candidate_name = process_resume_data(abs_path, nlp, matcher)
 
-            # Insert the file path into the database
-            insert_resume_data(job_id, f'{s3_file_path}')
-        return jsonify({"message": "Resumes uploaded and data inserted successfully"}), 201
+            inserted_id = insert_resume_data(job_id, f'{s3_file_path}')
+            resume_data.append({
+                "id": inserted_id,
+                "job_id": job_id,
+                "pdf_data": f'{s3_file_path}',
+                "similarity_score": None
+            })
+        return jsonify({"message": "Resumes uploaded and data inserted successfully", "resumes": resume_data}), 201
     except Exception as e:
         return jsonify({"error": e}), 400
 
@@ -62,11 +67,15 @@ def insert_resume_data(job_id, file_path):
             ) values (%s, %s, %s)
         """
         values = (job_id, file_path, None)
-        
+
         cursor.execute(query, values)
         connection.commit()
 
-        return cursor.lastrowid
+        id = cursor.lastrowid
+        if id is None:
+            raise Exception("Failed to insert resume")
+        
+        return id
     except Exception as e:
         raise Exception("Error Inserting Resume Data:", str(e))
     finally:
@@ -191,10 +200,11 @@ def get_all_rankings_by_job_id(job_id):
                 id,
                 pdf_data,
                 similarity_score
-            from resumes;
+            from resumes
+            where job_id = %s;
         '''
         
-        cursor.execute(query)
+        cursor.execute(query, (job_id,))
         return cursor.fetchall()
     except Exception as e:
         raise Exception("Error Retrieving Ranked Resumes:", str(e))
