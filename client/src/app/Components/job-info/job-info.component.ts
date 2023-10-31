@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RestService } from 'src/app/Services/rest/rest.service';
@@ -30,7 +30,6 @@ export class JobInfoComponent implements OnInit {
     this.skills = this.data.skills.split(',').map((skill: string) => skill.trim().charAt(0).toUpperCase() + skill.slice(1));
   }
 
-
   onFileSelect(event: any): void {
     const files = event.target.files;
     const filesFormArray = this.fileForm.get('files') as FormArray;
@@ -57,7 +56,14 @@ export class JobInfoComponent implements OnInit {
       const filesFormArray = this.fileForm.get('files') as FormArray;
       const selectedFiles: File[] = filesFormArray.value;
 
-      this._restService.createResumes(this.data.job_id, selectedFiles);
+      this._restService.createResumes(this.data.job_id, selectedFiles).subscribe({
+        next: async (data: any) => {
+          const selectedJobId = this._dataService.sharedSelectedJobId.getValue();
+          if (!selectedJobId || selectedJobId != this.data.job_id) return;
+          this._dataService.updateResumeList(data.resumes);
+        },
+        error: async (exception: any) => alert(exception.error.message)
+      });
       this._dataService.resumeModalIsCompleted(true);
   }
 }

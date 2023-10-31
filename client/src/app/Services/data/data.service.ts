@@ -14,8 +14,11 @@ export class DataService {
   private resumeModalStatus = new BehaviorSubject<boolean>(false);
   sharedResumeModalStatus = this.resumeModalStatus.asObservable();
 
-  private resumeList = new BehaviorSubject([]);
+  private resumeList = new BehaviorSubject<any>([]);
   sharedResumeList = this.resumeList.asObservable();
+
+  private selectedJobId = new BehaviorSubject<string | null>(null);
+  sharedSelectedJobId = this.selectedJobId;
 
   constructor() { }
 
@@ -24,7 +27,15 @@ export class DataService {
   }
 
   updateResumeList(data: any) {
-    this.resumeList.next(data);
+    this.resumeList.next([...this.resumeList.getValue(), ...data]);
+  }
+
+  clearResumeList() {
+    this.resumeList.next([]);
+  }
+
+  updateSelectedJobId(data: string | null) {
+    this.selectedJobId.next(data);
   }
 
   modalIsCompleted(data: boolean) {

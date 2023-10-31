@@ -40,11 +40,14 @@ export class RankingsComponent implements OnInit {
     });
     this.valueChangesSubscription = this.selectGroup.controls['job'].valueChanges.subscribe(value => {
       if (!value) {
-        this._dataService.updateResumeList([]);
+        this._dataService.clearResumeList();
+        this._dataService.updateSelectedJobId(null);
         return;
       }
       this.optionValue = value;
+      this._dataService.updateSelectedJobId(this.optionValue);
       // We want to update the rankings view when the user selects a new job based off the job_id
+      this._dataService.clearResumeList();
       this.getResumesByJobId(Number(this.optionValue));
     });
   }
