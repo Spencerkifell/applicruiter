@@ -1,8 +1,8 @@
-# TalentWave
+# AppliCruiter
 ## A Different Approach to Automated Tracking Systems for Businesses
 
 ### Summary
-- TalentWave.AI is an application powered by machine learning that streamlines the resume screening process by efficiently categorizing and assessing resumes submitted for job openings.
+- AppliCruiter is an application powered by machine learning that streamlines the resume screening process by efficiently categorizing and assessing resumes submitted for job openings.
 
 ### What it does
 - Our solution was designed using a combination of technologies. On the backend, we used Python, leveraging the sentence_transformers library integrated with PyTorch. We took the extra step of fine-tuning the all-mpnet-base-v2 model using a comprehensive dataset of resumes. Additionally, we employed the pdfplumber library to seamlessly extract text from PDF resumes. The data, along with job descriptions, was stored in an SQL database, ensuring accessibility and organization.

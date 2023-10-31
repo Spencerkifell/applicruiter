@@ -11,6 +11,6 @@ server = Server(app)
 # TODO - Redirect this route to API documentation
 @server.app.route('/api')
 def hello_world():
-    return 'TalentWave.AI API'
+    return 'AppliCruiter API'
 
 server.run()
