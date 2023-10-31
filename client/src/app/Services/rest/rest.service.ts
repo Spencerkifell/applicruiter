@@ -16,7 +16,7 @@ export class RestService {
   ) {
     this.dataSubscription = this.dataProvider.sharedJobList.subscribe(data => {
       this.jobCollection = data;
-    });
+    });    
   }
 
   createJob(job: any) {
@@ -39,36 +39,26 @@ export class RestService {
   }
 
   createResumes(job_id: any, resumes: File[]) {
-    let url = `http://127.0.0.1:5000/api/resume/upload/${job_id}`;
-
     // Create a DataTransfer object
     const dataTransfer = new DataTransfer();
-
-    // Add each File object to the DataTransfer object
-    for (const file of resumes) {
-      dataTransfer.items.add(file);
-    }
+    resumes.forEach(resume => dataTransfer.items.add(resume));
 
     // Create a new FileList from the DataTransfer object
     const selectedFileList = dataTransfer.files;
-
     const formData = new FormData();
 
-    // Append each resume file to the FormData object
     for (let i = 0; i < resumes.length; i++) {
       const resume = selectedFileList.item(i);
       if (resume) {
-        formData.append('resumes', resume, resume.name); // 'resumes' should match the field name expected by your Flask API
+        formData.append('resumes', resume, resume.name);
       }
     }
+    return this.postResumes(job_id, formData);
+  }
 
-    // Make the HTTP POST request with FormData
-    this.httpClient.post(url, formData).subscribe({
-      next: async (data: any) => {
-        console.log(data);
-      },
-      error: async (exception: any) => alert(exception.error.message)
-    });
+  postResumes(job_id: number, formDataList: FormData) {
+    const url = `http://127.0.0.1:5000/api/resume/upload/${job_id}`;
+    return this.httpClient.post<any>(url, formDataList);
   }
 
   rankResumes(jobId: number, jobDesc: string): Observable<any[]> {
