@@ -1,6 +1,7 @@
 from app_config import AppConfig
 from boto3.session import Session
 from botocore.exceptions import NoCredentialsError
+from flask import jsonify
 
 config = AppConfig()
 
@@ -38,3 +39,20 @@ def parse_s3_location(pdf_location):
     bucket_name = deconstructed_path.pop(0)
     bucket_path = '/'.join(deconstructed_path)
     return {'bucket_name': bucket_name, 'bucket_path': bucket_path}
+
+class ResponseData:
+    def __init__(self, route, message, data, response_code):
+        self.route = route
+        self.message = message
+        self.data = data
+        self.response_code = response_code
+        
+    def get_response_data(self):
+        return jsonify ({
+            "route": self.route,
+            "message": self.message,
+            "data": self.data
+        }), self.response_code
+        
+    def __repr__(self):
+        return f"ResponseData(route={self.route}, message={self.message}, data={self.data})"
