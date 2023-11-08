@@ -79,7 +79,6 @@ export class RankingsComponent implements OnInit {
         });
 
         const currentPage = this.rankingTable.paginator.pageIndex;
-        this._dataService.updateResumeList(this.resumeRankingCollection);
         this.rankingTable.paginator.pageIndex = currentPage;
       },
       error: async (exception: any) => console.log(exception.error.message),
