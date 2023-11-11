@@ -60,7 +60,7 @@ export class JobInfoComponent implements OnInit {
         next: async (data: any) => {
           const selectedJobId = this._dataService.sharedSelectedJobId.getValue();
           if (!selectedJobId || selectedJobId != this.data.job_id) return;
-          this._dataService.updateResumeList(data.resumes);
+          this._dataService.updateResumeList(data.data);
         },
         error: async (exception: any) => alert(exception.error.message)
       });

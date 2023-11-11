@@ -60,7 +60,7 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
     this.signedUrlSubscription = this._restService.getSignedResumeURL(element.pdf_data).subscribe({
       next: (body: any) => {
         if (this.signedUrlSubscription.closed) return;
-        this.signedUrl = body.url;
+        this.signedUrl = body.data;
         window.open(this.signedUrl, '_blank');
       },
       error: (error: any) => {

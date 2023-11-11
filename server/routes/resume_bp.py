@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_cors import cross_origin, CORS
 from werkzeug.utils import secure_filename
-from global_utils import config, upload_file_to_s3
+from global_utils import ResponseData, upload_file_to_s3, config
 import hashlib
 import mysql.connector
 import uuid
@@ -16,14 +16,24 @@ CORS(resume_bp, resources={r"/api/*": {"origins": "*"}})
 def upload_resume(job_id):
     try:
         if 'resumes' not in request.files:
-            return jsonify({"error": "No resume files uploaded"}), 400
+            return ResponseData(
+                f"/api/resume/upload/{job_id}", 
+                "Failed To Upload Resumes: No resume files uploaded", 
+                None, 
+                400
+            ).get_response_data()
 
         uploaded_resumes = request.files.getlist('resumes')
 
         resume_data = []
         for resume in uploaded_resumes:
             if resume.filename == '':
-                return jsonify({"error": "One or more resume files have no selected file"}), 400
+                return ResponseData(
+                    f"/api/resume/upload/{job_id}", 
+                    "Failed To Upload Resumes: One or more resume files have no selected file", 
+                    None, 
+                    400
+                ).get_response_data()
 
             # Securely generate a unique filename (Removes unsafe characters)
             safe_filename = secure_filename(resume.filename)
@@ -50,11 +60,22 @@ def upload_resume(job_id):
                 "pdf_data": f'{s3_file_path}',
                 "similarity_score": None
             })
-        return jsonify({"message": "Resumes uploaded and data inserted successfully", "resumes": resume_data}), 201
+        return ResponseData(
+            f"/api/resume/upload/{job_id}", 
+            "Resumes Uploaded Successfully: Data inserted successfully", 
+            resume_data, 
+            201
+        ).get_response_data()
     except Exception as e:
-        return jsonify({"error": e}), 400
+        return ResponseData(
+            f"/api/resume/upload/{job_id}", 
+            f"Resumes Not Uploaded: {e}", 
+            None, 
+            500
+        ).get_response_data()
 
 def insert_resume_data(job_id, file_path):
+    connection, cursor = None, None
     try:
         connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
@@ -73,13 +94,12 @@ def insert_resume_data(job_id, file_path):
 
         id = cursor.lastrowid
         if id is None:
-            raise Exception("Failed to insert resume")
-        
+            raise Exception()
         return id
-    except Exception as e:
-        raise Exception("Error Inserting Resume Data:", str(e))
+    except Exception:
+        raise Exception("Failed to insert resume data")
     finally:
-        if connection.is_connected():
+        if connection and connection.is_connected():
             cursor.close()
             connection.close()
             
@@ -92,7 +112,6 @@ def _extract_email(text):
 
 # region Ranked Resumes
 
-# TODO FIX ENTIRE METHOD SINCE SHOULD BE A POST
 @resume_bp.route('/rank/<int:job_id>', methods=['POST'])
 def rank_resumes(job_id):
     from routes.utils.sort_jobs import rank_resumes
@@ -103,24 +122,32 @@ def rank_resumes(job_id):
     raw_resumes = get_resumes_by_job_id(job_id)
     parsed_resumes = get_parsed_resumes(raw_resumes)
     
-    # TODO fix all return statements to follow specific format
     if parsed_resumes is None or len(parsed_resumes) == 0 or job_description is None:
-        return jsonify({"error": "No resumes found"}), 401
+        return ResponseData(
+            f"/api/resume/rank/{job_id}", 
+            "Resumes Ranked: No resumes found", 
+            None, 
+            400
+        ).get_response_data()
     
     updated_resumes = rank_resumes(parsed_resumes, job_description)
     
     if updated_resumes is None or len(updated_resumes) == 0:
-        return jsonify({
-            "message": "No resumes requiring update",
-            "updated_resumes": []
-        }), 200
+        return ResponseData(
+            f"/api/resume/rank/{job_id}", 
+            "Resumes Ranked: No resumes requiring update", 
+            [], 
+            200
+        ).get_response_data()
     
     set_similarity_score(updated_resumes)
     
-    return jsonify({
-        "message": "Resumes ranked successfully", 
-        "updated_resumes": updated_resumes
-    }), 200
+    return ResponseData(
+        f"/api/resume/rank/{job_id}", 
+        "Resumes Ranked: Resumes ranked successfully", 
+        updated_resumes, 
+        201
+    ).get_response_data()
 
 def set_similarity_score(updated_resumes):
     try:
@@ -186,9 +213,20 @@ def get_resumes_by_job_id(job_id):
 def get_ranked_resumes(job_id):
     try:
         resume_data = get_all_rankings_by_job_id(job_id)
-        return jsonify({"message": "Ranked resume data retrieved successfully", "resume_data": resume_data}), 200
+        return ResponseData(
+            f"/api/resume/get/ranking/{job_id}", 
+            "Resumes Ranked: Ranked resume data retrieved successfully", 
+            resume_data, 
+            200
+        ).get_response_data()
+        # return jsonify({"message": "Ranked resume data retrieved successfully", "resume_data": resume_data}), 200
     except Exception as e:
-        return jsonify({"error": "An error occurred"}), 500
+        return ResponseData(
+            f"/api/resume/get/ranking/{job_id}", 
+            f"Resumes Ranked: An error has occured ({e})", 
+            None, 
+            500
+        ).get_response_data()
 
 def get_all_rankings_by_job_id(job_id):
     try:
