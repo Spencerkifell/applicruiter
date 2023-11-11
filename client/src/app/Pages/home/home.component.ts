@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
   getJobs() {
     this._httpClient.get('http://127.0.0.1:5000/api/job').subscribe({
       next: (data: any) => {
-        this.jobCollection = data?.jobs
+        this.jobCollection = data?.data
         this._dataService.updateJobList(this.jobCollection);
       },
       error: async (exception: any) => console.log(exception.error.message)

@@ -6,7 +6,6 @@ import { HomeComponent } from './Pages/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JobModalComponent } from './Components/job-modal/job-modal.component';
 import { MatCardModule } from '@angular/material/card';
-import { CardComponent } from './Components/deprecated/card/card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,7 +32,6 @@ import { RankingTableComponent } from './Components/ranking-table/ranking-table.
     AppComponent,
     HomeComponent,
     JobModalComponent,
-    CardComponent,
     JobInfoComponent,
     DataTableComponent,
     RankingsComponent,

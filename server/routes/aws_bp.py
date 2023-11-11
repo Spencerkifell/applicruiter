@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify, request, current_app
-from flask_cors import cross_origin, CORS
-from global_utils import config, get_signed_s3_url, parse_s3_location
+from flask import Blueprint, request
+from flask_cors import CORS
+from global_utils import ResponseData, get_signed_s3_url, parse_s3_location
 
 aws_bp = Blueprint("aws", __name__, url_prefix='/api/aws')
 CORS(aws_bp, resources={r"/api/*": {"origins": "*"}})
@@ -17,14 +17,16 @@ def get_signed_file_url():
         url = get_signed_s3_url(**parse_s3_location(path))
         
         if url:
-            response_data = {
-                "route": "/aws/resume/url",
-                "message": "Retrieved signed file successfully" if url else "Unable to retrieve signed file from S3",
-                "url": url if url else None
-            }
-            return jsonify(response_data), 200 if url else 500
+            return ResponseData(
+                "/api/aws/resume/url", 
+                "Data Retrieval: Retrieved signed file successfully" if url else "Data Retrieval: Unable to retrieve signed file from S3",
+                url, 
+                201 if url else 500
+            ).get_response_data()
     except Exception as e:
-        return jsonify({
-            "route": "/aws/resume/url", 
-            "message": e
-        }), 400
+        return ResponseData(
+            "/api/aws/resume/url", 
+            f"Data Retrieval: {e}", 
+            None, 
+            400
+        ).get_response_data()

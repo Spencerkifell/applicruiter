@@ -61,7 +61,6 @@ export class RankingsComponent implements OnInit {
     this.valueChangesSubscription.unsubscribe();
   }
 
-  // TODO FIX ERROR HANDLING ACROSS PROJECT
   setResumeRankings(): void {
     var selectedJob = this.getCurrentJob();
     if (!this.optionValue || !selectedJob || !selectedJob.description) return;
@@ -69,7 +68,7 @@ export class RankingsComponent implements OnInit {
       next: (data: any) => {
         if (!this.rankingTable) return;
 
-        const dataToUpdate: [] = data?.updated_resumes;
+        const dataToUpdate: [] = data?.data;
         if (!dataToUpdate || dataToUpdate.length == 0) return;
         
         dataToUpdate.forEach(data => {
@@ -95,7 +94,7 @@ export class RankingsComponent implements OnInit {
   getResumesByJobId(job_id: number): void {
     this._httpClient.get(`http://127.0.0.1:5000/api/resume/get/ranking/${job_id}`).subscribe({
       next: (data: any) => {
-        this._dataService.updateResumeList(data?.resume_data);
+        this._dataService.updateResumeList(data?.data);
       },
       error: async (exception: any) => console.log(exception.error.message)
     })
