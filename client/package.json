@@ -20,7 +20,9 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
+    "@faker-js/faker": "^8.2.0",
     "@swimlane/ngx-datatable": "^20.1.0",
+    "cypress": "^13.5.0",
     "ngx-pagination": "^6.0.3",
     "rxjs": "~7.5.0",
     "zone.js": "~0.11.4"
