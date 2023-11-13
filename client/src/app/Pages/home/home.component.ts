@@ -37,7 +37,9 @@ export class HomeComponent implements OnInit {
         this._matSnackBar.open('Job created successfully!', 'Close', {
           duration: 5000,
           horizontalPosition: 'right',
-          verticalPosition: 'top'
+          verticalPosition: 'top',
+          // We can't add an attribute to the snackbar element, so we have to use the panelClass property to add a class to the snackbar element
+          panelClass: ['cy-success-snackbar']
         });
         this._dataService.modalIsCompleted(false);
       }     

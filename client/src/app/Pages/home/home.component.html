@@ -15,7 +15,14 @@
         </mat-card>
     </div>
 
-    <button mat-fab color="primary" aria-label="Click to add a new job posting" (click)="this.openModal()" class="fab-bottom-right large-button">
+    <button 
+        mat-fab 
+        color="primary" 
+        aria-label="Click to add a new job posting" 
+        (click)="this.openModal()" 
+        class="fab-bottom-right large-button"
+        data-cy="add-job-btn"
+    >
         <mat-icon>add</mat-icon>
     </button>
 </div>
