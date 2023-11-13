@@ -1,19 +1,93 @@
 # AppliCruiter
 ## A Different Approach to Automated Tracking Systems for Businesses
 
-### Summary
+<summary>Table of Contents</summary>
+<ol>
+    <li>
+        <a href="#summary">Project Summary</a>
+    </li>
+    <li>
+        <a href="#tech-stack">Tech Stack</a>
+    </li>
+    <li>
+        <a href="#getting-started">Getting Started</a>
+        <ul>
+            <li><a href="#prerequisites">Prerequisites</a></li>
+            <li><a href="#installation">Installation</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#resources">Resources</a>
+    </li>
+    <li>
+        <a href="#contact">Contact</a>
+    </li>
+</ol>
+
+## Summary
 - AppliCruiter is an application powered by machine learning that streamlines the resume screening process by efficiently categorizing and assessing resumes submitted for job openings.
 
-### What it does
-- Our solution was designed using a combination of technologies. On the backend, we used Python, leveraging the sentence_transformers library integrated with PyTorch. We took the extra step of fine-tuning the all-mpnet-base-v2 model using a comprehensive dataset of resumes. Additionally, we employed the pdfplumber library to seamlessly extract text from PDF resumes. The data, along with job descriptions, was stored in an SQL database, ensuring accessibility and organization.
-- On the frontend, we used Angular.js, coupled with the Material UI framework, to create a user-friendly interface for TalentWave.AI. This dynamic front-end interface seamlessly interacts with the backend, providing real-time updates for each job posting created. The use of RX.js allowed us to use observables, enabling our application to dynamically respond to changes in job postings. This means that as new job postings are created or updated, the interface automatically updates in real-time, providing an efficient and intuitive user experience.
-- We also incorporated Flask, a micro web framework for Python. Flask served as the bridge that seamlessly connected our machine learning backend with the frontend. It allowed us to create a responsive and efficient web application that can handle incoming requests, process data, and deliver results.
+## Tech Stack
 
-### Chalenges we ran into
-- This project was mainly developed under a 24 hour time constraint, so initially we didn't have time to polish it as much as we hoped to.
-- While developing TalentWave.AI, we encountered a significant challenge during the fine-tuning process. Initially, the model was producing many NaN (Not-a-Number) results, which confused us. It required several hours of dedicated effort to find the issue, but we ultimately resolved the problem with persistence.
+### Server
+- Written in Python, making use of the sentence_transformers library integrated with PyTorch. To enhance performance, we fine-tuned the all-mpnet-base-v2 model using an extensive dataset of resumes. Furthermore, we incorporated the pdfplumber library to effortlessly extract text from PDF resumes.
+- A MySQL database was leveraged for storing persistent data related to jobs and resumes. This relational database ensures efficient and organized management of information crucial for seamless operations. 
+- Amazon AWS S3 was leveraged to store resumes in the ubiquitous PDF format. Leveraging S3 buckets provides a scalable and secure solution for efficiently managing and accessing resume data, offering a reliable infrastructure for storage needs.
+- Developed REST server using Flask to serve as the bridge that seamlessly connected our model and persistent data to the client. This permitted the creation of a responsive and efficient web application that can handle requests, process data, and deliver results.
+- Built With
+    - Python
+    - PyTorch (sentence_transformers)
+    - Flask
+    - AWS S3
+    - MYSQL
+    - all-mpnet-base-v2 (fine-tuned with a comprehensive dataset of resumes)
+    - pdfplumbler
 
-### Links to Resources
-- Since the model and datasets are too large to store in the directory of the project, this [dropbox](https://www.dropbox.com/scl/fo/7de8b34pyec5190mfmcgj/h?rlkey=fff5wx1bl5ru73danvfzzzidf&dl=0) link contains them both.
-- Please make sure to extract them in the server directory for the project to run.
+### Client
+- Written in TypeScript, making use of Angular to create a user-friendly interface for the application.
+- The client seamlessly interacts with the server, providing real-time updates for each job posting created.The use of RX.js allowed observability, which made the application dynamically responsive to state changes. Whenever a new job posting, a new resume is created, the interface automatically updates in real-time, providing an efficient and intuitive user experience.
+- Cypress was utilized for end-to-end testing to ensure the seamless functionality of the application from the user's perspective. 
+- Built With
+    - TypeScript
+    - Angular
+    - Material UI
+    - Tailwind CSS
+    - Cypress
 
+## Getting Started
+
+### Prerequisites
+#### Versions Used During Development
+- Client
+    - Node - 18.17.0
+- Server
+    - Python - 3.8.18 ([MiniConda](https://docs.conda.io/projects/miniconda/en/latest/) - Python Environment Manager)
+    - MYSQL - 8.1.0
+    - S3 Bucket
+
+### Installation
+#### Steps
+
+- Navigate to client directory within the project
+- Verify that you have the correct version of Node installed
+- Run the following: ```npm i```
+- Manage the environment variables to properly utilize your hosted server
+- Navigate to the server directory within the project
+- Make sure your python virtual environment is currently activated
+- Install required packages and dependencies with ```pip install -r requirements.txt```
+- Externally make sure you have setup an S3 bucket to store data and that MYSQL is currently running
+- Populate a new .env file by referencing the .env.example file
+- Download the model from the dropbox in the resource section and unzip directly in server directory
+- Run truncate_all.py to configure the MYSQL database and truncate the data within the given S3 bucket ```python truncate_all.py```
+- Start the server with ```python main.py```
+- Start the client with ```npm start```
+
+### Resources
+- [Machine Learning Model](https://www.dropbox.com/scl/fo/7de8b34pyec5190mfmcgj/h?rlkey=fff5wx1bl5ru73danvfzzzidf&dl=0)
+- [Create S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html)
+- [MiniConda Setup](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-resources.html)
+
+### Contact
+Feel free to shoot me a message or connect with me on LinkedIn!
+- [Email](mailto:spencerkifell.cs@gmail.com)
+- [LinkedIn](https://www.linkedin.com/in/spencerkifell/)
