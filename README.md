@@ -17,6 +17,9 @@
         </ul>
     </li>
     <li>
+        <a href="#screenshots">Screenshots</a>
+    </li>
+    <li>
         <a href="#resources">Resources</a>
     </li>
     <li>
@@ -81,6 +84,14 @@
 - Run truncate_all.py to configure the MYSQL database and truncate the data within the given S3 bucket ```python truncate_all.py```
 - Start the server with ```python main.py```
 - Start the client with ```npm start```
+
+### Screenshots
+![Image 1](./client/images/1.png)
+![Image 2](./client/images/2.png)
+![Image 3](./client/images/3.png)
+![Image 4](./client/images/4.png)
+![Image 5](./client/images/5.png)
+![Image 6](./client/images/6.png)
 
 ### Resources
 - [Machine Learning Model](https://www.dropbox.com/scl/fo/7de8b34pyec5190mfmcgj/h?rlkey=fff5wx1bl5ru73danvfzzzidf&dl=0)
