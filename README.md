@@ -94,7 +94,7 @@
 ![Image 6](./client/images/6.png)
 
 ### Resources
-- [Machine Learning Model](https://www.dropbox.com/scl/fo/7de8b34pyec5190mfmcgj/h?rlkey=fff5wx1bl5ru73danvfzzzidf&dl=0)
+- [Machine Learning Model](https://huggingface.co/spencerkifell/applicruiter-model)
 - [Create S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html)
 - [MiniConda Setup](https://docs.conda.io/projects/miniconda/en/latest/miniconda-other-resources.html)
 
