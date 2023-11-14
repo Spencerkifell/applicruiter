@@ -27,7 +27,10 @@ export class JobInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.skills = this.data.skills.split(',').map((skill: string) => skill.trim().charAt(0).toUpperCase() + skill.slice(1));
+    this.skills = this.data.skills.split(',').map((skill: string) => {
+      let trimmedSkill = skill.trim();
+      return `${trimmedSkill.charAt(0).toUpperCase()}${trimmedSkill.slice(1)}`;
+    })
   }
 
   onFileSelect(event: any): void {
