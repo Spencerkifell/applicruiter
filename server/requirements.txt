@@ -17,6 +17,7 @@ filelock==3.12.4
 Flask==3.0.0
 Flask-Cors==4.0.0
 fsspec==2023.9.2
+gunicorn==21.2.0
 huggingface-hub==0.17.3
 idna==3.4
 importlib-metadata==6.8.0

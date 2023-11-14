@@ -13,4 +13,4 @@ class Server:
         self.app.register_blueprint(job_bp, url_prefix='/api/job')
         self.app.register_blueprint(aws_bp, url_prefix='/api/aws')
     def run(self):
-        self.app.run(port=5000, debug=True)
+        self.app.run(port=5000)
