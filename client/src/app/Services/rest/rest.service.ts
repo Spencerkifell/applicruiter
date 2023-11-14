@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {Observable, Subscription} from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DataService } from '../data/data.service';
+import { environment } from 'src/environments/environment';
+
+const API_URL = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +23,7 @@ export class RestService {
   }
 
   createJob(job: any) {
-    this.httpClient.post('http://127.0.0.1:5000/api/job', job).subscribe({
+    this.httpClient.post(`${API_URL}/api/job`, job).subscribe({
       next: async (data: any) => {
         let { title, description, country, city, level, skills, job_id } = data.data;
         this.jobCollection.push({
@@ -57,17 +60,17 @@ export class RestService {
   }
 
   postResumes(job_id: number, formDataList: FormData) {
-    const url = `http://127.0.0.1:5000/api/resume/upload/${job_id}`;
+    const url = `${API_URL}/api/resume/upload/${job_id}`;
     return this.httpClient.post<any>(url, formDataList);
   }
 
   rankResumes(jobId: number, jobDesc: string): Observable<any[]> {
-    const url = `http://127.0.0.1:5000/api/resume/rank/${jobId}`;
+    const url = `${API_URL}/api/resume/rank/${jobId}`;
     return this.httpClient.post<any>(url, { job_description: jobDesc });
   }
 
   getSignedResumeURL(filePath: string): Observable<any> {
-    const url = `http://127.0.0.1:5000/api/aws/resume/url`;
+    const url = `${API_URL}/api/aws/resume/url`;
     return this.httpClient.post<any>(url, { path: filePath });
   }
 }

@@ -1,9 +1,11 @@
 from dotenv import dotenv_values
+import os
 
 class AppConfig:
     def __init__(self):
         # Load environment variables from the .env file
         self.config = dotenv_values(".env")
+        # When in prod use os variable and comment out dotenv logic
         
         self.db_config = {
             'host': self.get_env('DB_HOST'),
@@ -22,5 +24,11 @@ class AppConfig:
     def get_env(self, key):
         try:
             return self.config[key]
+        except KeyError:
+            raise Exception(f"Environment variable {key} not found.")
+        
+    def get_env(self, key):
+        try:
+            return os.environ[key]
         except KeyError:
             raise Exception(f"Environment variable {key} not found.")

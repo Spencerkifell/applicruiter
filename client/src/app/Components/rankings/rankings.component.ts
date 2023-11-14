@@ -7,6 +7,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ResumeRanking } from '../utils';
 import { HttpClient } from '@angular/common/http';
 import { RankingTableComponent } from '../ranking-table/ranking-table.component';
+import { environment } from 'src/environments/environment';
+
+const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-rankings',
@@ -92,7 +95,7 @@ export class RankingsComponent implements OnInit {
   }
 
   getResumesByJobId(job_id: number): void {
-    this._httpClient.get(`http://127.0.0.1:5000/api/resume/get/ranking/${job_id}`).subscribe({
+    this._httpClient.get(`${API_URL}/api/resume/get/ranking/${job_id}`).subscribe({
       next: (data: any) => {
         this._dataService.updateResumeList(data?.data);
       },

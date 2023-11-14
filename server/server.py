@@ -14,3 +14,4 @@ class Server:
         self.app.register_blueprint(aws_bp, url_prefix='/api/aws')
     def run(self):
         self.app.run(port=5000)
+        # In prod use gunicorn and pass

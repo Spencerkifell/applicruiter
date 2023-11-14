@@ -5,6 +5,9 @@ import { ModalService } from 'src/app/Services/modal/modal.service';
 import { DataService } from 'src/app/Services/data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from 'src/environments/environment';
+
+const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-home',
@@ -60,7 +63,7 @@ export class HomeComponent implements OnInit {
   }
 
   getJobs() {
-    this._httpClient.get('http://127.0.0.1:5000/api/job').subscribe({
+    this._httpClient.get(`${API_URL}/api/job`).subscribe({
       next: (data: any) => {
         this.jobCollection = data?.data
         this._dataService.updateJobList(this.jobCollection);
