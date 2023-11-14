@@ -14,11 +14,11 @@ CORS(job_bp, resources={r"/api/*": {"origins": "*"}})
 def insert_data_route():
     try:
         data = request.get_json()
-        title = data.get('title')
-        description = data.get('description')
-        level = data.get('level')
-        country = data.get('country')
-        city = data.get('city')
+        title = str(data.get('title')).capitalize()
+        description = str(data.get('description')).capitalize()
+        level = str(data.get('level')).capitalize()
+        country = str(data.get('country')).capitalize()
+        city = str(data.get('city')).capitalize()
         skills = data.get('skills')
         
         if all([title, description, level, country, city, skills]):

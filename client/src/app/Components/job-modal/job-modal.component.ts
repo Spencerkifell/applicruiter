@@ -18,7 +18,7 @@ export class JobModalComponent implements OnInit {
 
   secondFormGroup = this._formBuilder.group({
     level: ['', Validators.required],
-    skills: ['', Validators.required],
+    skills: ['', [Validators.required, this.skillValidator]],
   });
 
   constructor(
@@ -44,5 +44,13 @@ export class JobModalComponent implements OnInit {
 
     this._restService.createJob(jobData);
     this._dataService.modalIsCompleted(true);
+  }
+
+  skillValidator(control: any): any {
+    const value: string = control.value;
+    const result = value.trim().split(/(,)/)
+    const totalWords = result.filter((word) => word !== ',' && word.trim() !== '').length;
+    const totalCommas = result.filter((comma) => comma == ',').length;
+    return totalCommas === totalWords - 1 ? null : { 'invalidSkills': true };
   }
 }
