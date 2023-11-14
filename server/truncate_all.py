@@ -18,6 +18,7 @@ def truncate_s3_bucket(client, bucket):
 
 def truncate_database_tables(db_config: dict, file_path: str = './database/truncate_tables.sql'): 
     connection = mysql.connector.connect(**db_config)
+    connection.autocommit = True
     cursor = connection.cursor()
     try:
         with open(file_path, 'r') as f:
