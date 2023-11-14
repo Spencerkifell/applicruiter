@@ -2,7 +2,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from routes.utils.resume import Resume
 
-similarityModel = SentenceTransformer('model')
+similarityModel = SentenceTransformer('spencerkifell/applicruiter-model')
 
 def rank_resumes(resumes, job_description):
     job_embedding = similarityModel.encode(job_description)
