@@ -27,6 +27,7 @@ export class RankingsComponent implements OnInit {
 
   jobCollection: JobPosting[] = [];
   resumeRankingCollection: ResumeRanking[] = [];
+  selectedJobId: string | null = null;
 
   optionValue: string | null = null;
   selectGroup = this._formBuilder.group({
@@ -36,22 +37,20 @@ export class RankingsComponent implements OnInit {
   constructor(private _dataService: DataService, private _httpClient: HttpClient, private _formBuilder: FormBuilder, private _restService: RestService) { 
     this.combinedSubscription = combineLatest([
       this._dataService.sharedJobList,
-      this._dataService.sharedResumeList
-    ]).subscribe(([jobData, resumeData]) => {
+      this._dataService.sharedResumeList,
+      this._dataService.sharedSelectedJobId
+    ]).subscribe(([jobData, resumeData, selectedJobId]) => {
       this.jobCollection = jobData;
       this.resumeRankingCollection = resumeData;
+      this.selectedJobId = selectedJobId;
     });
-    this.valueChangesSubscription = this.selectGroup.controls['job'].valueChanges.subscribe(value => {
+    this.valueChangesSubscription = this._dataService.sharedSelectedJobId.subscribe(value => {
       if (!value) {
         this._dataService.clearResumeList();
-        this._dataService.updateSelectedJobId(null);
         return;
       }
-      this.optionValue = value;
-      this._dataService.updateSelectedJobId(this.optionValue);
-      // We want to update the rankings view when the user selects a new job based off the job_id
       this._dataService.clearResumeList();
-      this.getResumesByJobId(Number(this.optionValue));
+      this.getResumesByJobId(Number(value));
     });
   }
 
@@ -66,8 +65,8 @@ export class RankingsComponent implements OnInit {
 
   setResumeRankings(): void {
     var selectedJob = this.getCurrentJob();
-    if (!this.optionValue || !selectedJob || !selectedJob.description) return;
-    this.updatedRankedResumes = this._restService.rankResumes(Number(this.optionValue), selectedJob.description).subscribe({
+    if (!this.selectedJobId || !selectedJob || !selectedJob.description) return;
+    this.updatedRankedResumes = this._restService.rankResumes(Number(this.selectedJobId), selectedJob.description).subscribe({
       next: (data: any) => {
         if (!this.rankingTable) return;
 
@@ -91,7 +90,7 @@ export class RankingsComponent implements OnInit {
   }
 
   getCurrentJob(): JobPosting | undefined {
-    return this.jobCollection.find(job => job.job_id === Number(this.optionValue));
+    return this.jobCollection.find(job => job.job_id === Number(this.selectedJobId));
   }
 
   getResumesByJobId(job_id: number): void {

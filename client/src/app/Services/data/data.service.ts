@@ -5,6 +5,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
+  private contentLoaded = new BehaviorSubject<boolean>(false);
+  sharedContentLoaded = this.contentLoaded.asObservable();
+
   private jobList = new BehaviorSubject([]);
   sharedJobList = this.jobList.asObservable();
 
@@ -21,6 +24,10 @@ export class DataService {
   sharedSelectedJobId = this.selectedJobId;
 
   constructor() { }
+
+  updateContentLoaded(data: boolean) {
+    this.contentLoaded.next(data);
+  }
 
   updateJobList(data: any) {
     this.jobList.next(data);

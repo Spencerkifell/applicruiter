@@ -1,5 +1,9 @@
 .content {
     overflow-y: auto;
     overflow-x: hidden;
+    min-height: 200px;
     max-height: 400px;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }

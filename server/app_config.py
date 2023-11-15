@@ -1,5 +1,5 @@
 from dotenv import dotenv_values
-import os
+# import os
 
 class AppConfig:
     def __init__(self):
@@ -27,8 +27,8 @@ class AppConfig:
         except KeyError:
             raise Exception(f"Environment variable {key} not found.")
         
-    def get_env(self, key):
-        try:
-            return os.environ[key]
-        except KeyError:
-            raise Exception(f"Environment variable {key} not found.")
+    # def get_env(self, key):
+    #     try:
+    #         return os.environ[key]
+    #     except KeyError:
+    #         raise Exception(f"Environment variable {key} not found.")

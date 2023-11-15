@@ -2,3 +2,7 @@
     background-color: #f5f5f5 !important;
     cursor: pointer;
 }
+
+.table-check {
+    accent-color: #673AB7
+}

@@ -1,6 +1,6 @@
 body {
     margin: 0;
-}
+}    
 
 .mat-typography {
     margin: 0;
@@ -8,9 +8,12 @@ body {
 
 .mat-toolbar {
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
-    display: flex;
-    justify-content: space-between;
 }

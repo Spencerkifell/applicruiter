@@ -15,8 +15,9 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private jobSubscripton: Subscription;
+  private jobSubscription: Subscription;
   jobCollection: any = [];
+  contentLoaded: boolean = false;
 
   private modalSubscription: Subscription;
   modalStatus: boolean = false;
@@ -31,7 +32,7 @@ export class HomeComponent implements OnInit {
     private _httpClient: HttpClient,
     private _matSnackBar: MatSnackBar
   ) { 
-    this.jobSubscripton = this._dataService.sharedJobList.subscribe(data => {
+    this.jobSubscription = this._dataService.sharedJobList.subscribe(data => {
       this.jobCollection = data;
     });
     this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
@@ -54,7 +55,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.jobSubscripton.unsubscribe();
+    this.jobSubscription.unsubscribe();
     this.modalSubscription.unsubscribe();
   }
 
@@ -66,6 +67,12 @@ export class HomeComponent implements OnInit {
     this._httpClient.get(`${API_URL}/api/job`).subscribe({
       next: (data: any) => {
         this.jobCollection = data?.data
+        this.contentLoaded = true;
+        // Make every job have a checked property of false
+        this.jobCollection = this.jobCollection.map((job: any) => {
+          job.checked = false;
+          return job;
+        });
         this._dataService.updateJobList(this.jobCollection);
       },
       error: async (exception: any) => console.log(exception.error.message)

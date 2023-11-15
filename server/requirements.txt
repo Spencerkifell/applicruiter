@@ -52,4 +52,5 @@ typing_extensions==4.8.0
 urllib3==1.26.18
 Werkzeug==3.0.1
 zipp==3.17.0
-https://download.pytorch.org/whl/cpu/torch-2.1.0%2Bcpu-cp38-cp38-linux_x86_64.whl
+torch==2.1.0
+# https://download.pytorch.org/whl/cpu/torch-2.1.0%2Bcpu-cp38-cp38-linux_x86_64.whl

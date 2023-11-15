@@ -3,18 +3,13 @@
     <mat-card class="tw-mb-10">
         <mat-card-content>
             <div class="tw-flex tw-items-center tw-justify-between">
-                <mat-form-field appearance="fill" [ngClass]="'custom-no-underline'" class="tw-items-center tw-self-center tw-align-middle" [formGroup]="selectGroup">
-                    <mat-label class="tw-justify-end tw-self-end">Select Job Requisition</mat-label>
-                    <mat-select formControlName="job">
-                        <mat-option>
-                            None
-                        </mat-option>
-                        <mat-option *ngFor="let job of jobCollection" [value]="job.job_id">
-                            {{job.job_id}} - {{job.title}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <button mat-raised-button color="primary" class="tw-max-w-xs tw-h-10" (click)="setResumeRankings()">Rank Resumes</button>
+                <div>
+                    <!-- TODO Name of job and id will go here -->
+                    <p></p>
+                </div>
+                <div>
+                    <button mat-raised-button color="primary" class="tw-max-w-xs tw-h-10" [disabled]="selectedJobId == null" (click)="setResumeRankings()">Rank Resumes</button>
+                </div>
             </div>
         </mat-card-content>
     </mat-card>

@@ -6,6 +6,7 @@ export interface JobPosting {
     country: string;
     city: string;
     skills: string;
+    checked: boolean;
 }
 
 export interface ResumeRanking {

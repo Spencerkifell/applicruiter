@@ -4,7 +4,6 @@ import {MatTableDataSource} from '@angular/material/table';
 import { JobPosting } from '../utils';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
-import { SelectionModel } from '@angular/cdk/collections';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ModalService } from 'src/app/Services/modal/modal.service';
 import { JobInfoComponent } from '../job-info/job-info.component';
@@ -23,9 +22,11 @@ export class DataTableComponent implements AfterViewInit {
   private jobInfoModalSubscription: Subscription;
   jobInfoModalStatus: boolean = false;
 
-  displayedColumns: string[] = ['job_id', 'title', 'level', 'country', 'city'];
+  private selectedJobIdSubscription: Subscription;
+  selectedJobId: string | null = null;
+
+  displayedColumns: string[] = ['job_id', 'title', 'level', 'country', 'city', 'checked'];
   dataSource = new MatTableDataSource<JobPosting>(this.jobCollection);
-  selection = new SelectionModel<JobPosting>(false, []);
 
   detailModalRef: any = null;
 
@@ -53,6 +54,9 @@ export class DataTableComponent implements AfterViewInit {
         this._dataService.resumeModalIsCompleted(false);
       }
     });
+    this.selectedJobIdSubscription = this._dataService.sharedSelectedJobId.subscribe(data => {
+      this.selectedJobId = data;
+    });
   }
 
   ngAfterViewInit() {
@@ -68,4 +72,23 @@ export class DataTableComponent implements AfterViewInit {
   openJobDetails(row: JobPosting) {
     this.detailModalRef = this._modalService.openModal(JobInfoComponent, row);
   }
+
+  selectJob(event: any, element: any) {
+    // Stops the event from propagating to the parent element
+    event.stopPropagation();
+    
+    const currentJobId = this.selectedJobId;
+    const currentJob = currentJobId ? this.jobCollection.find((j) => j.job_id === Number(currentJobId)) : null;
+
+    // Unchecks the current job if the user clicks on the same job
+    if (currentJob)
+      currentJob.checked = false;
+
+    if (currentJobId != element.job_id)
+      element.checked = !element.checked;
+  
+    this._dataService.updateSelectedJobId(element.checked ? String(element.job_id) : null);
+    this._dataService.updateJobList(this.jobCollection);
+  }
+  
 }

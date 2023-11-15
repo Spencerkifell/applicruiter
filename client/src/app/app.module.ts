@@ -26,6 +26,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { RankingsComponent } from './Components/rankings/rankings.component';
 import { RankingTableComponent } from './Components/ranking-table/ranking-table.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ErrorComponent } from './Pages/error/error.component'; 
 
 @NgModule({
   declarations: [
@@ -36,6 +39,7 @@ import { RankingTableComponent } from './Components/ranking-table/ranking-table.
     DataTableComponent,
     RankingsComponent,
     RankingTableComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +66,8 @@ import { RankingTableComponent } from './Components/ranking-table/ranking-table.
     NgxDatatableModule,
     MatTableModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

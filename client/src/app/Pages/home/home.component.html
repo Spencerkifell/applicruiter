@@ -1,16 +1,20 @@
-<div>
+<div class="tw-flex tw-flex-col">
     <div *ngIf="jobCollection.length > 0" class="parent-container">
         <app-data-table></app-data-table>
         <div style="margin: 20px"></div>
         <app-rankings></app-rankings>
     </div>
 
+    <div class="no-postings-card" *ngIf="!contentLoaded">
+        <mat-spinner></mat-spinner>
+    </div>
+
     <!-- Display a card when no job postings are available -->
-    <div *ngIf="jobCollection.length === 0" class="no-postings-card">
+    <div *ngIf="jobCollection.length === 0 && contentLoaded" class="no-postings-card">
         <mat-card class="empty-container">
-            <mat-card-content>
-                <h1>No Job Postings Available</h1>
-                <h2>Add a new job with the button on the right</h2>
+            <mat-card-content class="tw-py-5">
+                <h1 class="tw-text-2xl tw-mb-3">No Job Postings Available</h1>
+                <h2 class="tw-text-xl">Add a new job with the button on the right</h2>
             </mat-card-content>
         </mat-card>
     </div>
@@ -22,6 +26,7 @@
         (click)="this.openModal()" 
         class="fab-bottom-right large-button"
         data-cy="add-job-btn"
+        [disabled]="!contentLoaded"
     >
         <mat-icon>add</mat-icon>
     </button>

@@ -22,6 +22,10 @@ export class RestService {
     });    
   }
 
+  ngOnDestroy() {
+    this.dataSubscription.unsubscribe();
+  }
+
   createJob(job: any) {
     this.httpClient.post(`${API_URL}/api/job`, job).subscribe({
       next: async (data: any) => {
@@ -33,7 +37,8 @@ export class RestService {
           country: country,
           city: city,
           level: level,
-          skills: skills
+          skills: skills,
+          checked: false
         });
         this.dataProvider.updateJobList(this.jobCollection);
       },
