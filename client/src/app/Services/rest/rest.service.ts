@@ -78,4 +78,14 @@ export class RestService {
     const url = `${API_URL}/api/aws/resume/url`;
     return this.httpClient.post<any>(url, { path: filePath });
   }
+
+  getUser(authId: string): Observable<any> {
+    const url = `${API_URL}/api/user/${authId}`;
+    return this.httpClient.get<any>(url);
+  }
+
+  postUser(user: any): Observable<any> {
+    const url = `${API_URL}/api/user/`;
+    return this.httpClient.post<any>(url, user);
+  }
 }

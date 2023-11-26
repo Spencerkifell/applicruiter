@@ -29,6 +29,9 @@ import { RankingTableComponent } from './Components/ranking-table/ranking-table.
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ErrorComponent } from './Pages/error/error.component'; 
+import { AuthModule } from '@auth0/auth0-angular';
+import { AuthButtonComponent } from './Components/auth-button/auth-button.component';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -40,6 +43,7 @@ import { ErrorComponent } from './Pages/error/error.component';
     RankingsComponent,
     RankingTableComponent,
     ErrorComponent,
+    AuthButtonComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +72,13 @@ import { ErrorComponent } from './Pages/error/error.component';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatCheckboxModule,
+    AuthModule.forRoot({
+      domain: environment.authDomain,
+      clientId: environment.authClientId,
+      authorizationParams: {
+        redirect_uri: window.location.origin
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

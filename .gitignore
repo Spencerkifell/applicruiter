@@ -135,3 +135,6 @@ dist
 /server/uploads/
 /server/model.zip
 /server/training/data/source/
+
+/client/src/environments/environment.prod.ts
+/client/src/environments/environment.ts

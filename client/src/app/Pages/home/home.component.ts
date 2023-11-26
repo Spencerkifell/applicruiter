@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.component';
 import { ModalService } from 'src/app/Services/modal/modal.service';
 import { DataService } from 'src/app/Services/data/data.service';
@@ -15,7 +15,7 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private jobSubscription: Subscription;
+  private combinedSubscription: Subscription;
   jobCollection: any = [];
   contentLoaded: boolean = false;
 
@@ -32,8 +32,12 @@ export class HomeComponent implements OnInit {
     private _httpClient: HttpClient,
     private _matSnackBar: MatSnackBar
   ) { 
-    this.jobSubscription = this._dataService.sharedJobList.subscribe(data => {
-      this.jobCollection = data;
+    this.combinedSubscription = combineLatest([
+      this._dataService.sharedJobList, 
+      this._dataService.sharedContentLoaded
+    ]).subscribe(([jobData, contentLoaded]) => {
+      this.jobCollection = jobData;
+      this.contentLoaded = contentLoaded;
     });
     this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
       if (data) {
@@ -55,7 +59,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.jobSubscription.unsubscribe();
+    this.combinedSubscription.unsubscribe();
     this.modalSubscription.unsubscribe();
   }
 
@@ -67,7 +71,7 @@ export class HomeComponent implements OnInit {
     this._httpClient.get(`${API_URL}/api/job`).subscribe({
       next: (data: any) => {
         this.jobCollection = data?.data
-        this.contentLoaded = true;
+        this._dataService.updateContentLoaded(true);
         // Make every job have a checked property of false
         this.jobCollection = this.jobCollection.map((job: any) => {
           job.checked = false;
