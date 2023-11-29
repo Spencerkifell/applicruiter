@@ -47,6 +47,18 @@
                         <input data-cy="input-job-skills" matInput placeholder="Skills" formControlName="skills" required>
                     </mat-form-field>
                     <div>
+                        <button data-cy="btn-job-create" mat-button color="primary" matStepperNext>Next</button>
+                    </div>
+                </form>
+            </mat-step>
+            <mat-step>
+                <form [formGroup]="thirdFormGroup" style="display: flex;flex-direction: column;">
+                    <ng-template matStepLabel>User Provisioning</ng-template>
+                    <mat-form-field>
+                       <mat-label>Emails</mat-label>
+                       <input data-cy="input-job-emails" matInput placeholder="Emails" formControlName="emails">
+                    </mat-form-field>
+                    <div>
                         <button data-cy="btn-job-create" mat-button color="primary" (click)="onClick()">Create Job</button>
                     </div>
                 </form>

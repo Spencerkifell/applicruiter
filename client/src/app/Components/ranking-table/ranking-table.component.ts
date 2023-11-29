@@ -33,7 +33,6 @@ export class RankingTableComponent {
     private _restService: RestService,
   ) { 
     this.resumeRankingSubscripton = this._dataService.sharedResumeList.subscribe(data => {
-      debugger;
       this.resumeRankingCollection = data;
       this.dataSource.data = this.resumeRankingCollection;
       if (this.dataSource.paginator){

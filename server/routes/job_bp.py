@@ -13,23 +13,27 @@ CORS(job_bp, resources={r"/api/*": {"origins": "*"}})
 @cross_origin()
 def insert_data_route():
     try:
-        data = request.get_json()
-        title = str(data.get('title')).capitalize()
-        description = str(data.get('description')).capitalize()
-        level = str(data.get('level')).capitalize()
-        country = str(data.get('country')).capitalize()
-        city = str(data.get('city')).capitalize()
-        skills = data.get('skills')
+        data: dict = request.get_json()
+        
+        job_data = data.get('job')
+        email_data = data.get('emails')
+        
+        title = str(job_data.get('title')).capitalize()
+        description = str(job_data.get('description')).capitalize()
+        level = str(job_data.get('level')).capitalize()
+        country = str(job_data.get('country')).capitalize()
+        city = str(job_data.get('city')).capitalize()
+        skills = job_data.get('skills')
         
         if all([title, description, level, country, city, skills]):
-            returned_id = insert_job_data(title, description, level, country, city, skills)
+            returned_id = insert_job_data(title, description, level, country, city, skills, email_data)
             if not returned_id:
                 raise Exception("Failed to create and insert job data")
-            data['job_id'] = returned_id
+            job_data['job_id'] = returned_id
             return ResponseData(
                 "/api/job", 
                 "Job Created: Data inserted successfully", 
-                data, 
+                job_data, 
                 201
             ).get_response_data()
         else:
@@ -48,29 +52,40 @@ def insert_data_route():
         ).get_response_data()
 
     
-def insert_job_data(title, description, level, country, city, skills):
+def insert_job_data(title, description, level, country, city, skills, emails = None):
     connection, cursor = None, None
     try:
         connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
 
-        query = """
-            insert into jobs (
-                title, 
-                description, 
-                level, 
-                country, 
-                city, 
+        job_query = """
+            INSERT INTO jobs (
+                title,
+                description,
+                level,
+                country,
+                city,
                 skills
-            ) values (%s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s);
         """
-        values = (title, description, level, country, city, skills)
-
-        cursor.execute(query, values)
-        connection.commit()
+        job_values = (title, description, level, country, city, skills)
+        cursor.execute(job_query, job_values)
+                
+        job_id = cursor.lastrowid
         
-        return cursor.lastrowid
-    except Exception:
+        if emails and len(emails) != 0:
+            job_user_query = """
+                INSERT INTO job_users (job_id, user_id)
+                SELECT %s, id AS user_id
+                FROM users
+                WHERE email in ({})
+            """.format(', '.join(['%s'] * len(emails)))
+            values = (job_id, *emails,)
+            cursor.execute(job_user_query, values)
+            
+        connection.commit()
+        return job_id
+    except Exception as e:
         return None
     finally:
         if connection and connection.is_connected():
