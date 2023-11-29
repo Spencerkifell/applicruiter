@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 import { JobModalComponent } from 'src/app/Components/job-modal/job-modal.component';
 import { ModalService } from 'src/app/Services/modal/modal.service';
 import { DataService } from 'src/app/Services/data/data.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '@auth0/auth0-angular';
@@ -15,7 +15,7 @@ const API_URL = environment.apiUrl;
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   private jobSubscription: Subscription;
   jobCollection: any = [];
 
@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   contentLoaded: boolean = false;
 
   private authSubscription: Subscription;
-  isAuthenticated: boolean = false;
+  isAuthenticated: any = null;
 
   private modalSubscription: Subscription;
   modalStatus: boolean = false;
@@ -45,8 +45,13 @@ export class HomeComponent implements OnInit {
     this.contentLoadedSubscription = this._dataService.sharedContentLoaded.subscribe(data => {
       this.contentLoaded = data;
     });
-    this.authSubscription = this._authService.isAuthenticated$.subscribe(data => {
-      this.isAuthenticated = data;
+    this.authSubscription = combineLatest([this._authService.idTokenClaims$]).subscribe(([idTokenClaims]) => {
+      this.isAuthenticated = idTokenClaims;
+      
+      if (!this.isAuthenticated)
+        return;
+
+      this.getJobs();
     });
     this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
       if (data) {
@@ -63,22 +68,29 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.getJobs();
-  }
-
   ngOnDestroy(): void {
     this.jobSubscription.unsubscribe();
     this.contentLoadedSubscription.unsubscribe();
     this.modalSubscription.unsubscribe();
     this.authSubscription.unsubscribe();
   }
+
   openModal() {
     this.modalRef = this._modalService.openModal(JobModalComponent);
   }
 
   getJobs() {
-    this._httpClient.get(`${API_URL}/api/job`).subscribe({
+    const accessToken = this.isAuthenticated.__raw;
+    const userId = this.isAuthenticated.sub;
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    });
+
+    const params = { userId };
+
+    this._httpClient.get(`${API_URL}/api/job`, { headers, params}).subscribe({
       next: (data: any) => {
         this.jobCollection = data?.data
         this._dataService.updateContentLoaded(true);

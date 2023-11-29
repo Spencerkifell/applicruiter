@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { Observable, Subscription, catchError, filter, of, switchMap } from 'rxjs';
+import { Observable, catchError, filter, of, switchMap } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { Router } from '@angular/router';
@@ -10,9 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './auth-button.component.html',
   styleUrls: ['./auth-button.component.css']
 })
-export class AuthButtonComponent implements OnInit {
-  private contentLoadedSubscription: Subscription;
-
+export class AuthButtonComponent {
   authUser: any;
   contentLoaded: boolean = false;
 
@@ -22,9 +20,6 @@ export class AuthButtonComponent implements OnInit {
     private _dataService: DataService, 
     private _router: Router
   ) {
-    this.contentLoadedSubscription = this._dataService.sharedContentLoaded.subscribe(data => {
-      this.contentLoaded = data;
-    });
     this.handleUserAuth().subscribe(result => {
       if (!result) {
         this.authUser = null;
@@ -39,13 +34,6 @@ export class AuthButtonComponent implements OnInit {
       // todo - handle new user
       // If user is not verified then we should prompt them to finish setting up their account...
     });
-  }
-
-  ngOnInit(): void {
-  }
-
-  ngOnDestroy() {
-    this.contentLoadedSubscription.unsubscribe();
   }
 
   getUser() {

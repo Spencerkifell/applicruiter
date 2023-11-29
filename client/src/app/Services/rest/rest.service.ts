@@ -26,8 +26,8 @@ export class RestService {
     this.dataSubscription.unsubscribe();
   }
 
-  createJob(job: any, email: string | null = null) {
-    this.httpClient.post(`${API_URL}/api/job`, {job: job, emails: email}).subscribe({
+  createJob(job: any, emails: string [] | null = null) {
+    this.httpClient.post(`${API_URL}/api/job`, {job: job, emails: emails}).subscribe({
       next: async (data: any) => {
         let { title, description, country, city, level, skills, job_id } = data.data;
         this.jobCollection.push({

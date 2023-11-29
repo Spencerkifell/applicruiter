@@ -21,7 +21,7 @@
                     <textarea data-cy="input-job-desc" matInput style="min-height: 100px;max-height: 100px;" splaceholder="Job Description" formControlName="description" required></textarea>
                 </mat-form-field>
                 <div>
-                    <button data-cy="btn-job-next" mat-button color="primary" matStepperNext>Next</button>
+                    <button data-cy="btn-job-next" mat-button color="primary" [disabled]="this.firstFormGroup.invalid" matStepperNext>Next</button>
                 </div>
                 </form>
             </mat-step>
@@ -47,7 +47,7 @@
                         <input data-cy="input-job-skills" matInput placeholder="Skills" formControlName="skills" required>
                     </mat-form-field>
                     <div>
-                        <button data-cy="btn-job-create" mat-button color="primary" matStepperNext>Next</button>
+                        <button data-cy="btn-job-create" mat-button color="primary" matStepperNext [disabled]="this.secondFormGroup.invalid">Next</button>
                     </div>
                 </form>
             </mat-step>
@@ -59,7 +59,7 @@
                        <input data-cy="input-job-emails" matInput placeholder="Emails" formControlName="emails">
                     </mat-form-field>
                     <div>
-                        <button data-cy="btn-job-create" mat-button color="primary" (click)="onClick()">Create Job</button>
+                        <button data-cy="btn-job-create" mat-button color="primary" [disabled]="this.thirdFormGroup.invalid" (click)="onClick()">Create Job</button>
                     </div>
                 </form>
             </mat-step>

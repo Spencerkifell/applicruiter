@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from '@auth0/auth0-angular';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { DataService } from 'src/app/Services/data/data.service';
 
@@ -8,7 +9,7 @@ import { DataService } from 'src/app/Services/data/data.service';
   templateUrl: './job-modal.component.html',
   styleUrls: ['./job-modal.component.css']
 })
-export class JobModalComponent {
+export class JobModalComponent implements OnInit{
   firstFormGroup = this._formBuilder.group({
     title: ['', Validators.required],
     description: ['', Validators.required],
@@ -25,14 +26,23 @@ export class JobModalComponent {
     emails: ['', this.emailValidator.bind(this)],
   });
 
+  private profile: any;
+
   constructor(
     private _formBuilder: FormBuilder, 
     private _restService: RestService,
-    private _dataService: DataService
+    private _dataService: DataService,
+    private _authService: AuthService
   ) { }
 
+  ngOnInit(): void {
+    this._authService.user$.subscribe((profile) => { 
+      this.profile = profile;
+    });
+  }
+
   onClick(): void {
-    if (this.firstFormGroup.invalid || this.secondFormGroup.invalid || this.thirdFormGroup.invalid)  return;
+    if (this.firstFormGroup.invalid || this.secondFormGroup.invalid || this.thirdFormGroup.invalid || !this.profile)  return;
     
     let jobData = {
       title: this.firstFormGroup.get('title')?.value, 
@@ -46,7 +56,14 @@ export class JobModalComponent {
     let emails = this.thirdFormGroup.get('emails')?.value;
     let validEmails = this.filter(emails);
 
-    this._restService.createJob(jobData, validEmails ? emails.trim().split(',') : null);
+    let currentUserEmail: string = this.profile.email;
+    let emailData: string[] = [currentUserEmail];
+
+    if (validEmails && emails.trim() !== '')
+      emailData = [...emails.split(','), ...emailData];
+
+    // TODO If email is null do something else because not good
+    this._restService.createJob(jobData, emailData ? emailData : null);
     this._dataService.modalIsCompleted(true);
   }
 

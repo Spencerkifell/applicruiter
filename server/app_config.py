@@ -21,6 +21,11 @@ class AppConfig:
             'region_name': self.get_env('AWS_REGION'),
         }
         
+        self.auth0_config = {
+            'audience': self.get_env('AUTH0_AUDIENCE'),
+            'domain': self.get_env('AUTH0_DOMAIN'),
+        }
+        
     def get_env(self, key):
         try:
             return self.config[key]

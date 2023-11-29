@@ -56,3 +56,8 @@ class ResponseData:
         
     def __repr__(self):
         return f"ResponseData(route={self.route}, message={self.message}, data={self.data})"
+    
+class AuthHeaderException(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
