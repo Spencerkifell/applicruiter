@@ -8,6 +8,7 @@ import { ResumeRanking } from '../utils';
 import { HttpClient } from '@angular/common/http';
 import { RankingTableComponent } from '../ranking-table/ranking-table.component';
 import { environment } from 'src/environments/environment';
+import { AuthService } from '@auth0/auth0-angular';
 
 const API_URL = environment.apiUrl;
 
@@ -25,16 +26,27 @@ export class RankingsComponent implements OnInit {
   private updatedRankedResumes!: Subscription;
   updatedResumeRankings: [] | undefined = undefined;
 
+  private authSubscription: Subscription;
+  isAuthenticated: boolean = false;
+
   jobCollection: JobPosting[] = [];
   resumeRankingCollection: ResumeRanking[] = [];
+
   selectedJobId: string | null = null;
+  selectedJob: JobPosting | undefined = undefined;
 
   optionValue: string | null = null;
   selectGroup = this._formBuilder.group({
     job: ['', Validators.required],
   });
 
-  constructor(private _dataService: DataService, private _httpClient: HttpClient, private _formBuilder: FormBuilder, private _restService: RestService) { 
+  constructor(
+    private _dataService: DataService, 
+    private _httpClient: HttpClient, 
+    private _formBuilder: FormBuilder, 
+    private _restService: RestService,
+    private _authService: AuthService
+  ) { 
     this.combinedSubscription = combineLatest([
       this._dataService.sharedJobList,
       this._dataService.sharedResumeList,
@@ -50,7 +62,12 @@ export class RankingsComponent implements OnInit {
         return;
       }
       this._dataService.clearResumeList();
+
+      this.selectedJob = this.getCurrentJob();
       this.getResumesByJobId(Number(value));
+    });
+    this.authSubscription = this._authService.isAuthenticated$.subscribe(data => {
+      this.isAuthenticated = data;
     });
   }
 
@@ -61,12 +78,13 @@ export class RankingsComponent implements OnInit {
   ngOnDestroy(): void {
     this.combinedSubscription.unsubscribe();
     this.valueChangesSubscription.unsubscribe();
+    this.authSubscription.unsubscribe();
   }
 
   setResumeRankings(): void {
-    var selectedJob = this.getCurrentJob();
-    if (!this.selectedJobId || !selectedJob || !selectedJob.description) return;
-    this.updatedRankedResumes = this._restService.rankResumes(Number(this.selectedJobId), selectedJob.description).subscribe({
+    // var selectedJob = this.getCurrentJob();
+    if (!this.selectedJobId || !this.selectedJob || !this.selectedJob.description) return;
+    this.updatedRankedResumes = this._restService.rankResumes(Number(this.selectedJobId), this.selectedJob.description).subscribe({
       next: (data: any) => {
         if (!this.rankingTable) return;
 

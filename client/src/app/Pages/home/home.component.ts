@@ -6,6 +6,7 @@ import { DataService } from 'src/app/Services/data/data.service';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
+import { AuthService } from '@auth0/auth0-angular';
 
 const API_URL = environment.apiUrl;
 
@@ -15,9 +16,14 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private combinedSubscription: Subscription;
+  private jobSubscription: Subscription;
   jobCollection: any = [];
+
+  private contentLoadedSubscription: Subscription;
   contentLoaded: boolean = false;
+
+  private authSubscription: Subscription;
+  isAuthenticated: boolean = false;
 
   private modalSubscription: Subscription;
   modalStatus: boolean = false;
@@ -30,14 +36,17 @@ export class HomeComponent implements OnInit {
     private _modalService: ModalService,
     private _dataService: DataService,
     private _httpClient: HttpClient,
-    private _matSnackBar: MatSnackBar
+    private _matSnackBar: MatSnackBar,
+    private _authService: AuthService
   ) { 
-    this.combinedSubscription = combineLatest([
-      this._dataService.sharedJobList, 
-      this._dataService.sharedContentLoaded
-    ]).subscribe(([jobData, contentLoaded]) => {
-      this.jobCollection = jobData;
-      this.contentLoaded = contentLoaded;
+    this.jobSubscription = this._dataService.sharedJobList.subscribe(data => {
+      this.jobCollection = data;
+    });
+    this.contentLoadedSubscription = this._dataService.sharedContentLoaded.subscribe(data => {
+      this.contentLoaded = data;
+    });
+    this.authSubscription = this._authService.isAuthenticated$.subscribe(data => {
+      this.isAuthenticated = data;
     });
     this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
       if (data) {
@@ -59,10 +68,11 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.combinedSubscription.unsubscribe();
+    this.jobSubscription.unsubscribe();
+    this.contentLoadedSubscription.unsubscribe();
     this.modalSubscription.unsubscribe();
+    this.authSubscription.unsubscribe();
   }
-
   openModal() {
     this.modalRef = this._modalService.openModal(JobModalComponent);
   }

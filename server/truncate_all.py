@@ -16,7 +16,7 @@ def truncate_s3_bucket(client, bucket):
     except Exception as e:
         raise Exception("Error truncating S3 bucket:", str(e))
 
-def truncate_database_tables(db_config: dict, file_path: str = 'database/truncate_tables.sql'): 
+def truncate_database_tables(db_config: dict, file_path: str = './database/truncate_tables.sql'): 
     connection = mysql.connector.connect(**db_config)
     connection.autocommit = True
     cursor = connection.cursor()

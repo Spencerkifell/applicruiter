@@ -10,6 +10,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    background-color: #6467b3;
 }
 
 .navbar {

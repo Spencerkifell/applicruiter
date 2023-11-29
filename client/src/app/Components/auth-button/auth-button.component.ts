@@ -3,6 +3,7 @@ import { AuthService } from '@auth0/auth0-angular';
 import { Observable, Subscription, catchError, filter, of, switchMap } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-button',
@@ -15,21 +16,28 @@ export class AuthButtonComponent implements OnInit {
   authUser: any;
   contentLoaded: boolean = false;
 
-  constructor(private _auth: AuthService, private _restService: RestService, private _dataService: DataService) { 
+  constructor(
+    private _auth: AuthService, 
+    private _restService: RestService, 
+    private _dataService: DataService, 
+    private _router: Router
+  ) {
     this.contentLoadedSubscription = this._dataService.sharedContentLoaded.subscribe(data => {
       this.contentLoaded = data;
     });
-    // todo finish implementing this
     this.handleUserAuth().subscribe(result => {
-      // We have an error
-      // todo - result.error also means that our api is working so that being said we should find another consistent property
-      if (result.error) {
-        // todo - handle error (this is an error if we have a user but no user in the db and can't create one)
-        alert("error")
+      if (!result) {
+        this.authUser = null;
+        this._router.navigate(['/error']);
         return;
       }
-      alert("success")
+      else if (result.status == 404) {
+        this.authUser = null;
+        this._router.navigate(['/404']);
+        return;
+      }
       // todo - handle new user
+      // If user is not verified then we should prompt them to finish setting up their account...
     });
   }
 
@@ -41,7 +49,6 @@ export class AuthButtonComponent implements OnInit {
   }
 
   getUser() {
-    debugger;
     return this._auth.user$;
   }
 
@@ -68,7 +75,7 @@ export class AuthButtonComponent implements OnInit {
         );
       }),
       // If we don't have a user in the db, then we should create one, otherwise we should do nothing
-      filter(response => !!response && !!response.error),
+      filter(response => response && response.error),
       switchMap(() => {
         return this._restService.postUser(this.authUser).pipe(
           catchError(error => {

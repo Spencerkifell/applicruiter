@@ -21,10 +21,10 @@ def create_user():
         first_name = data.get('given_name')
         last_name = data.get('family_name')
         picture = data.get('picture')
-        
+    
         # Verifies that all required data is present
-        if all([auth_id, email, email_verified, first_name, last_name, picture]):
-            returned_id = insert_user_data(auth_id, email, email_verified, first_name, last_name, picture)
+        if all([auth_id, email, picture]) and email_verified != None:
+            returned_id = insert_user_data(auth_id, email, email_verified, picture, first_name, last_name)
             if not returned_id:
                 raise Exception("Failed to create and insert user data")
             return ResponseData(
@@ -41,7 +41,7 @@ def create_user():
             500
         ).get_response_data()
         
-def insert_user_data(auth_id, email, email_verified, first_name, last_name, picture):
+def insert_user_data(auth_id, email, email_verified, picture, first_name = None, last_name = None):
     connection, cursor = None, None
     try:
         connection = mysql.connector.connect(**config.db_config)
@@ -50,14 +50,23 @@ def insert_user_data(auth_id, email, email_verified, first_name, last_name, pict
         query = """
             insert into users (
                 auth_id, 
-                email, 
-                email_verified, 
+                email,
+                email_verified,
                 first_name, 
                 last_name, 
-                picture
-            ) values (%s, %s, %s, %s, %s, %s)
+                picture,
+                registered
+            ) values (%s, %s, %s, %s, %s, %s, %s)
         """
-        values = (auth_id, email, email_verified, first_name, last_name, picture)
+        values = (
+            auth_id, 
+            email, 
+            email_verified, 
+            first_name, 
+            last_name, 
+            picture, 
+            1 if all([first_name, last_name, email_verified]) else 0
+        )
 
         cursor.execute(query, values)
         connection.commit()
@@ -102,11 +111,13 @@ def get_user_data(id):
         query = """
             select 
                 auth_id, 
-                email, 
-                email_verified, 
+                email,
+                email_verified,
                 first_name, 
                 last_name, 
-                picture
+                picture,
+                registered,
+                created_at
             from users
             where auth_id = %s
         """

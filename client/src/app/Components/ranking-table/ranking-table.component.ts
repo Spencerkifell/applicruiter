@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResumeRanking } from '../utils';
 import { MatPaginator } from '@angular/material/paginator';
@@ -9,10 +9,10 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-ranking-table',
   templateUrl: './ranking-table.component.html',
-  styleUrls: ['./ranking-table.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./ranking-table.component.css']
 })
 export class RankingTableComponent implements OnInit, AfterViewInit {
+  @Input() selectedId!: string | null;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   private resumeRankingSubscripton: Subscription;
@@ -24,7 +24,10 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['id', 'pdf_data', 'similarity_score'];
   dataSource = new MatTableDataSource<ResumeRanking>(this.resumeRankingCollection);
 
-  constructor(private _dataService: DataService, private _restService: RestService) { 
+  constructor(
+    private _dataService: DataService, 
+    private _restService: RestService
+  ) { 
     this.resumeRankingSubscripton = this._dataService.sharedResumeList.subscribe(data => {
       this.resumeRankingCollection = data;
       this.dataSource.data = this.resumeRankingCollection;
@@ -41,7 +44,6 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource = new MatTableDataSource<ResumeRanking>(this.resumeRankingCollection);
     this.dataSource.paginator = this.paginator;
-    
   }
 
   ngOnDestroy(): void {
@@ -65,7 +67,7 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
       },
       error: (error: any) => {
         console.error('Error:', error);
-        // Handle error
+        // TODO Handle Error
       },
       complete: () => {
         element.signed_url = this.signedUrl;

@@ -1,17 +1,34 @@
-<mat-card style="height: fit-content; max-height: 700px; margin-bottom: 50px;">
-    <mat-card-title style="margin-bottom: 25px;">Candidate Rankings</mat-card-title>
-    <mat-card class="tw-mb-10">
-        <mat-card-content>
-            <div class="tw-flex tw-items-center tw-justify-between">
-                <div>
-                    <!-- TODO Name of job and id will go here -->
-                    <p></p>
-                </div>
-                <div>
-                    <button mat-raised-button color="primary" class="tw-max-w-xs tw-h-10" [disabled]="selectedJobId == null" (click)="setResumeRankings()">Rank Resumes</button>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-    <app-ranking-table #rankingTable></app-ranking-table>
+<mat-card style="height: fit-content; max-height: 700px;" class="ranking-table">
+    <mat-card-title class="tw-text-emerald-50" style="margin-bottom: 25px;">Candidate Rankings</mat-card-title>
+    <div
+        *ngIf="this.selectedJob && this.selectedJob.checked" 
+        class="job-header tw-flex tw-items-center tw-justify-between"
+    >
+        <div>
+            <p 
+                *ngIf="this.selectedJob && this.selectedJob.checked"
+                class="tw-text-lg tw-font-light"
+            >
+                {{ this.selectedJob.job_id }} - {{ this.selectedJob.title }} ({{ this.selectedJob.level }})
+            </p>
+            <p 
+                *ngIf="(this.selectedJob && !this.selectedJob.checked) || (!this.selectedJob)"
+                class="tw-text-lg tw-font-light"
+            >
+                No Job Selected
+            </p>
+        </div>
+        <div>
+            <button 
+                mat-raised-button 
+                color="primary" 
+                class="tw-max-w-xs tw-h-10" 
+                [disabled]="!selectedJobId || !isAuthenticated" 
+                (click)="setResumeRankings()"
+            >
+                Rank Resumes
+            </button>
+        </div>
+    </div>
+    <app-ranking-table [selectedId]="selectedJobId" #rankingTable></app-ranking-table>
 </mat-card>
