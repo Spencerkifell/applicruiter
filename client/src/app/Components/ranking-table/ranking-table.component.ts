@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResumeRanking } from '../utils';
 import { MatPaginator } from '@angular/material/paginator';
@@ -11,9 +11,13 @@ import { Subscription } from 'rxjs';
   templateUrl: './ranking-table.component.html',
   styleUrls: ['./ranking-table.component.css']
 })
-export class RankingTableComponent implements OnInit, AfterViewInit {
+export class RankingTableComponent {
   @Input() selectedId!: string | null;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.paginator = paginator;
+    this.dataSource.paginator = this.paginator;
+  }
+  paginator!: MatPaginator;
 
   private resumeRankingSubscripton: Subscription;
   resumeRankingCollection: ResumeRanking[] = [];
@@ -26,24 +30,18 @@ export class RankingTableComponent implements OnInit, AfterViewInit {
 
   constructor(
     private _dataService: DataService, 
-    private _restService: RestService
+    private _restService: RestService,
   ) { 
     this.resumeRankingSubscripton = this._dataService.sharedResumeList.subscribe(data => {
+      debugger;
       this.resumeRankingCollection = data;
       this.dataSource.data = this.resumeRankingCollection;
-      let size = this.dataSource.paginator?.pageSize;
-      if (this.dataSource.paginator)
+      if (this.dataSource.paginator){
+        this.dataSource.paginator = this.paginator;
+        let size = this.dataSource.paginator?.pageSize;
         this.dataSource.paginator.pageSize = size;
+      }
     }); 
-  }
-
-  ngOnInit(): void {
-  
-  }
-
-  ngAfterViewInit() {
-    this.dataSource = new MatTableDataSource<ResumeRanking>(this.resumeRankingCollection);
-    this.dataSource.paginator = this.paginator;
   }
 
   ngOnDestroy(): void {

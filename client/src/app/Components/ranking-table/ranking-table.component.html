@@ -44,12 +44,13 @@
             mat-row 
             *matRowDef="let row; columns: displayedColumns;"
         ></tr>
+        
     </table>
 
     <mat-paginator 
         [pageSizeOptions]="[5, 10, 20]"
         showFirstLastButtons
         aria-label="Select page of periodic elements"
-        length="collection.length">
+        length="this.dataSource.data.length">
     </mat-paginator>
 </div>
