@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { DataService } from 'src/app/Services/data/data.service';
@@ -8,7 +8,7 @@ import { DataService } from 'src/app/Services/data/data.service';
   templateUrl: './job-modal.component.html',
   styleUrls: ['./job-modal.component.css']
 })
-export class JobModalComponent implements OnInit {
+export class JobModalComponent {
   firstFormGroup = this._formBuilder.group({
     title: ['', Validators.required],
     description: ['', Validators.required],
@@ -30,9 +30,6 @@ export class JobModalComponent implements OnInit {
     private _restService: RestService,
     private _dataService: DataService
   ) { }
-
-  ngOnInit(): void {
-  }
 
   onClick(): void {
     if (this.firstFormGroup.invalid || this.secondFormGroup.invalid || this.thirdFormGroup.invalid)  return;
