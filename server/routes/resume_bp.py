@@ -112,6 +112,7 @@ def _extract_email(text):
 
 # region Ranked Resumes
 
+# TODO catch errors if there is an issue ranking the resumes
 @resume_bp.route('/rank/<int:job_id>', methods=['POST'])
 def rank_resumes(job_id):
     from routes.utils.sort_jobs import rank_resumes
@@ -219,7 +220,6 @@ def get_ranked_resumes(job_id):
             resume_data, 
             200
         ).get_response_data()
-        # return jsonify({"message": "Ranked resume data retrieved successfully", "resume_data": resume_data}), 200
     except Exception as e:
         return ResponseData(
             f"/api/resume/get/ranking/{job_id}", 
