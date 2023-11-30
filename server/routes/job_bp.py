@@ -13,8 +13,6 @@ AUTH0_AUDIENCE = config.auth0_config.get('audience')
 job_bp = Blueprint("job", __name__, url_prefix='/api/job')
 CORS(job_bp, resources={r"/api/*": {"origins": "*"}})
 
-# TODO Fix error bubbling because by rethrowing the exception, the stack trace is lost
-
 # region Post Job Data
 
 @job_bp.route("", methods=["POST"])
@@ -94,7 +92,7 @@ def insert_job_data(title, description, level, country, city, skills, emails = N
             
         connection.commit()
         return job_id
-    except Exception as e:
+    except Exception:
         return None
     finally:
         if connection and connection.is_connected():
@@ -218,27 +216,24 @@ def get_jobs_by_id(job_id):
 # region JWT Methods
 
 def verify_user(headers, args):
-    try:
-        auth_header: str = headers.get('Authorization')
-        if auth_header is None:
-            raise AuthHeaderException("Authorization header is missing")
-        
-        token = auth_header.replace('Bearer ', '')
-        
-        token_payload = get_jwt_payload(token)
-        
-        if token_payload is None:
-            raise AuthHeaderException("Invalid or expired token")
-        
-        token_user_id = token_payload.get('sub')
-        request_user_id = args.get('userId')
-        
-        if token_user_id != request_user_id:
-            raise AuthHeaderException("Authorized user does not match user user in request")
-        
-        return token_user_id
-    except AuthHeaderException as e:
-        raise e
+    auth_header: str = headers.get('Authorization')
+    if auth_header is None:
+        raise AuthHeaderException("Authorization header is missing")
+    
+    token = auth_header.replace('Bearer ', '')
+    
+    token_payload = get_jwt_payload(token)
+    
+    if token_payload is None:
+        raise AuthHeaderException("Invalid or expired token")
+    
+    token_user_id = token_payload.get('sub')
+    request_user_id = args.get('userId')
+    
+    if token_user_id != request_user_id:
+        raise AuthHeaderException("Authorized user does not match user user in request")
+    
+    return token_user_id
     
 def get_jwt_payload(token):
     try:
