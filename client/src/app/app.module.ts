@@ -75,6 +75,8 @@ import { environment } from 'src/environments/environment';
     AuthModule.forRoot({
       domain: environment.authDomain,
       clientId: environment.authClientId,
+      cacheLocation: 'localstorage',
+      useRefreshTokens: true,
       authorizationParams: {
         redirect_uri: window.location.origin
       },

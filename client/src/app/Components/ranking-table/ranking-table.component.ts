@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResumeRanking } from '../utils';
 import { MatPaginator } from '@angular/material/paginator';
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './ranking-table.component.html',
   styleUrls: ['./ranking-table.component.css']
 })
-export class RankingTableComponent {
+export class RankingTableComponent implements OnDestroy {
   @Input() selectedId!: string | null;
   @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.paginator = paginator;
