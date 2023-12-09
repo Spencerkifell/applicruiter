@@ -23,7 +23,7 @@
                 mat-raised-button 
                 color="primary" 
                 class="tw-max-w-xs tw-h-10" 
-                [disabled]="!selectedJobId || !isAuthenticated" 
+                [disabled]="!selectedJobId || !isAuthenticated || disabled" 
                 (click)="setResumeRankings()"
             >
                 Rank Resumes

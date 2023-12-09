@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { JobPosting } from '../utils';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
@@ -39,7 +39,6 @@ export class DataTableComponent implements AfterViewInit {
       this.jobCollection = data;
       this.dataSource.data = this.jobCollection;
       let size = this.dataSource.paginator?.pageSize;
-      this.dataSource.paginator?.firstPage();
       if (this.dataSource.paginator)
         this.dataSource.paginator.pageSize = size;
     });
@@ -67,6 +66,7 @@ export class DataTableComponent implements AfterViewInit {
   ngOnDestroy(): void {
     this.jobSubscripton.unsubscribe();
     this.jobInfoModalSubscription.unsubscribe();
+    this.selectedJobIdSubscription.unsubscribe();
   }
 
   openJobDetails(row: JobPosting) {
@@ -74,9 +74,13 @@ export class DataTableComponent implements AfterViewInit {
   }
 
   selectJob(event: any, element: any) {
+    if (!this.dataSource.paginator)
+      return;
+
     // Stops the event from propagating to the parent element
     event.stopPropagation();
-    
+
+    const currentPage = this.dataSource.paginator.pageIndex;
     const currentJobId = this.selectedJobId;
     const currentJob = currentJobId ? this.jobCollection.find((j) => j.job_id === Number(currentJobId)) : null;
 
@@ -89,6 +93,19 @@ export class DataTableComponent implements AfterViewInit {
   
     this._dataService.updateSelectedJobId(element.checked ? String(element.job_id) : null);
     this._dataService.updateJobList(this.jobCollection);
+    
+    this.maintainCurrentPage(currentPage);
   }
-  
+
+  maintainCurrentPage(desiredPageIndex: number) {
+    const currentPageIndex = this.dataSource.paginator?.pageIndex;
+    if (currentPageIndex !== desiredPageIndex) {
+      // Trigger a page change event to navigate to the desired page
+      this.dataSource.paginator?.page.emit({
+        pageIndex: desiredPageIndex,
+        pageSize: this.dataSource.paginator?.pageSize,
+        length: this.dataSource.paginator?.length
+      })
+    }
+  }
 }

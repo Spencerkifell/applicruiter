@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { Observable, catchError, filter, of, switchMap } from 'rxjs';
-import { DataService } from 'src/app/Services/data/data.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { Router } from '@angular/router';
 
@@ -17,7 +16,6 @@ export class AuthButtonComponent {
   constructor(
     private _auth: AuthService, 
     private _restService: RestService, 
-    private _dataService: DataService, 
     private _router: Router
   ) {
     this.handleUserAuth().subscribe(result => {

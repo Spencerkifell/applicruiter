@@ -45,6 +45,7 @@
     - MYSQL
     - all-mpnet-base-v2 (fine-tuned with a comprehensive dataset of resumes)
     - pdfplumbler
+    - JWT
 
 ### Client
 - Written in TypeScript, making use of Angular to create a user-friendly interface for the application.
@@ -56,6 +57,7 @@
     - Material UI
     - Tailwind CSS
     - Cypress
+    - Auth0
 
 ## Getting Started
 
@@ -92,6 +94,9 @@
 ![Image 4](./client/images/4.png)
 ![Image 5](./client/images/5.png)
 ![Image 6](./client/images/6.png)
+![Image 7](./client/images/7.png)
+![Image 8](./client/images/8.png)
+![Image 9](./client/images/9.png)
 
 ### Resources
 - [Machine Learning Model](https://huggingface.co/spencerkifell/applicruiter-model)

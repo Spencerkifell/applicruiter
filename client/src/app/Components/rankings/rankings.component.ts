@@ -35,6 +35,8 @@ export class RankingsComponent implements OnInit {
   selectedJobId: string | null = null;
   selectedJob: JobPosting | undefined = undefined;
 
+  disabled: boolean = false;
+
   optionValue: string | null = null;
   selectGroup = this._formBuilder.group({
     job: ['', Validators.required],
@@ -82,8 +84,8 @@ export class RankingsComponent implements OnInit {
   }
 
   setResumeRankings(): void {
-    // var selectedJob = this.getCurrentJob();
     if (!this.selectedJobId || !this.selectedJob || !this.selectedJob.description) return;
+    this.disabled = true;
     this.updatedRankedResumes = this._restService.rankResumes(Number(this.selectedJobId), this.selectedJob.description).subscribe({
       next: (data: any) => {
         if (!this.rankingTable) return;
@@ -103,6 +105,7 @@ export class RankingsComponent implements OnInit {
       error: async (exception: any) => console.log(exception.error.message),
       complete: () => {
         this.updatedRankedResumes.unsubscribe();
+        this.disabled = false;
       }
     });
   }

@@ -45,6 +45,7 @@ export class RankingTableComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.resumeRankingSubscripton.unsubscribe();
+    this.signedUrlSubscription?.unsubscribe();
   }
 
   // TODO - We also have to make sure that the url is only stored max for its expiration time
@@ -55,7 +56,6 @@ export class RankingTableComponent implements OnDestroy {
       return;
     }
 
-    // TODO - Loading indidcator in case the request takes a while
     this.signedUrlSubscription = this._restService.getSignedResumeURL(element.pdf_data).subscribe({
       next: (body: any) => {
         if (this.signedUrlSubscription.closed) return;

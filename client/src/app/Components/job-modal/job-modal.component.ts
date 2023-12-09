@@ -44,16 +44,19 @@ export class JobModalComponent implements OnInit{
   onClick(): void {
     if (this.firstFormGroup.invalid || this.secondFormGroup.invalid || this.thirdFormGroup.invalid || !this.profile)  return;
     
+    const { title, description, country, city } = this.firstFormGroup.value;
+    const { level, skills } = this.secondFormGroup.value;
+    const { emails } = this.thirdFormGroup.value;
+
     let jobData = {
-      title: this.firstFormGroup.get('title')?.value, 
-      description: this.firstFormGroup.get('description')?.value, 
-      country: this.firstFormGroup.get('country')?.value, 
-      city: this.firstFormGroup.get('city')?.value, 
-      level: this.secondFormGroup.get('level')?.value,
-      skills: this.secondFormGroup.get('skills')?.value
+      title: title, 
+      description: description, 
+      country: country, 
+      city: city, 
+      level: level,
+      skills: skills
     };
 
-    let emails = this.thirdFormGroup.get('emails')?.value;
     let validEmails = this.filter(emails);
 
     let currentUserEmail: string = this.profile.email;
@@ -62,8 +65,7 @@ export class JobModalComponent implements OnInit{
     if (validEmails && emails.trim() !== '')
       emailData = [...emails.split(','), ...emailData];
 
-    // TODO If email is null do something else because not good
-    this._restService.createJob(jobData, emailData ? emailData : null);
+    this._restService.createJob(jobData, emailData);
     this._dataService.modalIsCompleted(true);
   }
 
