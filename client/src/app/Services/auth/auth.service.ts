@@ -1,41 +1,48 @@
-import { Component } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
-import { Observable, catchError, filter, of, switchMap } from 'rxjs';
-import { RestService } from 'src/app/Services/rest/rest.service';
+import { Injectable } from '@angular/core';
+import { RestService } from '../rest/rest.service';
 import { Router } from '@angular/router';
+import { Observable, catchError, filter, of, switchMap } from 'rxjs';
+import { AuthService as Auth0Service } from '@auth0/auth0-angular';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../app.state';
+import { selectUser } from 'src/app/Store/Auth/auth.selectors';
+import * as authActions from '../../Store/Auth/auth.actions';
 
-@Component({
-  selector: 'app-auth-button',
-  templateUrl: './auth-button.component.html',
-  styleUrls: ['./auth-button.component.css']
+
+@Injectable({
+  providedIn: 'root'
 })
-export class AuthButtonComponent {
+export class AuthService {
   authUser: any;
   contentLoaded: boolean = false;
 
   constructor(
-    private _auth: AuthService, 
-    private _restService: RestService, 
-    private _router: Router
+    private _auth: Auth0Service,
+    private _restService: RestService,
+    private _router: Router,
+    private _store: Store<AppState>
   ) {
     this.handleUserAuth().subscribe(result => {
       if (!result) {
-        this.authUser = null;
+        this.clearUser();
         this._router.navigate(['/error']);
         return;
       }
       else if (result.status == 404) {
-        this.authUser = null;
+        this.clearUser();
         this._router.navigate(['/404']);
         return;
       }
-      // todo - handle new user
-      // If user is not verified then we should prompt them to finish setting up their account...
     });
   }
 
   getUser() {
-    return this._auth.user$;
+    return this._store.select(selectUser);
+  }
+
+  clearUser() {
+    this.authUser = null;
+    this._store.dispatch(authActions.clearUser());
   }
 
   login() {
@@ -44,16 +51,16 @@ export class AuthButtonComponent {
 
   logout() {
     this._auth.logout({ logoutParams: { returnTo: document.location.origin } })
-    this.authUser = null;
+    this.clearUser();
   }
 
-  // Pipe to handle user authentication
   private handleUserAuth(): Observable<any> {
     return this._auth.user$.pipe(
       // If a user is authenticated, then we should continue otherwise we should do nothing
       filter (user => user != null),
       switchMap(user => {
         this.authUser = user;
+        this._store.dispatch(authActions.setUser({ user }));
         return this._restService.getUser(this.authUser.sub).pipe(
           catchError(error => {
             return of(error);

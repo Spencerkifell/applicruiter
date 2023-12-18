@@ -1,0 +1,10 @@
+.prompt {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: calc(100vh - 75px);
+}
+
+.option-card {
+    background-color: #1F2937;
+}

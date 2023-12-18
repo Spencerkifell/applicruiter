@@ -1,14 +1,14 @@
-<div class="tw-h-screen">
-    <div class="navbar">
+<div class="tw-flex tw-flex-row">
+    <!-- <div class="navbar tw-fixed">
         <mat-toolbar>
             <span class="title tw-text-emerald-50">AppliCruiter</span>
             <div class="icons">
                 <app-auth-button></app-auth-button>
-                <!-- <a mat-icon-button href="https://github.com/Spencerkifell/mais-hacks-2023" target="_blank" aria-label="GitHub">
-                    <mat-icon>code</mat-icon>
-                </a> -->
             </div>
         </mat-toolbar>
-    </div>
-    <router-outlet class="tw-h-screen"></router-outlet>
+    </div> -->  
+    <app-side-nav></app-side-nav>
+    <div class="tw-flex-1">
+        <router-outlet></router-outlet>
+    </div> 
 </div>

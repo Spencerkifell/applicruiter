@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+}
+
+.title {
+    margin-left: 25px;
+}
+
+.fab-bottom-right {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+.parent-container {
+    margin: auto;
+    width: 85%;
+    margin-top: 50px;
+}
+
+.conditional {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 0.25fr); 
+    grid-gap: 20px;
+}
+
+ul {
+    padding-left: !important 0;
+}
+
+.pagination-container {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    text-align: center;
+}
+
+.large-button {
+    width: 65px;
+    height: 65px; 
+    font-size: xx-large;
+}
+
+.no-postings-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+    height: 85vh;
+}
+
+.empty-container {
+    padding: 75px;
+    text-align: center;
+}

@@ -30,8 +30,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ErrorComponent } from './Pages/error/error.component'; 
 import { AuthModule } from '@auth0/auth0-angular';
-import { AuthButtonComponent } from './Components/auth-button/auth-button.component';
 import { environment } from 'src/environments/environment';
+import { NewUserComponent } from './Pages/new-user/new-user.component';
+import { NewUserButtonsComponent } from './Components/new-user-buttons/new-user-buttons.component';
+import { EmployerComponent } from './Pages/employer/employer.component';
+import { SideNavComponent } from './Components/side-nav/side-nav.component';
+import { SideNavButtonComponent } from './Components/side-nav-button/side-nav-button.component';
+import { StoreModule } from '@ngrx/store';
+import { authReducer } from './Store/Auth/auth.reducer';
+import { AuthService } from './Services/auth/auth.service';
+import { AppState } from './app.state';
 
 @NgModule({
   declarations: [
@@ -43,7 +51,11 @@ import { environment } from 'src/environments/environment';
     RankingsComponent,
     RankingTableComponent,
     ErrorComponent,
-    AuthButtonComponent,
+    NewUserComponent,
+    NewUserButtonsComponent,
+    EmployerComponent,
+    SideNavComponent,
+    SideNavButtonComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,8 +93,9 @@ import { environment } from 'src/environments/environment';
         redirect_uri: window.location.origin
       },
     }),
+    StoreModule.forRoot<AppState>({ auth: authReducer }),
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
