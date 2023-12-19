@@ -1,64 +1,77 @@
 <div
   style="border: 25px solid; border-color: #a2a3bb"
-  *ngIf="this.rows.length != 0"
-  class="tw-flex tw-flex-col tw-justify-between tw-bg-white dark:tw-bg-gray-800 tw-h-full tw-w-full"
+  class="tw-flex tw-flex-col tw-bg-gray-800 tw-h-full tw-w-full"
 >
-  <div class="tw-flex tw-justify-center tw-bg-white dark:tw-bg-gray-800">
-    <table
-      class="tw-w-full tw-text-sm tw-text-left tw-text-gray-500 dark:tw-text-gray-400"
-    >
-      <thead
-        class="tw-text-xs tw-text-gray-700 tw-uppercase tw-bg-gray-50 dark:tw-bg-gray-700 dark:tw-text-white"
-      >
-        <tr class="tw-w-full">
-          <th
-            *ngFor="let column of columns"
-            scope="col"
-            class="tw-px-6 tw-py-3"
-          >
-            {{ column }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let row of displayedRows"
-          class="tw-bg-white tw-border-b dark:tw-bg-gray-800 dark:tw-border-gray-700 tw-w-full"
-        >
-          <th
-            scope="row"
-            class="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900 tw-whitespace-nowrap dark:tw-text-white"
-          >
-            {{ row.name }}
-          </th>
-          <td class="tw-px-6 tw-py-4">
-            {{ row.owner }}
-          </td>
-          <td class="tw-px-6 tw-py-4">
-            {{ row.totalMembers }}
-          </td>
-          <td class="tw-px-6 tw-py-4">
-            {{ row.totalListings }}
-          </td>
-          <td class="tw-px-6 tw-py-4">
-            {{ row.dateCreated }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
   <div
-    class="tw-w-full tw-flex tw-justify-center tw-bg-gray-50 dark:tw-bg-gray-700"
+    class="tw-w-full tw-flex tw-justify-between tw-align-middle tw-p-2 tw-px-4 tw-py-4 tw-bg-gray-600"
   >
-    <mat-paginator
-      #paginator
-      showFirstLastButtons
-      [pageSize]="pageSize"
-      [pageIndex]="pageIndex"
-      [length]="rows.length"
-      (page)="onPageChange($event)"
-      class="tw-text-xs tw-text-gray-700 tw-uppercase tw-bg-gray-50 dark:tw-bg-gray-700 dark:tw-text-white"
+    <button
+      mat-raised-button
+      class="tw-m-4 tw-bg-white tw-font-sans tw-text-base"
     >
-    </mat-paginator>
+      Create New Organization
+    </button>
+    <!-- This is a temp search until we make the component -->
+    <input
+      matInput
+      type="text"
+      [disabled]="this.rows.length === 0"
+      placeholder="Search for an organization"
+      class="tw-w-2/5 tw-p-2 tw-text-black tw-rounded-md tw-border-0 tw-font-sans tw-text-base"
+    />
+  </div>
+  <div class="tw-flex tw-flex-col tw-flex-1 tw-justify-between tw-h-max">
+    <div class="tw-flex tw-justify-center tw-bg-gray-800">
+      <table class="tw-w-full tw-text-sm tw-text-left tw-text-gray-400">
+        <thead class="tw-text-xs tw-uppercase tw-bg-gray-700 tw-text-white">
+          <tr class="tw-w-full">
+            <th
+              *ngFor="let column of columns"
+              scope="col"
+              class="tw-px-6 tw-py-3"
+            >
+              {{ column }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of displayedRows"
+            class="tw-border-b tw-bg-gray-800 tw-border-gray-700 tw-w-full"
+          >
+            <th
+              scope="row"
+              class="tw-px-6 tw-py-4 tw-font-medium tw-whitespace-nowrap tw-text-white"
+            >
+              {{ row.name }}
+            </th>
+            <td class="tw-px-6 tw-py-4">
+              {{ row.owner }}
+            </td>
+            <td class="tw-px-6 tw-py-4">
+              {{ row.totalMembers }}
+            </td>
+            <td class="tw-px-6 tw-py-4">
+              {{ row.totalListings }}
+            </td>
+            <td class="tw-px-6 tw-py-4">
+              {{ row.dateCreated }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tw-w-full tw-flex tw-justify-center tw-bg-gray-700">
+      <mat-paginator
+        #paginator
+        showFirstLastButtons
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [length]="rows.length"
+        (page)="onPageChange($event)"
+        class="tw-text-xs tw-uppercase tw-bg-gray-700 tw-text-white"
+      >
+      </mat-paginator>
+    </div>
   </div>
 </div>
