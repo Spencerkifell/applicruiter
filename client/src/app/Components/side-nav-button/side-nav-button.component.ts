@@ -1,20 +1,19 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/Services/auth/auth.service';
 
 @Component({
   selector: 'app-side-nav-button',
   templateUrl: './side-nav-button.component.html',
-  styleUrls: ['./side-nav-button.component.css']
+  styleUrls: ['./side-nav-button.component.css'],
 })
 export class SideNavButtonComponent implements OnInit {
   @Input() icon: string = '';
   @Input() text: string = '';
 
-  constructor(private _router: Router, private _auth: AuthService) { }
+  constructor(private _router: Router, private _auth: AuthService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   handleClick() {
     switch (this.text) {
@@ -26,6 +25,9 @@ export class SideNavButtonComponent implements OnInit {
         break;
       case 'Settings':
         this._router.navigate(['/settings']);
+        break;
+      case 'Organizations':
+        this._router.navigate(['/organizations']);
         break;
       case 'Login':
         this._auth.login();

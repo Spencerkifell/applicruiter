@@ -4,11 +4,13 @@ import { HomeComponent } from './Pages/home/home.component';
 import { NewUserComponent } from './Pages/new-user/new-user.component';
 import { ErrorComponent } from './Pages/error/error.component';
 import { EmployerComponent } from './Pages/employer/employer.component';
+import { OrganizationsComponent } from './Components/organizations/organizations.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: NewUserComponent },
   { path: 'employer', component: EmployerComponent},
+  { path: 'organizations', component: OrganizationsComponent},
   { path: 'error', component: ErrorComponent },
   { path: '**', redirectTo: 'error' },
 ];

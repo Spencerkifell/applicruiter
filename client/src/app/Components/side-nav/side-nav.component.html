@@ -1,31 +1,30 @@
-<aside 
-    id="default-sidebar" 
-    class="
-        tw-top-0 
-        tw-left-0 
-        tw-z-40 
-        tw-w-64 
-        tw-h-screen 
-        tw-transition-transform 
-        -tw-translate-x-full-translate-x-full 
-        sm:tw-translate-x-0 
-        tw-bg-gray-50 
-        dark:tw-bg-gray-800
-        tw-flex
-        tw-flex-col
-        tw-justify-between"
-    >
-    <div class="tw-px-3 tw-py-4 tw-overflow-y-auto">
-       <ul class="tw-space-y-2 tw-font-medium">
-          <app-side-nav-button icon="dashboard" text="Dashboard"></app-side-nav-button>
-       </ul>
-    </div>
-    <div class="tw-px-3 tw-py-4 tw-overflow-y-auto">
-         <ul class="tw-space-y-2 tw-font-medium">
-            <app-side-nav-button icon="person" text="Profile"></app-side-nav-button>
-            <app-side-nav-button icon="settings" text="Settings"></app-side-nav-button>
-            <app-side-nav-button icon="{{ isAuthenticated ? 'logout' : 'login'}}" text="{{ isAuthenticated ? 'Logout' : 'Login'}}"></app-side-nav-button>
-         </ul>
-    </div>
+<aside
+  id="default-sidebar"
+  class="tw-top-0 tw-left-0 tw-z-40 tw-w-64 tw-sticky tw-h-screen tw-transition-transform -tw-translate-x-full-translate-x-full sm:tw-translate-x-0 tw-bg-gray-50 dark:tw-bg-gray-800 tw-flex tw-flex-col tw-justify-between"
+>
+  <div class="tw-px-3 tw-py-4 tw-overflow-y-auto">
+    <ul class="tw-space-y-2 tw-font-medium">
+      <app-side-nav-button
+        icon="dashboard"
+        text="Dashboard"
+      ></app-side-nav-button>
+      <app-side-nav-button
+        icon="business"
+        text="Organizations"
+      ></app-side-nav-button>
+    </ul>
+  </div>
+  <div class="tw-px-3 tw-py-4 tw-overflow-y-auto">
+    <ul class="tw-space-y-2 tw-font-medium">
+      <app-side-nav-button icon="person" text="Profile"></app-side-nav-button>
+      <app-side-nav-button
+        icon="settings"
+        text="Settings"
+      ></app-side-nav-button>
+      <app-side-nav-button
+        icon="{{ isAuthenticated ? 'logout' : 'login' }}"
+        text="{{ isAuthenticated ? 'Logout' : 'Login' }}"
+      ></app-side-nav-button>
+    </ul>
+  </div>
 </aside>
- 

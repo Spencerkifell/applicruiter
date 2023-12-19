@@ -15,3 +15,12 @@ export interface ResumeRanking {
     similarity_score: number | undefined;
     signed_url: string | undefined;
 }
+
+export interface Organization {
+    id: number;
+    name: string;
+    owner: string;
+    totalMembers: number;
+    totalListings: number;
+    dateCreated: string;
+}

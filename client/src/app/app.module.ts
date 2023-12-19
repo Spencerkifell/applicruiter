@@ -40,6 +40,8 @@ import { StoreModule } from '@ngrx/store';
 import { authReducer } from './Store/Auth/auth.reducer';
 import { AuthService } from './Services/auth/auth.service';
 import { AppState } from './app.state';
+import { OrganizationsComponent } from './Components/organizations/organizations.component';
+import { OrganizationsTableComponent } from './Components/organizations-table/organizations-table.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import { AppState } from './app.state';
     EmployerComponent,
     SideNavComponent,
     SideNavButtonComponent,
+    OrganizationsComponent,
+    OrganizationsTableComponent,
   ],
   imports: [
     BrowserModule,
