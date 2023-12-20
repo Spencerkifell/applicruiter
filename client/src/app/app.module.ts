@@ -39,10 +39,11 @@ import { StoreModule } from '@ngrx/store';
 import { authReducer } from './Store/Auth/auth.reducer';
 import { AuthService } from './Services/auth/auth.service';
 import { AppState } from './app.state';
-import { OrganizationsComponent } from './Components/organizations/organizations.component';
+import { OrganizationsComponent } from './Pages/organizations/organizations.component';
 import { OrganizationsTableComponent } from './Components/organizations-table/organizations-table.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { OrganizationModalComponent } from './Components/organization-modal/organization-modal.component';
+import { organizationsReducer } from './Store/Organizations/organizations.reducer';
 
 @NgModule({
   declarations: [
@@ -99,7 +100,10 @@ import { OrganizationModalComponent } from './Components/organization-modal/orga
         redirect_uri: window.location.origin,
       },
     }),
-    StoreModule.forRoot<AppState>({ auth: authReducer }),
+    StoreModule.forRoot<AppState>({
+      auth: authReducer,
+      organizations: organizationsReducer,
+    }),
   ],
   providers: [AuthService],
   bootstrap: [AppComponent],

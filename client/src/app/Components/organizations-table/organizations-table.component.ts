@@ -2,11 +2,15 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
-  OnInit,
+  OnDestroy,
   Output,
   ViewChild,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { AppState } from 'src/app/app.state';
 import { Organization } from 'src/app/models';
 
 @Component({
@@ -14,63 +18,75 @@ import { Organization } from 'src/app/models';
   templateUrl: './organizations-table.component.html',
   styleUrls: ['./organizations-table.component.css'],
 })
-export class OrganizationsTableComponent implements OnInit, AfterViewInit {
+export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() openOrgModal: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  columns: string[] = [
-    'Organization Name',
-    'Owner',
-    'Total Members',
-    'Total Listings',
-    'Date Created',
+  private organizationSubscription: Subscription;
+  organizationCollection: Organization[] = [];
+
+  styles = {
+    head: 'tw-text-sm tw-uppercase tw-bg-[#303947]',
+    headCell: 'tw-px-6 tw-py-3 tw-text-white tw-font-sans',
+    cell: 'tw-px-6 tw-py-4 tw-font-medium tw-whitespace-nowrap tw-text-[#717886] tw-font-sans',
+    name: 'tw-px-6 tw-py-4 tw-font-medium tw-whitespace-nowrap tw-text-white tw-font-sans',
+  };
+
+  displayedColumns: string[] = [
+    'name',
+    'owner',
+    'totalMembers',
+    'totalListings',
+    'dateCreated',
   ];
-  // test rows until data is available from backend
-  rows: Organization[] = [
-    // {
-    //   id: 1,
-    //   name: 'Organization 1',
-    //   owner: 'Owner 1',
-    //   totalMembers: 1,
-    //   totalListings: 1,
-    //   dateCreated: '1/1/2021',
-    // },
-  ];
+
+  dataSource = new MatTableDataSource<Organization>(
+    this.organizationCollection
+  );
+
   displayedRows: Organization[] = [];
 
-  pageSize: number = 10;
+  pageSize: number = 15;
   pageIndex = 0;
 
-  // TODO Figure out why there is an error being thrown in the console
-  constructor() {}
+  constructor(private _store: Store<AppState>) {
+    this.organizationSubscription = this._store
+      .select('organizations')
+      .subscribe((organizations) => {
+        this.organizationCollection = organizations.organizations;
+        this.dataSource.data = this.organizationCollection;
+        let size = this.dataSource.paginator?.pageSize;
+        if (this.dataSource.paginator)
+          this.dataSource.paginator.pageSize = size;
+      });
+  }
 
-  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource<Organization>(
+      this.organizationCollection
+    );
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnDestroy(): void {
+    this.organizationSubscription.unsubscribe();
+  }
 
   addOrganizationClicked(): void {
     this.openOrgModal.emit(true);
   }
 
-  ngAfterViewInit(): void {
-    // Set labels for paginator
-    this.paginator._intl.itemsPerPageLabel = 'Items per page:';
-    this.paginator._intl.nextPageLabel = 'Next page';
-    this.paginator._intl.previousPageLabel = 'Previous page';
+  // onPageChange(event: any): void {
+  //   this.pageIndex = event.pageIndex;
+  //   this.updateDisplayedRows();
+  // }
 
-    // Set attributes for paginator
-    this.paginator.length = this.rows.length;
-    this.paginator.pageSize = this.pageSize;
-
-    this.updateDisplayedRows();
-  }
-
-  onPageChange(event: any): void {
-    this.pageIndex = event.pageIndex;
-    this.updateDisplayedRows();
-  }
-
-  updateDisplayedRows(): void {
-    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-    const endIndex = startIndex + this.paginator.pageSize;
-    this.displayedRows = this.rows.slice(startIndex, endIndex);
-  }
+  // updateDisplayedRows(): void {
+  //   const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+  //   const endIndex = startIndex + this.paginator.pageSize;
+  //   this.displayedRows = this.organizationCollection.slice(
+  //     startIndex,
+  //     endIndex
+  //   );
+  // }
 }

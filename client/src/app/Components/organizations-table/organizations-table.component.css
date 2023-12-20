@@ -1,0 +1,6 @@
+/* Had to manually make a css property instead of Tailwind since matui components are styled deeply */
+td.mat-cell {
+  border-bottom: 1px solid;
+  border-color: #303947;
+  background-clip: padding-box;
+}

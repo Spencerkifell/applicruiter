@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 body {
-    background-color: #A2A3BB;
-    margin: 0;
+  background-color: #9293a3;
+  margin: 0;
 }
 
-.ngx-pagination a{
-    color: black !important;
+.ngx-pagination a {
+  color: black !important;
 }
 
 .ngx-pagination .current {
-    background-color: #B3B7EE !important;
-    color: black !important;
+  background-color: #b3b7ee !important;
+  color: black !important;
 }
 
 .ngx-pagination {
-    margin-left: 0;
-    margin-bottom: 1rem;
-    padding-left: 0;
+  margin-left: 0;
+  margin-bottom: 1rem;
+  padding-left: 0;
 }
