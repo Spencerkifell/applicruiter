@@ -8,9 +8,8 @@ import { AppState } from '../../app.state';
 import { selectUser } from 'src/app/Store/Auth/auth.selectors';
 import * as authActions from '../../Store/Auth/auth.actions';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   authUser: any;
@@ -22,13 +21,12 @@ export class AuthService {
     private _router: Router,
     private _store: Store<AppState>
   ) {
-    this.handleUserAuth().subscribe(result => {
+    this.handleUserAuth().subscribe((result) => {
       if (!result) {
         this.clearUser();
         this._router.navigate(['/error']);
         return;
-      }
-      else if (result.status == 404) {
+      } else if (result.status == 404) {
         this.clearUser();
         this._router.navigate(['/404']);
         return;
@@ -50,28 +48,28 @@ export class AuthService {
   }
 
   logout() {
-    this._auth.logout({ logoutParams: { returnTo: document.location.origin } })
+    this._auth.logout({ logoutParams: { returnTo: document.location.origin } });
     this.clearUser();
   }
 
   private handleUserAuth(): Observable<any> {
     return this._auth.user$.pipe(
       // If a user is authenticated, then we should continue otherwise we should do nothing
-      filter (user => user != null),
-      switchMap(user => {
+      filter((user) => user != null),
+      switchMap((user) => {
         this.authUser = user;
         this._store.dispatch(authActions.setUser({ user }));
         return this._restService.getUser(this.authUser.sub).pipe(
-          catchError(error => {
+          catchError((error) => {
             return of(error);
           })
         );
       }),
       // If we don't have a user in the db, then we should create one, otherwise we should do nothing
-      filter(response => response && response.error),
+      filter((response) => response && response.error),
       switchMap(() => {
         return this._restService.postUser(this.authUser).pipe(
-          catchError(error => {
+          catchError((error) => {
             return of(error);
           })
         );

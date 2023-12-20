@@ -13,7 +13,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select'; 
+import { MatSelectModule } from '@angular/material/select';
 import { HttpClientModule } from '@angular/common/http';
 import { MatChipsModule } from '@angular/material/chips';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -28,10 +28,9 @@ import { RankingsComponent } from './Components/rankings/rankings.component';
 import { RankingTableComponent } from './Components/ranking-table/ranking-table.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ErrorComponent } from './Pages/error/error.component'; 
+import { ErrorComponent } from './Pages/error/error.component';
 import { AuthModule } from '@auth0/auth0-angular';
 import { environment } from 'src/environments/environment';
-import { NewUserComponent } from './Pages/new-user/new-user.component';
 import { NewUserButtonsComponent } from './Components/new-user-buttons/new-user-buttons.component';
 import { EmployerComponent } from './Pages/employer/employer.component';
 import { SideNavComponent } from './Components/side-nav/side-nav.component';
@@ -42,6 +41,8 @@ import { AuthService } from './Services/auth/auth.service';
 import { AppState } from './app.state';
 import { OrganizationsComponent } from './Components/organizations/organizations.component';
 import { OrganizationsTableComponent } from './Components/organizations-table/organizations-table.component';
+import { DashboardComponent } from './Pages/dashboard/dashboard.component';
+import { OrganizationModalComponent } from './Components/organization-modal/organization-modal.component';
 
 @NgModule({
   declarations: [
@@ -53,13 +54,14 @@ import { OrganizationsTableComponent } from './Components/organizations-table/or
     RankingsComponent,
     RankingTableComponent,
     ErrorComponent,
-    NewUserComponent,
     NewUserButtonsComponent,
     EmployerComponent,
     SideNavComponent,
     SideNavButtonComponent,
     OrganizationsComponent,
     OrganizationsTableComponent,
+    DashboardComponent,
+    OrganizationModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,7 +71,7 @@ import { OrganizationsTableComponent } from './Components/organizations-table/or
     MatInputModule,
     MatFormFieldModule,
     MatStepperModule,
-    FormsModule, 
+    FormsModule,
     ReactiveFormsModule,
     MatCardModule,
     MatDialogModule,
@@ -94,14 +96,12 @@ import { OrganizationsTableComponent } from './Components/organizations-table/or
       cacheLocation: 'localstorage',
       useRefreshTokens: true,
       authorizationParams: {
-        redirect_uri: window.location.origin
+        redirect_uri: window.location.origin,
       },
     }),
     StoreModule.forRoot<AppState>({ auth: authReducer }),
   ],
   providers: [AuthService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-  
-}
+export class AppModule {}

@@ -1,0 +1,92 @@
+<div>
+  <mat-card>
+    <mat-stepper [linear]="true" #stepper>
+      <mat-step [stepControl]="firstFormGroup">
+        <form
+          [formGroup]="firstFormGroup"
+          style="display: flex; flex-direction: column"
+        >
+          <ng-template matStepLabel>Organization Information</ng-template>
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input
+              data-cy="input-org-name"
+              matInput
+              placeholder="Name"
+              formControlName="name"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Address</mat-label>
+            <input
+              data-cy="input-org-address"
+              matInput
+              placeholder="Address"
+              formControlName="address"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Country</mat-label>
+            <input
+              data-cy="input-org-country"
+              matInput
+              placeholder="Country"
+              formControlName="country"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>City</mat-label>
+            <input
+              data-cy="input-org-city"
+              matInput
+              placeholder="City"
+              formControlName="city"
+              required
+            />
+          </mat-form-field>
+          <div>
+            <button
+              data-cy="btn-org-next"
+              mat-button
+              color="primary"
+              [disabled]="this.firstFormGroup.invalid"
+              matStepperNext
+            >
+              Next
+            </button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="secondFormGroup">
+        <form
+          [formGroup]="secondFormGroup"
+          style="display: flex; flex-direction: column"
+        >
+          <ng-template matStepLabel>User Provisioning</ng-template>
+          <mat-form-field>
+            <mat-label>Emails</mat-label>
+            <input
+              data-cy="input-org-emails"
+              matInput
+              placeholder="Emails"
+              formControlName="emails"
+            />
+          </mat-form-field>
+          <div>
+            <button
+              data-cy="btn-org-create"
+              mat-button
+              color="primary"
+              (click)="onClick()"
+            >
+              Create Organization
+            </button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-stepper>
+  </mat-card>
+</div>

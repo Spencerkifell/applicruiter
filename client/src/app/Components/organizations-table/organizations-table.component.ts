@@ -1,6 +1,13 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { Organization } from 'src/app/utils';
+import { Organization } from 'src/app/models';
 
 @Component({
   selector: 'app-organizations-table',
@@ -9,6 +16,7 @@ import { Organization } from 'src/app/utils';
 })
 export class OrganizationsTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @Output() openOrgModal: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   columns: string[] = [
     'Organization Name',
@@ -19,111 +27,28 @@ export class OrganizationsTableComponent implements OnInit, AfterViewInit {
   ];
   // test rows until data is available from backend
   rows: Organization[] = [
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
-    {
-      id: 1,
-      name: 'Organization 1',
-      owner: 'Owner 1',
-      totalMembers: 1,
-      totalListings: 1,
-      dateCreated: '1/1/2021',
-    },
+    // {
+    //   id: 1,
+    //   name: 'Organization 1',
+    //   owner: 'Owner 1',
+    //   totalMembers: 1,
+    //   totalListings: 1,
+    //   dateCreated: '1/1/2021',
+    // },
   ];
   displayedRows: Organization[] = [];
 
   pageSize: number = 10;
   pageIndex = 0;
 
+  // TODO Figure out why there is an error being thrown in the console
   constructor() {}
 
   ngOnInit(): void {}
+
+  addOrganizationClicked(): void {
+    this.openOrgModal.emit(true);
+  }
 
   ngAfterViewInit(): void {
     // Set labels for paginator

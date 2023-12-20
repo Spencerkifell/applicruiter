@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 const API_URL = environment.apiUrl;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RestService {
   private dataSubscription: Subscription;
@@ -17,39 +17,64 @@ export class RestService {
     private httpClient: HttpClient,
     private dataProvider: DataService
   ) {
-    this.dataSubscription = this.dataProvider.sharedJobList.subscribe(data => {
-      this.jobCollection = data;
-    });    
+    this.dataSubscription = this.dataProvider.sharedJobList.subscribe(
+      (data) => {
+        this.jobCollection = data;
+      }
+    );
   }
 
   ngOnDestroy() {
     this.dataSubscription.unsubscribe();
   }
 
-  createJob(job: any, emails: string [] | null = null) {
-    this.httpClient.post(`${API_URL}/api/job`, {job: job, emails: emails}).subscribe({
-      next: async (data: any) => {
-        let { title, description, country, city, level, skills, job_id } = data.data;
-        this.jobCollection.push({
-          job_id: job_id,
-          title: title,
-          description: description,
-          country: country,
-          city: city,
-          level: level,
-          skills: skills,
-          checked: false
-        });
-        this.dataProvider.updateJobList(this.jobCollection);
-      },
-      error: async (exception: any) => alert(exception.error.message)
-    });
+  createOrganization(
+    headers: any,
+    params: any,
+    data: { organization: any; emails: string[] | null }
+  ) {
+    this.httpClient
+      .post(`${API_URL}/api/organization`, data, {
+        headers,
+        params,
+      })
+      .subscribe({
+        next: async (data: any) => {
+          console.log(data);
+          // TODO HANDLE DATA
+          debugger;
+        },
+        error: async (exception: any) => alert(exception.error.message),
+      });
+  }
+
+  createJob(job: any, emails: string[] | null = null) {
+    this.httpClient
+      .post(`${API_URL}/api/job`, { job: job, emails: emails })
+      .subscribe({
+        next: async (data: any) => {
+          let { title, description, country, city, level, skills, job_id } =
+            data.data;
+          this.jobCollection.push({
+            job_id: job_id,
+            title: title,
+            description: description,
+            country: country,
+            city: city,
+            level: level,
+            skills: skills,
+            checked: false,
+          });
+          this.dataProvider.updateJobList(this.jobCollection);
+        },
+        error: async (exception: any) => alert(exception.error.message),
+      });
   }
 
   createResumes(job_id: any, resumes: File[]) {
     // Create a DataTransfer object
     const dataTransfer = new DataTransfer();
-    resumes.forEach(resume => dataTransfer.items.add(resume));
+    resumes.forEach((resume) => dataTransfer.items.add(resume));
 
     // Create a new FileList from the DataTransfer object
     const selectedFileList = dataTransfer.files;

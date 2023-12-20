@@ -109,7 +109,8 @@ def get_user_data(id):
         cursor = connection.cursor(dictionary=True)
         
         query = """
-            select 
+            select
+                id,
                 auth_id, 
                 email,
                 email_verified,
@@ -117,7 +118,9 @@ def get_user_data(id):
                 last_name, 
                 picture,
                 registered,
-                created_at
+                created_at,
+                updated_at,
+                deleted_at
             from users
             where auth_id = %s
         """

@@ -8,12 +8,12 @@
     <button
       mat-raised-button
       class="tw-m-4 tw-bg-white tw-font-sans tw-text-base"
+      (click)="addOrganizationClicked()"
     >
       Create New Organization
     </button>
     <!-- This is a temp search until we make the component -->
     <input
-      matInput
       type="text"
       [disabled]="this.rows.length === 0"
       placeholder="Search for an organization"

@@ -14,7 +14,7 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-employer',
   templateUrl: './employer.component.html',
-  styleUrls: ['./employer.component.css']
+  styleUrls: ['./employer.component.css'],
 })
 export class EmployerComponent {
   private jobSubscription: Subscription;
@@ -32,7 +32,7 @@ export class EmployerComponent {
   modalRef: any = null;
 
   p = 1;
-  
+
   constructor(
     private _router: Router,
     private _modalService: ModalService,
@@ -40,16 +40,19 @@ export class EmployerComponent {
     private _httpClient: HttpClient,
     private _matSnackBar: MatSnackBar,
     private _authService: AuthService
-  ) { 
-    this.jobSubscription = this._dataService.sharedJobList.subscribe(data => {
+  ) {
+    this.jobSubscription = this._dataService.sharedJobList.subscribe((data) => {
       this.jobCollection = data;
     });
-    this.contentLoadedSubscription = this._dataService.sharedContentLoaded.subscribe(data => {
-      this.contentLoaded = data;
-    });
-    this.authSubscription = combineLatest([this._authService.idTokenClaims$]).subscribe(([idTokenClaims]) => {
+    this.contentLoadedSubscription =
+      this._dataService.sharedContentLoaded.subscribe((data) => {
+        this.contentLoaded = data;
+      });
+    this.authSubscription = combineLatest([
+      this._authService.idTokenClaims$,
+    ]).subscribe(([idTokenClaims]) => {
       this.isAuthenticated = idTokenClaims;
-      
+
       if (!this.isAuthenticated) {
         this._router.navigate(['/']);
         return;
@@ -57,19 +60,21 @@ export class EmployerComponent {
 
       this.getJobs();
     });
-    this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(data => {
-      if (data) {
-        this.modalRef.close();
-        this._matSnackBar.open('Job created successfully!', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          // We can't add an attribute to the snackbar element, so we have to use the panelClass property to add a class to the snackbar element
-          panelClass: ['cy-success-snackbar']
-        });
-        this._dataService.modalIsCompleted(false);
-      }     
-    });
+    this.modalSubscription = this._dataService.sharedJobModalStatus.subscribe(
+      (data) => {
+        if (data) {
+          this.modalRef.close();
+          this._matSnackBar.open('Job created successfully!', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            // We can't add an attribute to the snackbar element, so we have to use the panelClass property to add a class to the snackbar element
+            panelClass: ['cy-success-snackbar'],
+          });
+          this._dataService.modalIsCompleted(false);
+        }
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -89,14 +94,14 @@ export class EmployerComponent {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`
+      Authorization: `Bearer ${accessToken}`,
     });
 
     const params = { userId };
 
-    this._httpClient.get(`${API_URL}/api/job`, { headers, params}).subscribe({
+    this._httpClient.get(`${API_URL}/api/job`, { headers, params }).subscribe({
       next: (data: any) => {
-        this.jobCollection = data?.data
+        this.jobCollection = data?.data;
         this._dataService.updateContentLoaded(true);
         // Make every job have a checked property of false
         this.jobCollection = this.jobCollection.map((job: any) => {
@@ -105,7 +110,7 @@ export class EmployerComponent {
         });
         this._dataService.updateJobList(this.jobCollection);
       },
-      error: async (exception: any) => console.log(exception.error.message)
+      error: async (exception: any) => console.log(exception.error.message),
     });
   }
 }

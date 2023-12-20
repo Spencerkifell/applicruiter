@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { JobPosting } from '../../utils';
+import { JobPosting } from '../../models';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/Services/data/data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';

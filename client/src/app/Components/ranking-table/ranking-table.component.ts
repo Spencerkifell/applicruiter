@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ResumeRanking } from '../../utils';
+import { ResumeRanking } from '../../models';
 import { MatPaginator } from '@angular/material/paginator';
 import { DataService } from 'src/app/Services/data/data.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
