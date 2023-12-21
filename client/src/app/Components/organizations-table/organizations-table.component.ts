@@ -1,17 +1,14 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  OnDestroy,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { skip } from 'rxjs';
+import { ModalService } from 'src/app/Services/modal/modal.service';
 import { AppState } from 'src/app/app.state';
 import { Organization } from 'src/app/models';
+import { OrganizationModalComponent } from '../organization-modal/organization-modal.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-organizations-table',
@@ -20,10 +17,12 @@ import { Organization } from 'src/app/models';
 })
 export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @Output() openOrgModal: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   private organizationSubscription: Subscription;
   organizationCollection: Organization[] = [];
+
+  private modalStatusSubscription: Subscription | undefined;
+  orgModalRef: any = null;
 
   styles = {
     head: 'tw-text-sm tw-uppercase tw-bg-[#303947]',
@@ -49,7 +48,11 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
   pageSize: number = 15;
   pageIndex = 0;
 
-  constructor(private _store: Store<AppState>) {
+  constructor(
+    private _store: Store<AppState>,
+    private _modalService: ModalService,
+    private _matSnackBar: MatSnackBar
+  ) {
     this.organizationSubscription = this._store
       .select('organizations')
       .subscribe((organizations) => {
@@ -70,9 +73,29 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.organizationSubscription.unsubscribe();
+    this.modalStatusSubscription?.unsubscribe();
   }
 
   addOrganizationClicked(): void {
-    this.openOrgModal.emit(true);
+    this.orgModalRef = this._modalService.openModal(OrganizationModalComponent);
+
+    this.modalStatusSubscription = this._modalService.sharedSubmissionSuccess
+      .pipe(skip(1))
+      .subscribe((data: boolean) => {
+        this.orgModalRef.close();
+        this.createSnackBar(
+          data
+            ? 'Organization created successfully!'
+            : 'Failure adding organization'
+        );
+      });
+  }
+
+  createSnackBar(message: string): void {
+    this._matSnackBar.open(`${message}`, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+    });
   }
 }

@@ -28,7 +28,7 @@ def insert_data_route():
         org_data = data.get('organization')
         validated_org_data, org_data_is_valid = PropertyValidator(org_data, organization_attributes).get_validated_values()
         
-        # TODO Finish provisioning later
+        # TODO Finish provisioning aspect at a later date
         email_data = data.get('emails')
         
         if all([validated_org_data, org_data_is_valid, verified_id]):

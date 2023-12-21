@@ -19,7 +19,7 @@ export interface ResumeRanking {
 export interface Organization {
   id: number;
   name: string;
-  owner: string;
+  owner: number;
   address: string;
   country: string;
   city: string;

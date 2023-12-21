@@ -12,8 +12,6 @@ import * as authActions from '../../Store/Auth/auth.actions';
   providedIn: 'root',
 })
 export class AuthService {
-  contentLoaded: boolean = false;
-
   constructor(
     private _auth: Auth0Service,
     private _restService: RestService,

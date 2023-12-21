@@ -80,6 +80,11 @@
               data-cy="btn-org-create"
               mat-button
               color="primary"
+              [disabled]="
+                this.firstFormGroup.invalid ||
+                this.secondFormGroup.invalid ||
+                !this.claims
+              "
               (click)="onClick()"
             >
               Create Organization

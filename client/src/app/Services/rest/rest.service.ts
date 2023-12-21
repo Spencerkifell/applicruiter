@@ -29,38 +29,30 @@ export class RestService {
     this.dataSubscription.unsubscribe();
   }
 
-  createOrganization(
+  postOrganization(
     headers: any,
     params: any,
-    data: { organization: any; emails: string[] | null }
+    data: { organization: any; emails: string[] }
   ) {
-    this.httpClient
-      .post(`${API_URL}/api/organization`, data, {
-        headers,
-        params,
-      })
-      .subscribe({
-        next: async (data: any) => {
-          let newOrganization = this.instantiateOrganization(data.data);
-          // TODO HANDLE DATA
-        },
-        error: async (exception: any) => alert(exception.error.message),
-      });
+    const url = `${API_URL}/api/organization/`;
+    return this.httpClient.post<any>(url, data, {
+      observe: 'response',
+      headers,
+      params,
+    });
   }
 
-  private instantiateOrganization(data: any): Organization {
-    debugger;
-    const { org_id: id, name, owner, country, city, address } = data;
+  instantiateOrganization(data: any, owner: number): Organization | null {
+    const { org_id: id, name, country, city, address } = data;
 
-    if (!id || !name || !country || !city || !address)
-      throw new Error('Invalid organization data received');
+    if (!id || !name || !country || !city || !address || !owner) return null;
 
     const dateCreated = new Date().toISOString().slice(0, 10);
 
     return {
       id: id,
       name: name,
-      owner: 'hi',
+      owner: owner,
       address: address,
       country: country,
       city: city,
