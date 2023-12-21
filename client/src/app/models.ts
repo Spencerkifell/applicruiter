@@ -27,3 +27,16 @@ export interface Organization {
   totalListings: number;
   dateCreated: string;
 }
+
+export interface User {
+  auth_id: string;
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  email_verified: number;
+  picture: string;
+  created_at: string | null;
+  updated_at: string | null;
+  deleted_at: string | null;
+}

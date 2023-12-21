@@ -20,7 +20,7 @@ def verify_user(headers, args):
         raise AuthHeaderException("Invalid or expired token")
     
     token_user_id = token_payload.get('sub')
-    request_user_id = args.get('userId')
+    request_user_id = args.get('userAuthId')
     
     if token_user_id != request_user_id:
         raise AuthHeaderException("Authorized user does not match user user in request")

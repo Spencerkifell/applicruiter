@@ -7,9 +7,9 @@ import { Subscription, combineLatest } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnDestroy{
+export class AppComponent implements OnDestroy {
   private authSubscription: Subscription;
   isAuthenticated: any = null;
   title = 'client';
@@ -18,10 +18,12 @@ export class AppComponent implements OnDestroy{
     private _authService: AuthService,
     private _auth0Service: Auth0Service
   ) {
-    this.authSubscription = combineLatest([this._auth0Service.idTokenClaims$]).subscribe(([idTokenClaims]) => {
+    this.authSubscription = combineLatest([
+      this._auth0Service.idTokenClaims$,
+    ]).subscribe(([idTokenClaims]) => {
       this.isAuthenticated = idTokenClaims;
 
-      if (!idTokenClaims){
+      if (!idTokenClaims) {
         this._authService.clearUser();
         return;
       }

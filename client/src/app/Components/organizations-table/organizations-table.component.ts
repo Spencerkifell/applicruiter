@@ -75,18 +75,4 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
   addOrganizationClicked(): void {
     this.openOrgModal.emit(true);
   }
-
-  // onPageChange(event: any): void {
-  //   this.pageIndex = event.pageIndex;
-  //   this.updateDisplayedRows();
-  // }
-
-  // updateDisplayedRows(): void {
-  //   const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-  //   const endIndex = startIndex + this.paginator.pageSize;
-  //   this.displayedRows = this.organizationCollection.slice(
-  //     startIndex,
-  //     endIndex
-  //   );
-  // }
 }

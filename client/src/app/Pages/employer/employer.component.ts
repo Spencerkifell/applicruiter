@@ -90,14 +90,14 @@ export class EmployerComponent {
 
   getJobs() {
     const accessToken = this.isAuthenticated.__raw;
-    const userId = this.isAuthenticated.sub;
+    const userAuthId = this.isAuthenticated.sub;
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     });
 
-    const params = { userId };
+    const params = { userAuthId };
 
     this._httpClient.get(`${API_URL}/api/job`, { headers, params }).subscribe({
       next: (data: any) => {
