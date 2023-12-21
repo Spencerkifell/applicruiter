@@ -20,6 +20,9 @@ export interface Organization {
   id: number;
   name: string;
   owner: string;
+  address: string;
+  country: string;
+  city: string;
   totalMembers: number;
   totalListings: number;
   dateCreated: string;

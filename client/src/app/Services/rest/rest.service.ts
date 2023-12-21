@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
 import { DataService } from '../data/data.service';
 import { environment } from 'src/environments/environment';
+import { Organization } from 'src/app/models';
 
 const API_URL = environment.apiUrl;
 
@@ -40,12 +41,33 @@ export class RestService {
       })
       .subscribe({
         next: async (data: any) => {
-          console.log(data);
+          let newOrganization = this.instantiateOrganization(data.data);
           // TODO HANDLE DATA
-          debugger;
         },
         error: async (exception: any) => alert(exception.error.message),
       });
+  }
+
+  private instantiateOrganization(data: any): Organization {
+    debugger;
+    const { org_id: id, name, owner, country, city, address } = data;
+
+    if (!id || !name || !country || !city || !address)
+      throw new Error('Invalid organization data received');
+
+    const dateCreated = new Date().toISOString().slice(0, 10);
+
+    return {
+      id: id,
+      name: name,
+      owner: 'hi',
+      address: address,
+      country: country,
+      city: city,
+      totalMembers: 1,
+      totalListings: 0,
+      dateCreated: dateCreated,
+    };
   }
 
   createJob(job: any, emails: string[] | null = null) {
@@ -106,11 +128,11 @@ export class RestService {
 
   getUser(authId: string): Observable<any> {
     const url = `${API_URL}/api/user/${authId}`;
-    return this.httpClient.get<any>(url);
+    return this.httpClient.get<any>(url, { observe: 'response' });
   }
 
   postUser(user: any): Observable<any> {
     const url = `${API_URL}/api/user/`;
-    return this.httpClient.post<any>(url, user);
+    return this.httpClient.post<any>(url, user, { observe: 'response' });
   }
 }

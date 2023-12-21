@@ -12,7 +12,6 @@ import * as authActions from '../../Store/Auth/auth.actions';
   providedIn: 'root',
 })
 export class AuthService {
-  authUser: any;
   contentLoaded: boolean = false;
 
   constructor(
@@ -21,14 +20,14 @@ export class AuthService {
     private _router: Router,
     private _store: Store<AppState>
   ) {
-    this.handleUserAuth().subscribe((result) => {
-      if (!result) {
-        this.clearUser();
-        this._router.navigate(['/error']);
+    this.handleUserAuth().subscribe((response) => {
+      if ([200, 201].includes(response.status)) {
+        const user = response.body.data;
+        this._store.dispatch(authActions.setUser({ user }));
         return;
-      } else if (result.status == 404) {
+      } else {
         this.clearUser();
-        this._router.navigate(['/404']);
+        if (this._router.url != '/error') this._router.navigate(['/error']);
         return;
       }
     });
@@ -39,7 +38,6 @@ export class AuthService {
   }
 
   clearUser() {
-    this.authUser = null;
     this._store.dispatch(authActions.clearUser());
   }
 
@@ -54,25 +52,17 @@ export class AuthService {
 
   private handleUserAuth(): Observable<any> {
     return this._auth.user$.pipe(
-      // If a user is authenticated, then we should continue otherwise we should do nothing
-      filter((user) => user != null),
-      switchMap((user) => {
-        this.authUser = user;
-        this._store.dispatch(authActions.setUser({ user }));
-        return this._restService.getUser(this.authUser.sub).pipe(
+      filter((user) => user != null && user.sub != null),
+      switchMap((user) =>
+        this._restService.getUser(user!.sub!).pipe(
           catchError((error) => {
-            return of(error);
+            if (error.status == 404) return this._restService.postUser(user);
+            throw error;
           })
-        );
-      }),
-      // If we don't have a user in the db, then we should create one, otherwise we should do nothing
-      filter((response) => response && response.error),
-      switchMap(() => {
-        return this._restService.postUser(this.authUser).pipe(
-          catchError((error) => {
-            return of(error);
-          })
-        );
+        )
+      ),
+      catchError((error) => {
+        return of(error);
       })
     );
   }
