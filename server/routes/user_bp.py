@@ -17,20 +17,32 @@ def create_user():
         # Get individual data from request body
         auth_id = data.get('sub')
         email = data.get('email')
-        email_verified = data.get('email_verified')
+        email_verified = int(data.get('email_verified'))
         first_name = data.get('given_name')
         last_name = data.get('family_name')
         picture = data.get('picture')
-    
+        
         # Verifies that all required data is present
-        if all([auth_id, email, picture]) and email_verified != None:
+        if all([auth_id, email, picture, first_name, last_name]) and email_verified != None:
+            # Desired properties to send back to client
+            response_data = {
+                'auth_id': auth_id,
+                'first_name': first_name,
+                'last_name': last_name,
+                'picture': picture,
+                'email': email,
+                'email_verified': email_verified,
+                'created_at': None,
+                'updated_at': None,
+                'deleted_at': None
+            }
             returned_id = insert_user_data(auth_id, email, email_verified, picture, first_name, last_name)
             if not returned_id:
                 raise Exception("Failed to create and insert user data")
             return ResponseData(
                 "/api/user", 
                 "User Created: Data inserted successfully", 
-                data, 
+                {**response_data, 'id': returned_id}, 
                 201
             ).get_response_data()
     except Exception as e:
@@ -41,7 +53,7 @@ def create_user():
             500
         ).get_response_data()
         
-def insert_user_data(auth_id, email, email_verified, picture, first_name = None, last_name = None):
+def insert_user_data(auth_id, email, email_verified, picture, first_name, last_name):
     connection, cursor = None, None
     try:
         connection = mysql.connector.connect(**config.db_config)
@@ -54,18 +66,17 @@ def insert_user_data(auth_id, email, email_verified, picture, first_name = None,
                 email_verified,
                 first_name, 
                 last_name, 
-                picture,
-                registered
-            ) values (%s, %s, %s, %s, %s, %s, %s)
+                picture
+            ) values (%s, %s, %s, %s, %s, %s)
         """
+        
         values = (
             auth_id, 
             email, 
             email_verified, 
             first_name, 
             last_name, 
-            picture, 
-            1 if all([first_name, last_name, email_verified]) else 0
+            picture,
         )
 
         cursor.execute(query, values)
@@ -117,7 +128,6 @@ def get_user_data(id):
                 first_name, 
                 last_name, 
                 picture,
-                registered,
                 created_at,
                 updated_at,
                 deleted_at
@@ -128,7 +138,7 @@ def get_user_data(id):
 
         cursor.execute(query, values)
         result = cursor.fetchone()
-        
+
         return result
     except Exception as e:
         raise Exception(f"Failed to retrieve user data with id {id}")
