@@ -93,3 +93,63 @@ def insert_org_data(org_data: dict, user_id: str):
             connection.close()
 
 # endregion
+
+# region Get Organization
+
+# Get Organizations by User ID
+
+@organization_bp.route('/user/<user_id>', methods=['GET'])
+@cross_origin()
+def get_organizations(user_id):
+    try:
+        verify_user(request.headers, request.args)
+        organizations = get_user_organizations(user_id)
+        return ResponseData(
+            f"/api/organization/user/{user_id}",
+            f"Organizations Retrieved: {'Data retrieved successfully' if organizations else 'Organizations not found'}",
+            organizations,
+            200 if organizations else 404
+        ).get_response_data()
+    except Exception as e:
+        return ResponseData(
+            f"/api/organizations/user/{user_id}", 
+            f"Organizations Not Retrieved: {e}", 
+            None, 
+            500
+        ).get_response_data()
+        
+def get_user_organizations(user_id):
+    connection, cursor = None, None
+    try:
+        connection = mysql.connector.connect(**config.db_config)
+        cursor = connection.cursor(dictionary=True)
+        
+        query = """
+            select
+                o.id,
+                o.name,
+                o.owner,
+                o.address,
+                o.country,
+                o.city,
+                o.logo,
+                o.created_at,
+                o.updated_at,
+                o.deleted_at
+            from organizations o
+            inner join user_organizations u
+            on o.id = u.org_id
+            where u.user_id = %s
+        """
+        values = (user_id,)
+        
+        cursor.execute(query, values)
+        return cursor.fetchall()
+    except Exception as e:
+        raise Exception(f"Failed to retrieve organizations for user with id {user_id}")
+    finally:
+        if connection and connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# endregion
