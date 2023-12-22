@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DataService {
-  private contentLoaded = new BehaviorSubject<boolean>(false);
-  sharedContentLoaded = this.contentLoaded.asObservable();
+  // private contentLoaded = new BehaviorSubject<boolean>(false);
+  // sharedContentLoaded = this.contentLoaded.asObservable();
 
   private jobList = new BehaviorSubject([]);
   sharedJobList = this.jobList.asObservable();
@@ -23,11 +23,11 @@ export class DataService {
   private selectedJobId = new BehaviorSubject<string | null>(null);
   sharedSelectedJobId = this.selectedJobId;
 
-  constructor() { }
+  constructor() {}
 
-  updateContentLoaded(data: boolean) {
-    this.contentLoaded.next(data);
-  }
+  // updateContentLoaded(data: boolean) {
+  // this.contentLoaded.next(data);
+  // }
 
   updateJobList(data: any) {
     this.jobList.next(data);

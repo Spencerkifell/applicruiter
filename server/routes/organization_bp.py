@@ -10,10 +10,6 @@ CORS(organization_bp, resources={r"/api/*": {"origins": "*"}})
 
 organization_attributes = ['name', 'address', 'city', 'country']
 
-# TODO
-# Get Organizations by User ID
-# Get Organization by ID
-
 # region Create Organization
 
 @organization_bp.route('', methods=['POST'])
@@ -151,5 +147,8 @@ def get_user_organizations(user_id):
         if connection and connection.is_connected():
             cursor.close()
             connection.close()
+            
+# TODO (Not Needed Yet)
+# Get Organization by ID
 
 # endregion

@@ -1,1 +1,4 @@
-<app-organizations-table></app-organizations-table>
+<div class="tw-flex tw-justify-center tw-h-full" *ngIf="!this.contentLoaded">
+  <mat-spinner class="tw-self-center"></mat-spinner>
+</div>
+<app-organizations-table *ngIf="this.contentLoaded"></app-organizations-table>

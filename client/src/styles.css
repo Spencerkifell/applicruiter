@@ -21,3 +21,8 @@ body {
   margin-bottom: 1rem;
   padding-left: 0;
 }
+
+.mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: #1f2937;
+}

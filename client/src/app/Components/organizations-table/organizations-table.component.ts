@@ -45,7 +45,7 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
 
   displayedRows: Organization[] = [];
 
-  pageSize: number = 15;
+  pageSize: number = 10;
   pageIndex = 0;
 
   constructor(
@@ -57,6 +57,7 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
       .select('organizations')
       .subscribe((organizations) => {
         this.organizationCollection = organizations.organizations;
+        if (this.organizationCollection.length == 0) return;
         this.dataSource.data = this.organizationCollection;
         let size = this.dataSource.paginator?.pageSize;
         if (this.dataSource.paginator)
@@ -65,9 +66,6 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource = new MatTableDataSource<Organization>(
-      this.organizationCollection
-    );
     this.dataSource.paginator = this.paginator;
   }
 

@@ -42,6 +42,15 @@ export class RestService {
     });
   }
 
+  getOrganizations(headers: any, params: any, userId: number) {
+    const url = `${API_URL}/api/organization/user/${userId}`;
+    return this.httpClient.get<any>(url, {
+      observe: 'response',
+      headers,
+      params,
+    });
+  }
+
   instantiateOrganization(data: any, owner: number): Organization | null {
     const { org_id: id, name, country, city, address } = data;
 
