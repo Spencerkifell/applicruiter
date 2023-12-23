@@ -8,6 +8,10 @@ export const updateOrganization = createAction(
   '[Organizations] Update Organization',
   props<{ organization: any }>()
 );
+export const setOrganization = createAction(
+  '[Organizations] Set Current Organization',
+  props<{ organization: any }>()
+);
 export const clearOrganizations = createAction(
   '[Organizations] Clear Organizations'
 );

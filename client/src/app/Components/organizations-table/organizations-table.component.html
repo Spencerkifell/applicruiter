@@ -10,7 +10,7 @@
   >
     <button
       mat-raised-button
-      class="tw-m-4 tw-bg-white tw-font-sans tw-text-base"
+      class="tw-m-4 tw-bg-white tw-font-sans tw-text-base hover:tw-bg-slate-300"
       (click)="addOrganizationClicked()"
     >
       Create New Organization
@@ -81,7 +81,11 @@
           *matHeaderRowDef="displayedColumns"
           class="tw-text-sm tw-uppercase tw-bg-gray-700"
         ></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="hover:tw-bg-gray-900 hover:tw-cursor-pointer"
+        ></tr>
       </table>
     </div>
     <div class="tw-w-full tw-flex tw-justify-center tw-bg-gray-700">

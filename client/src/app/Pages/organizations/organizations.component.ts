@@ -92,7 +92,9 @@ export class OrganizationsComponent implements OnDestroy {
       city: organization.city,
       totalMembers: 1,
       totalListings: 0,
-      dateCreated: organization.created_at,
+      dateCreated: new Date(organization.created_at).toLocaleDateString(
+        'en-US'
+      ),
     }));
   }
 

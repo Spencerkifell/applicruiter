@@ -1,16 +1,16 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { AuthService as Auth0Service } from '@auth0/auth0-angular';
-import { Store } from '@ngrx/store';
 import { Subscription, combineLatest } from 'rxjs';
+import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { AuthService } from 'src/app/Services/auth/auth.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
-import { AppState } from 'src/app/app.state';
+import { ModalService } from 'src/app/Services/modal/modal.service';
 import { emailValidator, filterMultiInput } from 'src/app/form-utils';
+import { getAuthHeaderParams, instantiateNewOrganization } from 'src/app/utils';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.state';
 import { User } from 'src/app/models';
 import * as organizationActions from '../../Store/Organizations/organizations.actions';
-import { ModalService } from 'src/app/Services/modal/modal.service';
 
 @Component({
   selector: 'app-organization-modal',
@@ -83,15 +83,7 @@ export class OrganizationModalComponent implements OnDestroy {
     if (validEmails && emails.trim() !== '')
       emailData = [...emailData, ...emails.split(',')];
 
-    const accessToken = this.claims.__raw;
-    const userAuthId = this.claims.sub;
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    });
-
-    const params = { userAuthId };
+    const { headers, params } = getAuthHeaderParams(this.claims);
 
     this._restService
       .postOrganization(headers, params, {
@@ -102,10 +94,7 @@ export class OrganizationModalComponent implements OnDestroy {
         const { body } = response;
         const { data, message } = body;
 
-        const organization = this._restService.instantiateOrganization(
-          data,
-          this.user!.id
-        );
+        const organization = instantiateNewOrganization(data, this.user!.id);
 
         if (!organization) this._modalService.updateSubmission(false);
 

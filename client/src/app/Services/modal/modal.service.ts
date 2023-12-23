@@ -3,20 +3,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ModalService {
   private submissionSuccess = new BehaviorSubject<boolean>(false);
   sharedSubmissionSuccess = this.submissionSuccess.asObservable();
 
-  constructor(private dialog: MatDialog) { 
-    
-  }
+  constructor(private dialog: MatDialog) {}
 
   openModal(component: any, data: any = null) {
     return this.dialog.open(component, {
       width: '750px',
-      data: data? data : null
+      data: data ? data : null,
     });
   }
 

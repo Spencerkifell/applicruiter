@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
 import { DataService } from '../data/data.service';
 import { environment } from 'src/environments/environment';
-import { Organization } from 'src/app/models';
 
 const API_URL = environment.apiUrl;
 
@@ -49,26 +48,6 @@ export class RestService {
       headers,
       params,
     });
-  }
-
-  instantiateOrganization(data: any, owner: number): Organization | null {
-    const { org_id: id, name, country, city, address } = data;
-
-    if (!id || !name || !country || !city || !address || !owner) return null;
-
-    const dateCreated = new Date().toISOString().slice(0, 10);
-
-    return {
-      id: id,
-      name: name,
-      owner: owner,
-      address: address,
-      country: country,
-      city: city,
-      totalMembers: 1,
-      totalListings: 0,
-      dateCreated: dateCreated,
-    };
   }
 
   createJob(job: any, emails: string[] | null = null) {

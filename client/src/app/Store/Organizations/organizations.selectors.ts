@@ -8,3 +8,8 @@ export const selectOrganizations = createSelector(
   getOrganizationsState,
   (state: OrganizationsState) => state.organizations
 );
+
+export const selectCurrentOrganization = createSelector(
+  getOrganizationsState,
+  (state: OrganizationsState) => state.currentOrganization
+);
