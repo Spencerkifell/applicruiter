@@ -1,7 +1,6 @@
 from flask import Blueprint, request
 from flask_cors import cross_origin, CORS
-from global_utils import ResponseData, config
-from .utils.data_validator import PropertyValidator
+from global_utils import ResponseData, PropertyValidator, RouteException, config
 from jwt_utils import verify_user
 import mysql.connector
 
@@ -46,11 +45,12 @@ def insert_data_route():
                 400
             ).get_response_data()
     except Exception as e:
+        status_code = getattr(e, 'status_code', 500)
         return ResponseData(
             "/api/organization",
             f"Organization Not Created: {e}",
             None,
-            500
+            status_code
         ).get_response_data()
 
 def insert_org_data(org_data: dict, user_id: str):
@@ -91,6 +91,86 @@ def insert_org_data(org_data: dict, user_id: str):
 # endregion
 
 # region Get Organization
+
+# Get Organization by ID
+
+@organization_bp.route('/<org_id>', methods=['GET'])
+@cross_origin()
+def get_organization(org_id):
+    try:
+        verified_id = verify_user(request.headers, request.args)
+        organization = get_org_data(org_id, verified_id)
+        return ResponseData(
+            f"/api/organization/{org_id}",
+            f"Organization Retrieved: {'Data retrieved successfully' if organization else 'Organization not found'}",
+            organization,
+            200 if organization else 404
+        ).get_response_data()
+    except Exception as e:
+        status_code = getattr(e, 'status_code', 500)
+        return ResponseData(
+            f"/api/organization/{org_id}", 
+            f"Organization Not Retrieved: {e}", 
+            None, 
+            status_code
+        ).get_response_data()
+        
+def get_org_data(org_id, auth_id):
+    connection, cursor = None, None
+    try:
+        connection = mysql.connector.connect(**config.db_config)
+        cursor = connection.cursor(dictionary=True)
+        
+        if not verify_user_org(connection, auth_id, org_id):
+            raise RouteException("User is not authorized to retrieve this organization", 401)
+        
+        query = """
+            select
+                o.id,
+                o.name,
+                o.owner,
+                o.address,
+                o.country,
+                o.city,
+                o.logo,
+                o.created_at,
+                o.updated_at,
+                o.deleted_at
+            from organizations o
+            where o.id = %s
+        """
+        values = (org_id,)
+        
+        cursor.execute(query, values)
+        return cursor.fetchone()
+    except Exception as e:
+        raise Exception(f"Failed to retrieve organization with id {org_id}")
+    finally:
+        if connection and connection.is_connected():
+            cursor.close()
+            connection.close()
+            
+def verify_user_org(connection: mysql.connector.MySQLConnection, auth_id, org_id):
+    try:
+        cursor = connection.cursor()
+        
+        verify_user_org_query = """
+            SELECT 
+                COUNT(*)
+            FROM USER_ORGANIZATIONS
+            WHERE USER_ID = (SELECT ID FROM USERS WHERE AUTH_ID = %s)
+            AND ORG_ID = %s
+        """
+        values = (auth_id, org_id,)
+        
+        cursor.execute(verify_user_org_query, values)
+        result = cursor.fetchone()
+        
+        return result is not None and result[0] > 0
+    except Exception:
+        return False
+    finally:
+        cursor.close()
 
 # Get Organizations by User ID
 

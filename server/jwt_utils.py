@@ -1,6 +1,6 @@
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.error import URLError
-from global_utils import AuthHeaderException, config
+from global_utils import RouteException, config
 from jose import jwt
 import json
 
@@ -10,20 +10,20 @@ AUTH0_AUDIENCE = config.auth0_config.get('audience')
 def verify_user(headers, args):
     auth_header: str = headers.get('Authorization')
     if auth_header is None:
-        raise AuthHeaderException("Authorization header is missing")
+        raise RouteException("Authorization header is missing", 401)
     
     token = auth_header.replace('Bearer ', '')
     
     token_payload = get_jwt_payload(token)
     
     if token_payload is None:
-        raise AuthHeaderException("Invalid or expired token")
+        raise RouteException("Invalid or expired token", 401)
     
     token_user_id = token_payload.get('sub')
     request_user_id = args.get('userAuthId')
     
     if token_user_id != request_user_id:
-        raise AuthHeaderException("Authorized user does not match user user in request")
+        raise RouteException("Authorized user does not match user user in request", 401)
     
     return token_user_id
     
@@ -53,12 +53,12 @@ def get_jwt_payload(token):
             return payload
         return None
     except URLError:
-        raise AuthHeaderException("Unable to reach authentication domain")
+        raise RouteException("Unable to reach authentication domain", 500)
     except json.JSONDecodeError:
-        raise AuthHeaderException("Unable to decode content from authentication domain")
+        raise RouteException("Unable to decode content from authentication domain", 502)
     except jwt.ExpiredSignatureError:
-        raise AuthHeaderException("Token is expired")
+        raise RouteException("Token is expired", 401)
     except jwt.JWTClaimsError:
-        raise AuthHeaderException("Incorrect claims. Please, check the audience and issuer")
+        raise RouteException("Incorrect claims. Please, check the audience and issuer", 401)
     except Exception:
-        raise AuthHeaderException("Unable to parse authentication token")
+        raise RouteException("Unable to parse authentication token", 400)

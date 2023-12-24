@@ -1,68 +1,114 @@
 <div>
-    <mat-card>
-        <mat-stepper [linear]="true" #stepper>
-            <mat-step [stepControl]="firstFormGroup">
-                <form [formGroup]="firstFormGroup" style="display: flex;flex-direction: column;">
-                <ng-template matStepLabel>Basic Job Information</ng-template>
-                <mat-form-field>
-                    <mat-label>Job Title</mat-label>
-                    <input data-cy="input-job-title" matInput placeholder="Job Title" formControlName="title" required>
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-label>Country</mat-label>
-                    <input data-cy="input-job-country" matInput placeholder="Country" formControlName="country" required>
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-label>City</mat-label>
-                    <input data-cy="input-job-city" matInput placeholder="City" formControlName="city" required>
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-label>Job Description</mat-label>
-                    <textarea data-cy="input-job-desc" matInput style="min-height: 100px;max-height: 100px;" splaceholder="Job Description" formControlName="description" required></textarea>
-                </mat-form-field>
-                <div>
-                    <button data-cy="btn-job-next" mat-button color="primary" [disabled]="this.firstFormGroup.invalid" matStepperNext>Next</button>
-                </div>
-                </form>
-            </mat-step>
-            <mat-step>
-                <form [formGroup]="secondFormGroup" style="display: flex;flex-direction: column;">
-                    <ng-template matStepLabel>Required Skills</ng-template>
-                    <mat-form-field>
-                        <mat-label>Position Level</mat-label>
-                        <mat-select data-cy="select-position-level" formControlName="level" required>
-                            <mat-option data-cy="option-entry" value="Entry Level">
-                                Entry Level
-                            </mat-option>
-                            <mat-option data-cy="option-associate" value="Associate Level">
-                                Associate Level
-                            </mat-option>
-                            <mat-option data-cy="option-senior" value="Senior Level">
-                                Senior Level
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Skills</mat-label>
-                        <input data-cy="input-job-skills" matInput placeholder="Skills" formControlName="skills" required>
-                    </mat-form-field>
-                    <div>
-                        <button data-cy="btn-job-create" mat-button color="primary" matStepperNext [disabled]="this.secondFormGroup.invalid">Next</button>
-                    </div>
-                </form>
-            </mat-step>
-            <mat-step>
-                <form [formGroup]="thirdFormGroup" style="display: flex;flex-direction: column;">
-                    <ng-template matStepLabel>User Provisioning</ng-template>
-                    <mat-form-field>
-                       <mat-label>Emails</mat-label>
-                       <input data-cy="input-job-emails" matInput placeholder="Emails" formControlName="emails">
-                    </mat-form-field>
-                    <div>
-                        <button data-cy="btn-job-create" mat-button color="primary" [disabled]="this.thirdFormGroup.invalid" (click)="onClick()">Create Job</button>
-                    </div>
-                </form>
-            </mat-step>
-        </mat-stepper>
-    </mat-card>
+  <mat-card>
+    <mat-stepper [linear]="true" #stepper>
+      <mat-step [stepControl]="firstFormGroup">
+        <form
+          [formGroup]="firstFormGroup"
+          style="display: flex; flex-direction: column"
+        >
+          <ng-template matStepLabel>Basic Job Information</ng-template>
+          <mat-form-field>
+            <mat-label>Job Title</mat-label>
+            <input
+              data-cy="input-job-title"
+              matInput
+              placeholder="Job Title"
+              formControlName="title"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Country</mat-label>
+            <input
+              data-cy="input-job-country"
+              matInput
+              placeholder="Country"
+              formControlName="country"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>City</mat-label>
+            <input
+              data-cy="input-job-city"
+              matInput
+              placeholder="City"
+              formControlName="city"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Job Description</mat-label>
+            <textarea
+              data-cy="input-job-desc"
+              matInput
+              style="min-height: 100px; max-height: 100px"
+              splaceholder="Job Description"
+              formControlName="description"
+              required
+            ></textarea>
+          </mat-form-field>
+          <div>
+            <button
+              data-cy="btn-job-next"
+              mat-button
+              color="primary"
+              [disabled]="this.firstFormGroup.invalid"
+              matStepperNext
+            >
+              Next
+            </button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step>
+        <form
+          [formGroup]="secondFormGroup"
+          style="display: flex; flex-direction: column"
+        >
+          <ng-template matStepLabel>Required Skills</ng-template>
+          <mat-form-field>
+            <mat-label>Position Level</mat-label>
+            <mat-select
+              data-cy="select-position-level"
+              formControlName="level"
+              required
+            >
+              <mat-option data-cy="option-entry" value="Entry Level">
+                Entry Level
+              </mat-option>
+              <mat-option data-cy="option-associate" value="Associate Level">
+                Associate Level
+              </mat-option>
+              <mat-option data-cy="option-senior" value="Senior Level">
+                Senior Level
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Skills</mat-label>
+            <input
+              data-cy="input-job-skills"
+              matInput
+              placeholder="Skills"
+              formControlName="skills"
+              required
+            />
+          </mat-form-field>
+          <div>
+            <button
+              data-cy="btn-job-create"
+              mat-button
+              color="primary"
+              matStepperNext
+              [disabled]="this.secondFormGroup.invalid"
+              (click)="onClick()"
+            >
+              Create Job
+            </button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-stepper>
+  </mat-card>
 </div>

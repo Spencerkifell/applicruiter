@@ -50,27 +50,22 @@ export class RestService {
     });
   }
 
-  createJob(job: any, emails: string[] | null = null) {
-    this.httpClient
-      .post(`${API_URL}/api/job`, { job: job, emails: emails })
-      .subscribe({
-        next: async (data: any) => {
-          let { title, description, country, city, level, skills, job_id } =
-            data.data;
-          this.jobCollection.push({
-            job_id: job_id,
-            title: title,
-            description: description,
-            country: country,
-            city: city,
-            level: level,
-            skills: skills,
-            checked: false,
-          });
-          this.dataProvider.updateJobList(this.jobCollection);
-        },
-        error: async (exception: any) => alert(exception.error.message),
-      });
+  getOrganization(headers: any, params: any, orgId: number) {
+    const url = `${API_URL}/api/organization/${orgId}`;
+    return this.httpClient.get<any>(url, {
+      observe: 'response',
+      headers,
+      params,
+    });
+  }
+
+  postJob(headers: any, params: any, data: { job: any }) {
+    const url = `${API_URL}/api/job/`;
+    return this.httpClient.post<any>(url, data, {
+      observe: 'response',
+      headers,
+      params,
+    });
   }
 
   createResumes(job_id: any, resumes: File[]) {

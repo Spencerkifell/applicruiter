@@ -85,6 +85,7 @@
           mat-row
           *matRowDef="let row; columns: displayedColumns"
           class="hover:tw-bg-gray-900 hover:tw-cursor-pointer"
+          (click)="organizationClicked(row)"
         ></tr>
       </table>
     </div>

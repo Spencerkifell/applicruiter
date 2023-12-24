@@ -1,11 +1,13 @@
 from flask import Blueprint, request
 from flask_cors import cross_origin, CORS
-from global_utils import ResponseData, AuthHeaderException, config
+from global_utils import ResponseData, PropertyValidator, RouteException, config
 from jwt_utils import verify_user
 import mysql.connector
 
 job_bp = Blueprint("job", __name__, url_prefix='/api/job')
 CORS(job_bp, resources={r"/api/*": {"origins": "*"}})
+
+job_attributes = ['org', 'title', 'description', 'level', 'country', 'city', 'skills']
 
 # region Post Job Data
 
@@ -14,20 +16,15 @@ CORS(job_bp, resources={r"/api/*": {"origins": "*"}})
 @cross_origin()
 def insert_data_route():
     try:
+        verified_id = verify_user(request.headers, request.args)
+        
         data: dict = request.get_json()
-        
+                
         job_data = data.get('job')
-        email_data = data.get('emails')
-        
-        title = str(job_data.get('title')).capitalize()
-        description = str(job_data.get('description')).capitalize()
-        level = str(job_data.get('level')).capitalize()
-        country = str(job_data.get('country')).capitalize()
-        city = str(job_data.get('city')).capitalize()
-        skills = job_data.get('skills')
-        
-        if all([title, description, level, country, city, skills]):
-            returned_id = insert_job_data(title, description, level, country, city, skills, email_data)
+        validated_job_data, job_data_is_valid = PropertyValidator(job_data, job_attributes).get_validated_values()
+                
+        if all([validated_job_data, job_data_is_valid, verified_id]):
+            returned_id = insert_job_data(validated_job_data, verified_id)
             if not returned_id:
                 raise Exception("Failed to create and insert job data")
             job_data['job_id'] = returned_id
@@ -38,60 +35,110 @@ def insert_data_route():
                 201
             ).get_response_data()
         else:
-            return ResponseData(
-                "/api/job", 
-                "Job Not Created: Missing required data", 
-                None, 
-                400
-            ).get_response_data()
+            raise RouteException("Missing required data", 400)
     except Exception as e:
+        status_code = getattr(e, 'status_code', 500)
         return ResponseData(
             "/api/job", 
             f"Job Not Created: {e}", 
             None, 
-            500
+            status_code
         ).get_response_data()
 
     
-def insert_job_data(title, description, level, country, city, skills, emails = None):
+def insert_job_data(job_data: dict, user_id: int):
     connection, cursor = None, None
     try:
         connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
+        
+        connection.start_transaction()
+        
+        if not verify_org_exists(connection, job_data.get('org')):
+            raise RouteException("Organization does not exist", 404)
+        
+        if not verify_user_org(connection, job_data.get('org'), user_id):
+            raise RouteException("User is not part of the organization", 403)
 
         job_query = """
             INSERT INTO jobs (
+                org_id,
                 title,
                 description,
                 level,
                 country,
                 city,
                 skills
-            ) VALUES (%s, %s, %s, %s, %s, %s);
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
-        job_values = (title, description, level, country, city, skills)
+        
+        job_values = (
+            job_data.get('org'),
+            job_data.get('title'),
+            job_data.get('description'),
+            job_data.get('level'),
+            job_data.get('country'),
+            job_data.get('city'),
+            job_data.get('skills')
+        )
         cursor.execute(job_query, job_values)
                 
         job_id = cursor.lastrowid
-        
-        if emails and len(emails) != 0:
-            job_user_query = """
-                INSERT INTO job_users (job_id, user_id)
-                SELECT %s, auth_id AS user_id
-                FROM users
-                WHERE email in ({})
-            """.format(', '.join(['%s'] * len(emails)))
-            values = (job_id, *emails,)
-            cursor.execute(job_user_query, values)
             
         connection.commit()
         return job_id
     except Exception:
+        connection.rollback()
         return None
     finally:
         if connection and connection.is_connected():
             cursor.close()
             connection.close()
+
+
+def verify_org_exists(connection: mysql.connector.MySQLConnection, org_id):
+    try:
+        cursor = connection.cursor()
+        
+        verify_org_query = """
+            SELECT
+                COUNT(*)
+            FROM ORGANIZATIONS
+            WHERE ID = %s
+        """
+        values = (org_id,)
+        
+        cursor.execute(verify_org_query, values)
+        result = cursor.fetchone()
+        
+        return result is not None and result[0] > 0
+    except Exception:
+        return False
+    finally:
+        cursor.close()
+
+        
+def verify_user_org(connection: mysql.connector.MySQLConnection, org_id, user_id):
+    try:
+        cursor = connection.cursor()
+        
+        verify_user_org_query = """
+            SELECT 
+                COUNT(*) 
+            FROM USER_ORGANIZATIONS
+            WHERE ORG_ID = %s 
+            AND USER_ID = (SELECT ID FROM USERS WHERE AUTH_ID = %s)
+        """
+        values = (org_id, user_id,)
+        
+        cursor.execute(verify_user_org_query, values)
+        result = cursor.fetchone()
+        
+        return result is not None and result[0] > 0
+    except Exception:
+        return False
+    finally:
+        cursor.close()
 
 # endregion
 
@@ -110,19 +157,13 @@ def get_jobs_route():
             jobs, 
             200
         ).get_response_data()
-    except AuthHeaderException as e:
-        return ResponseData(
-            "/api/job", 
-            f"Jobs Not Retrieved: {e}", 
-            None, 
-            401
-        ).get_response_data()
     except Exception as e:
+        status_code = getattr(e, 'status_code', 500)
         return ResponseData(
             "/api/job", 
             f"Jobs Not Retrieved: {e}", 
             None, 
-            500
+            status_code
         ).get_response_data()
     
 def get_all_jobs(user_id):

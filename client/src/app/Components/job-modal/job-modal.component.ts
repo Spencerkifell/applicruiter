@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { DataService } from 'src/app/Services/data/data.service';
-import { emailValidator, filterMultiInput } from 'src/app/form-utils';
+import { filterMultiInput } from 'src/app/form-utils';
+import { getAuthHeaderParams } from 'src/app/utils';
+import { Subscription, combineLatest } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { selectCurrentOrganization } from 'src/app/Store/Organizations/organizations.selectors';
+import { Organization } from 'src/app/models';
 
 @Component({
   selector: 'app-job-modal',
   templateUrl: './job-modal.component.html',
   styleUrls: ['./job-modal.component.css'],
 })
-export class JobModalComponent implements OnInit {
+export class JobModalComponent implements OnDestroy {
   firstFormGroup = this._formBuilder.group({
     title: ['', Validators.required],
     description: ['', Validators.required],
@@ -23,39 +28,51 @@ export class JobModalComponent implements OnInit {
     skills: ['', [Validators.required, this.skillValidator.bind(this)]],
   });
 
-  thirdFormGroup = this._formBuilder.group({
-    emails: ['', emailValidator.bind(this)],
-  });
+  private currentOrganizationSubscription: Subscription;
+  private currentOrganization: Organization | null = null;
 
-  private profile: any;
+  private authSubscription: Subscription;
+  private claims: any;
 
   constructor(
     private _formBuilder: FormBuilder,
     private _restService: RestService,
     private _dataService: DataService,
-    private _auth0Service: Auth0Service
-  ) {}
+    private _auth0Service: Auth0Service,
+    private _store: Store<any>
+  ) {
+    this.currentOrganizationSubscription = this._store
+      .pipe(select(selectCurrentOrganization))
+      .subscribe((currentOrganization) => {
+        this.currentOrganization = currentOrganization;
+      });
 
-  ngOnInit(): void {
-    this._auth0Service.user$.subscribe((profile) => {
-      this.profile = profile;
+    this.authSubscription = combineLatest([
+      this._auth0Service.idTokenClaims$,
+    ]).subscribe(([idTokenClaims]) => {
+      this.claims = idTokenClaims;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.currentOrganizationSubscription.unsubscribe();
+    this.authSubscription.unsubscribe();
   }
 
   onClick(): void {
     if (
       this.firstFormGroup.invalid ||
       this.secondFormGroup.invalid ||
-      this.thirdFormGroup.invalid ||
-      !this.profile
+      !this.claims ||
+      !this.currentOrganization
     )
       return;
 
     const { title, description, country, city } = this.firstFormGroup.value;
     const { level, skills } = this.secondFormGroup.value;
-    const { emails } = this.thirdFormGroup.value;
 
     let jobData = {
+      org: this.currentOrganization.id,
       title: title,
       description: description,
       country: country,
@@ -64,15 +81,15 @@ export class JobModalComponent implements OnInit {
       skills: skills,
     };
 
-    let validEmails = filterMultiInput(emails);
+    const { headers, params } = getAuthHeaderParams(this.claims);
 
-    let currentUserEmail: string = this.profile.email;
-    let emailData: string[] = [currentUserEmail];
-
-    if (validEmails && emails.trim() !== '')
-      emailData = [...emails.split(','), ...emailData];
-
-    this._restService.createJob(jobData, emailData);
+    this._restService
+      .postJob(headers, params, { job: jobData })
+      .subscribe((response) => {
+        const { body } = response;
+        // TODO - Continue working on creating the job here (left off)
+        debugger;
+      });
     this._dataService.modalIsCompleted(true);
   }
 

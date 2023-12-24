@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, skip } from 'rxjs';
+import { Router } from '@angular/router';
 import { ModalService } from 'src/app/Services/modal/modal.service';
 import { Organization } from 'src/app/models';
 import { OrganizationModalComponent } from '../organization-modal/organization-modal.component';
@@ -49,6 +50,7 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private _store: Store<AppState>,
+    private _router: Router,
     private _modalService: ModalService,
     private _matSnackBar: MatSnackBar
   ) {
@@ -86,6 +88,11 @@ export class OrganizationsTableComponent implements AfterViewInit, OnDestroy {
             : 'Failure adding organization'
         );
       });
+  }
+
+  organizationClicked(organization: Organization) {
+    if (organization.id == null) return;
+    this._router.navigate([`/employer/${organization.id}`]);
   }
 
   createSnackBar(message: string): void {
