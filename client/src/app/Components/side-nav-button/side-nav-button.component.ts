@@ -26,11 +26,8 @@ export class SideNavButtonComponent implements OnInit {
       case 'Settings':
         this._router.navigate(['/settings']);
         break;
-      case 'Organizations':
-        this._router.navigate(['/organizations']);
-        break;
       case 'Employer':
-        this._router.navigate(['/employer']);
+        this._router.navigate(['/organizations']);
         break;
       case 'Login':
         this._auth.login();

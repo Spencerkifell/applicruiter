@@ -1,7 +1,7 @@
 <!-- Organizations View -->
 
 <div
-  *ngIf="this.organizationCollection.length > 0"
+  *ngIf="this.jobCollection.length > 0"
   style="border: 25px solid; border-color: #a2a3bb"
   class="tw-flex tw-flex-col tw-bg-gray-800 tw-h-full tw-w-full"
 >
@@ -11,59 +11,68 @@
     <button
       mat-raised-button
       class="tw-m-4 tw-bg-white tw-font-sans tw-text-base hover:tw-bg-slate-300"
-      (click)="addOrganizationClicked()"
+      (click)="addJobClicked()"
     >
-      Create New Organization
+      Create New Job
     </button>
     <!-- This is a temp search until we make the component -->
     <input
       type="text"
-      [disabled]="this.organizationCollection.length === 0"
-      placeholder="Search for an organization"
+      [disabled]="this.jobCollection.length === 0"
+      placeholder="Search for a job"
       class="tw-w-2/5 tw-p-2 tw-text-black tw-rounded-md tw-border-0 tw-font-sans tw-text-base tw-placeholder-gray-500"
     />
   </div>
   <div class="tw-flex tw-flex-col tw-flex-1 tw-justify-between tw-h-max">
     <div class="tw-flex tw-justify-center tw-bg-gray-800">
       <table
-        *ngIf="this.organizationCollection.length > 0"
+        *ngIf="this.jobCollection.length > 0"
         mat-table
         [dataSource]="this.dataSource"
         class="tw-w-full tw-text-sm tw-text-left tw-text-gray-400 tw-bg-gray-800"
       >
-        <ng-container matColumnDef="name">
+        <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef [ngClass]="styles.headCell">
-            Organization Name
+            ID
           </th>
           <td mat-cell *matCellDef="let element" [ngClass]="styles.name">
-            {{ element.name }}
+            {{ element.id }}
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="owner">
+        <ng-container matColumnDef="title">
           <th mat-header-cell *matHeaderCellDef [ngClass]="styles.headCell">
-            Owner
+            Job Title
           </th>
-          <td mat-cell *matCellDef="let element" [ngClass]="styles.cell">
-            {{ element.owner }}
+          <td mat-cell *matCellDef="let element" [ngClass]="styles.name">
+            {{ element.title }}
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="totalMembers">
+        <ng-container matColumnDef="level">
           <th mat-header-cell *matHeaderCellDef [ngClass]="styles.headCell">
-            Total Members
+            Level
           </th>
           <td mat-cell *matCellDef="let element" [ngClass]="styles.cell">
-            {{ element.totalMembers }}
+            {{ element.level }}
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="totalListings">
+        <ng-container matColumnDef="country">
           <th mat-header-cell *matHeaderCellDef [ngClass]="styles.headCell">
-            Total Listings
+            Country
           </th>
           <td mat-cell *matCellDef="let element" [ngClass]="styles.cell">
-            {{ element.totalListings }}
+            {{ element.country }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef [ngClass]="styles.headCell">
+            City
+          </th>
+          <td mat-cell *matCellDef="let element" [ngClass]="styles.cell">
+            {{ element.city }}
           </td>
         </ng-container>
 
@@ -72,7 +81,7 @@
             Date Created
           </th>
           <td mat-cell *matCellDef="let element" [ngClass]="styles.cell">
-            {{ element.dateCreated }}
+            {{ element.checked }}
           </td>
         </ng-container>
 
@@ -85,7 +94,7 @@
           mat-row
           *matRowDef="let row; columns: displayedColumns"
           class="hover:tw-bg-gray-900 hover:tw-cursor-pointer"
-          (click)="organizationClicked(row)"
+          (click)="jobClicked(row)"
         ></tr>
       </table>
     </div>
@@ -93,7 +102,7 @@
       <mat-paginator
         showFirstLastButtons
         [pageSize]="pageSize"
-        [length]="this.organizationCollection.length"
+        [length]="this.jobCollection.length"
         class="tw-text-xs tw-uppercase tw-bg-gray-700 tw-text-white"
       >
       </mat-paginator>
@@ -104,25 +113,23 @@
 <!-- No Organizations View -->
 
 <div
-  *ngIf="this.organizationCollection.length == 0"
+  *ngIf="this.jobCollection.length == 0"
   class="tw-flex tw-flex-col tw-justify-center tw-gap-10 tw-items-center tw-h-full tw-w-full"
 >
   <mat-icon class="tw-scale-x-[1.75] tw-scale-y-[1.75] tw-text-gray-900"
-    >business</mat-icon
+    >work_off</mat-icon
   >
   <div class="tw-flex tw-flex-col tw-gap-4 tw-text-center tw-font-sans">
-    <p class="tw-text-4xl tw-font-semibold tw-text-gray-900">
-      No Organizations Found
-    </p>
+    <p class="tw-text-4xl tw-font-semibold tw-text-gray-900">No Jobs Found</p>
     <p class="tw-text-lg tw-font-light tw-text-gray-700">
-      There are no records to display, please create a new organization.
+      There are no records to display, please create a new job posting.
     </p>
   </div>
   <button
     mat-button
     class="tw-m-4 tw-bg-gray-800 tw-text-white tw-font-sans tw-text-base hover:tw-bg-gray-700 tw-shadow-gray-950 tw-shadow-2xl"
-    (click)="addOrganizationClicked()"
+    (click)="addJobClicked()"
   >
-    <p class="tw-my-2 tw-font-semibold">Create New Organization</p>
+    <p class="tw-my-2 tw-font-semibold">Create New Job</p>
   </button>
 </div>

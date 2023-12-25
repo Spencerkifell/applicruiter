@@ -1,4 +1,3 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Component, OnDestroy } from '@angular/core';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { Store } from '@ngrx/store';
@@ -7,8 +6,9 @@ import { AuthService } from 'src/app/Services/auth/auth.service';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { AppState } from 'src/app/app.state';
 import { Organization, User } from 'src/app/models';
-import * as organizationActions from 'src/app/Store/Organizations/organizations.actions';
 import { Router } from '@angular/router';
+import { getAuthHeaderParams } from 'src/app/utils';
+import * as organizationActions from 'src/app/Store/Organizations/organizations.actions';
 
 @Component({
   selector: 'app-organizations',
@@ -37,7 +37,7 @@ export class OrganizationsComponent implements OnDestroy {
         switchMap(([idTokenClaims, user]) => {
           const claims = idTokenClaims;
           this.user = user;
-          const { headers, params } = this.getHeadersParams(claims);
+          const { headers, params } = getAuthHeaderParams(claims);
           return this._restService
             .getOrganizations(headers, params, user!.id)
             .pipe(
@@ -68,18 +68,6 @@ export class OrganizationsComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.combinedSubscription.unsubscribe();
-  }
-
-  getHeadersParams(claims: any) {
-    const accessToken = claims.__raw;
-    const userAuthId = claims.sub;
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    });
-
-    return { headers, params: { userAuthId } };
   }
 
   mapOrganizations(organizations: any): Organization[] {

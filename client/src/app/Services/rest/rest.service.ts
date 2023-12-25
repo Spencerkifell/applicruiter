@@ -68,6 +68,15 @@ export class RestService {
     });
   }
 
+  getJobs(headers: any, params: any, orgId: number) {
+    const url = `${API_URL}/api/job/organization/${orgId}`;
+    return this.httpClient.get<any>(url, {
+      observe: 'response',
+      headers,
+      params,
+    });
+  }
+
   createResumes(job_id: any, resumes: File[]) {
     // Create a DataTransfer object
     const dataTransfer = new DataTransfer();

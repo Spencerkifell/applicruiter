@@ -4,11 +4,14 @@ import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { RestService } from 'src/app/Services/rest/rest.service';
 import { DataService } from 'src/app/Services/data/data.service';
 import { filterMultiInput } from 'src/app/form-utils';
-import { getAuthHeaderParams } from 'src/app/utils';
+import { getAuthHeaderParams, instantiateNewJob } from 'src/app/utils';
 import { Subscription, combineLatest } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { selectCurrentOrganization } from 'src/app/Store/Organizations/organizations.selectors';
 import { Organization } from 'src/app/models';
+import * as jobActions from '../../Store/Jobs/jobs.actions';
+import { Router } from '@angular/router';
+import { ModalService } from 'src/app/Services/modal/modal.service';
 
 @Component({
   selector: 'app-job-modal',
@@ -39,7 +42,8 @@ export class JobModalComponent implements OnDestroy {
     private _restService: RestService,
     private _dataService: DataService,
     private _auth0Service: Auth0Service,
-    private _store: Store<any>
+    private _store: Store<any>,
+    private _modalService: ModalService
   ) {
     this.currentOrganizationSubscription = this._store
       .pipe(select(selectCurrentOrganization))
@@ -87,10 +91,16 @@ export class JobModalComponent implements OnDestroy {
       .postJob(headers, params, { job: jobData })
       .subscribe((response) => {
         const { body } = response;
-        // TODO - Continue working on creating the job here (left off)
-        debugger;
+        const { data, message } = body;
+
+        const job = instantiateNewJob(data);
+
+        if (!job) return this._modalService.updateSubmission(false);
+
+        this._store.dispatch(jobActions.updateCurrentJobs({ jobs: [job] }));
+
+        this._modalService.updateSubmission(true);
       });
-    this._dataService.modalIsCompleted(true);
   }
 
   skillValidator(control: any): any {

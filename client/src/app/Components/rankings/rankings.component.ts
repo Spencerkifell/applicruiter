@@ -123,18 +123,16 @@ export class RankingsComponent implements OnInit {
 
   getCurrentJob(): JobPosting | undefined {
     return this.jobCollection.find(
-      (job) => job.job_id === Number(this.selectedJobId)
+      (job) => job.id === Number(this.selectedJobId)
     );
   }
 
-  getResumesByJobId(job_id: number): void {
-    this._httpClient
-      .get(`${API_URL}/api/resume/get/ranking/${job_id}`)
-      .subscribe({
-        next: (data: any) => {
-          this._dataService.updateResumeList(data?.data);
-        },
-        error: async (exception: any) => console.log(exception.error.message),
-      });
+  getResumesByJobId(id: number): void {
+    this._httpClient.get(`${API_URL}/api/resume/get/ranking/${id}`).subscribe({
+      next: (data: any) => {
+        this._dataService.updateResumeList(data?.data);
+      },
+      error: async (exception: any) => console.log(exception.error.message),
+    });
   }
 }

@@ -1,12 +1,15 @@
 export interface JobPosting {
-  job_id: number;
+  id: number;
+  org: number;
   title: string;
   description: string;
   level: string;
   country: string;
   city: string;
   skills: string;
-  checked: boolean;
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
 }
 
 export interface ResumeRanking {

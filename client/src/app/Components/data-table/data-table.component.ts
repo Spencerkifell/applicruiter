@@ -7,6 +7,9 @@ import { DataService } from 'src/app/Services/data/data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ModalService } from 'src/app/Services/modal/modal.service';
 import { JobInfoComponent } from '../job-info/job-info.component';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.state';
+import { selectCurrentJobs } from 'src/app/Store/Jobs/jobs.selectors';
 
 @Component({
   selector: 'app-data-table',
@@ -26,7 +29,7 @@ export class DataTableComponent implements AfterViewInit {
   selectedJobId: string | null = null;
 
   displayedColumns: string[] = [
-    'job_id',
+    'id',
     'title',
     'level',
     'country',
@@ -40,14 +43,19 @@ export class DataTableComponent implements AfterViewInit {
   constructor(
     private _dataService: DataService,
     private _matSnackBar: MatSnackBar,
-    private _modalService: ModalService
+    private _modalService: ModalService,
+    private _store: Store<AppState>
   ) {
-    this.jobSubscripton = this._dataService.sharedJobList.subscribe((data) => {
-      this.jobCollection = data;
-      this.dataSource.data = this.jobCollection;
-      let size = this.dataSource.paginator?.pageSize;
-      if (this.dataSource.paginator) this.dataSource.paginator.pageSize = size;
-    });
+    this.jobSubscripton = this._store
+      .select(selectCurrentJobs)
+      .subscribe((jobs) => {
+        this.jobCollection = jobs;
+        if (this.jobCollection.length == 0) return;
+        this.dataSource.data = this.jobCollection;
+        let size = this.dataSource.paginator?.pageSize;
+        if (this.dataSource.paginator)
+          this.dataSource.paginator.pageSize = size;
+      });
     this.jobInfoModalSubscription =
       this._dataService.sharedResumeModalStatus.subscribe((data) => {
         if (data) {
@@ -90,16 +98,16 @@ export class DataTableComponent implements AfterViewInit {
     const currentPage = this.dataSource.paginator.pageIndex;
     const currentJobId = this.selectedJobId;
     const currentJob = currentJobId
-      ? this.jobCollection.find((j) => j.job_id === Number(currentJobId))
+      ? this.jobCollection.find((j) => j.id === Number(currentJobId))
       : null;
 
     // Unchecks the current job if the user clicks on the same job
-    if (currentJob) currentJob.checked = false;
+    // if (currentJob) currentJob.checked = false;
 
-    if (currentJobId != element.job_id) element.checked = !element.checked;
+    if (currentJobId != element.id) element.checked = !element.checked;
 
     this._dataService.updateSelectedJobId(
-      element.checked ? String(element.job_id) : null
+      element.checked ? String(element.id) : null
     );
     this._dataService.updateJobList(this.jobCollection);
 

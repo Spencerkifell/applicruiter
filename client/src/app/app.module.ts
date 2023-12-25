@@ -44,6 +44,8 @@ import { OrganizationsTableComponent } from './Components/organizations-table/or
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { OrganizationModalComponent } from './Components/organization-modal/organization-modal.component';
 import { organizationsReducer } from './Store/Organizations/organizations.reducer';
+import { jobsReducer } from './Store/Jobs/jobs.reducer';
+import { JobsTableComponent } from './Components/jobs-table/jobs-table.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +65,7 @@ import { organizationsReducer } from './Store/Organizations/organizations.reduce
     OrganizationsTableComponent,
     DashboardComponent,
     OrganizationModalComponent,
+    JobsTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -103,6 +106,7 @@ import { organizationsReducer } from './Store/Organizations/organizations.reduce
     StoreModule.forRoot<AppState>({
       auth: authReducer,
       organizations: organizationsReducer,
+      jobs: jobsReducer,
     }),
   ],
   providers: [AuthService],

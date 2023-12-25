@@ -27,7 +27,7 @@ def insert_data_route():
             returned_id = insert_job_data(validated_job_data, verified_id)
             if not returned_id:
                 raise Exception("Failed to create and insert job data")
-            job_data['job_id'] = returned_id
+            job_data['id'] = returned_id
             return ResponseData(
                 "/api/job", 
                 "Job Created: Data inserted successfully", 
@@ -62,7 +62,7 @@ def insert_job_data(job_data: dict, user_id: int):
 
         job_query = """
             INSERT INTO jobs (
-                org_id,
+                org,
                 title,
                 description,
                 level,
@@ -144,6 +144,72 @@ def verify_user_org(connection: mysql.connector.MySQLConnection, org_id, user_id
 
 # region Get Job Data
 
+# Get job data by organization ID
+
+@job_bp.route('/organization/<org_id>', methods=['GET'])
+@cross_origin()
+def get_job_by_org(org_id):
+    try:
+        verified_id = verify_user(request.headers, request.args)
+        job_data = get_jobs_by_org(org_id, verified_id)
+                
+        if not job_data:
+            raise RouteException(f"No jobs founds with organization id {org_id}", 404)
+        return ResponseData(
+            f"/api/job/org/{org_id}", 
+            "Jobs Retrieved: Job data retrieved successfully", 
+            get_parsed_jobs(job_data), 
+            200
+        ).get_response_data()
+    except Exception as e:
+        status_code = getattr(e, 'status_code', 500)
+        return ResponseData(
+            f"/api/job/org/{org_id}", 
+            f"Jobs Not Retrieved: {e}", 
+            None, 
+            status_code
+        ).get_response_data()
+
+
+def get_jobs_by_org(org_id, verified_id):
+    connection, cursor = None, None
+    try:
+        connection = mysql.connector.connect(**config.db_config)
+        cursor = connection.cursor()
+                
+        if not verify_user_org(connection, org_id, verified_id):
+            raise RouteException("User is not part of the organization", 403)
+        
+        query = '''
+            select
+                id,
+                org,
+                title,
+                description,
+                level,
+                country,
+                city,
+                skills,
+                created_at,
+                updated_at,
+                deleted_at
+            from jobs
+            where org = %s
+        '''
+        values = (org_id,)
+        cursor.execute(query, values)
+        
+        return cursor.fetchall()
+    except Exception:
+        connection.rollback()
+        return None
+    finally:
+        if connection and connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# Original get jobs route
+
 @job_bp.route('', methods=['GET'])
 @job_bp.route('/', methods=['GET'])
 @cross_origin()
@@ -208,13 +274,17 @@ def get_parsed_jobs(job_data):
         return parsed_jobs
     for job in job_data:
         parsed_jobs.append({
-            'job_id': job[0],
-            'title': job[1],
-            'description': job[2],
-            'level': job[3],
-            'country': job[4],
-            'city': job[5],
-            'skills': job[6]
+            'id': job[0],
+            'org': job[1],
+            'title': job[2],
+            'description': job[3],
+            'level': job[4],
+            'country': job[5],
+            'city': job[6],
+            'skills': job[7],
+            'created_at': job[8],
+            'updated_at': job[9],
+            'deleted_at': job[10]
         })
     return parsed_jobs
 

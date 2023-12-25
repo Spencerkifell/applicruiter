@@ -12,6 +12,7 @@ export class ModalService {
   constructor(private dialog: MatDialog) {}
 
   openModal(component: any, data: any = null) {
+    this.submissionSuccess.next(false);
     return this.dialog.open(component, {
       width: '750px',
       data: data ? data : null,
