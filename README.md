@@ -30,6 +30,18 @@
 ## Summary
 - AppliCruiter is an application powered by machine learning that streamlines the resume screening process by efficiently categorizing and assessing resumes submitted for job openings.
 
+## Feature Roadmap (More information in Projects Board/Refactor Branch)
+- [x] Refactor UI to be more user friendly and intuitive
+- [x] Add authentication guard to routes to prevent unauthorized access
+- [x] Create new models for individual organizations and refactor existing models accordingly
+- [x] Refactor routes to accomodate for data changes
+- [x] Auth0 token persistence and expiry verification
+- [ ] Incorporate new changes into the client **(In Progress)**
+- [ ] Provision users (other than owner) to access different organizations
+- [ ] Modularize and encapsulate components that can be re-used
+- [x] Implement proper data store using NGRX instead of relying on simple Subscriptions
+- [ ] Develop e2e tests using Cypress in order to verify proper functionality of the application **(In Progress)**
+
 ## Tech Stack
 
 ### Server
