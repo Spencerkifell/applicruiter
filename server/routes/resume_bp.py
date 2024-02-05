@@ -1,10 +1,11 @@
 from flask import Blueprint, request
 from flask_cors import cross_origin, CORS
 from werkzeug.utils import secure_filename
-from global_utils import ResponseData, upload_file_to_s3, config
+from global_utils import ResponseData, upload_file_to_s3, config, RouteException
 import hashlib
 import mysql.connector
 import uuid
+from jwt_utils import verify_user
 
 resume_bp = Blueprint("resume", __name__)
 CORS(resume_bp, resources={r"/api/*": {"origins": "*"}})
@@ -186,10 +187,35 @@ def get_parsed_resumes(resume_data):
         })
     return parsed_resumes
 
-def get_resumes_by_job_id(job_id):
+@resume_bp.route('/job/<int:job_id>', methods=['GET'])
+@cross_origin()
+def get_ranked_resumes(job_id):
+    try:
+        verified_id = verify_user(request.headers, request.args)
+        
+        resume_data = get_resumes_by_job_id(job_id, verified_id)
+        return ResponseData(
+            f"/api/resume/job/{job_id}", 
+            "Resumes Retrieved: Ranked resume data retrieved successfully", 
+            resume_data, 
+            200
+        ).get_response_data()
+    except Exception as e:
+        status_code = getattr(e, 'status_code', 500)
+        return ResponseData(
+            f"/api/resume/job/{job_id}", 
+            f"Resumes Not Retrieved: {e}", 
+            None, 
+            status_code
+        ).get_response_data()
+        
+def get_resumes_by_job_id(job_id, verified_id):
     try:
         connection = mysql.connector.connect(**config.db_config)
         cursor = connection.cursor()
+        
+        if not verify_user_org(connection, verified_id, job_id):
+            raise RouteException("User is not authorized to view resumes for this job")
 
         query = """
             select
@@ -204,51 +230,32 @@ def get_resumes_by_job_id(job_id):
 
         return cursor.fetchall()
     except Exception as e:
-        raise Exception("Error Retrieving Resumes:", str(e))
+        raise Exception(f"Failed to retrieve resumes for job {job_id}")
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
-
-@resume_bp.route('/get/ranking/<int:job_id>', methods=['GET'])
-def get_ranked_resumes(job_id):
-    try:
-        resume_data = get_all_rankings_by_job_id(job_id)
-        return ResponseData(
-            f"/api/resume/get/ranking/{job_id}", 
-            "Resumes Ranked: Ranked resume data retrieved successfully", 
-            resume_data, 
-            200
-        ).get_response_data()
-    except Exception as e:
-        return ResponseData(
-            f"/api/resume/get/ranking/{job_id}", 
-            f"Resumes Ranked: An error has occured ({e})", 
-            None, 
-            500
-        ).get_response_data()
-
-def get_all_rankings_by_job_id(job_id):
-    try:
-        connection = mysql.connector.connect(**config.db_config)
-        cursor = connection.cursor(dictionary=True)
-
-        query = '''
-            select 
-                id,
-                pdf_data,
-                similarity_score
-            from resumes
-            where job_id = %s;
-        '''
         
-        cursor.execute(query, (job_id,))
-        return cursor.fetchall()
-    except Exception as e:
-        raise Exception("Error Retrieving Ranked Resumes:", str(e))
+def verify_user_org(connection: mysql.connector.MySQLConnection, auth_id, job_id):
+    try:
+        cursor = connection.cursor()
+        
+        verify_user_org_query = """
+            SELECT 
+                COUNT(*)
+            FROM USER_ORGANIZATIONS
+            WHERE USER_ID = (SELECT ID FROM USERS WHERE AUTH_ID = %s)
+            AND ORG_ID = (SELECT ORG FROM JOBS WHERE ID = %s)
+        """
+        values = (auth_id, job_id,)
+        
+        cursor.execute(verify_user_org_query, values)
+        result = cursor.fetchone()
+        
+        return result is not None and result[0] > 0
+    except Exception:
+        return False
     finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-
+        cursor.close()
+        
 # endregion

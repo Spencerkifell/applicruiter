@@ -46,6 +46,8 @@ import { OrganizationModalComponent } from './Components/organization-modal/orga
 import { organizationsReducer } from './Store/Organizations/organizations.reducer';
 import { jobsReducer } from './Store/Jobs/jobs.reducer';
 import { JobsTableComponent } from './Components/jobs-table/jobs-table.component';
+import { EmployerHeaderComponent } from './Components/employer-header/employer-header.component';
+import { PostingComponent } from './Pages/posting/posting.component';
 import { GenericTableComponent } from './Components/generic-table/generic-table.component';
 
 @NgModule({
@@ -68,6 +70,8 @@ import { GenericTableComponent } from './Components/generic-table/generic-table.
     OrganizationModalComponent,
     JobsTableComponent,
     GenericTableComponent,
+    EmployerHeaderComponent,
+    PostingComponent,
   ],
   imports: [
     BrowserModule,

@@ -77,6 +77,15 @@ export class RestService {
     });
   }
 
+  getResumes(headers: any, params: any, job_id: any): Observable<any> {
+    const url = `${API_URL}/api/resume/job/${job_id}`;
+    return this.httpClient.get<any>(url, {
+      observe: 'response',
+      headers,
+      params,
+    });
+  }
+
   createResumes(job_id: any, resumes: File[]) {
     // Create a DataTransfer object
     const dataTransfer = new DataTransfer();
