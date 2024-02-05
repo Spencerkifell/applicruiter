@@ -1,0 +1,29 @@
+.grid-container {
+  display: grid;
+  grid-template-rows: 0.5fr 2fr 2fr 2fr;
+  grid-template-columns: 1.5fr 2fr 2fr 2fr;
+  grid-template-areas:
+    "head head head head"
+    "stats table table table"
+    "stats table table table"
+    "stats table table table";
+}
+
+.grid-item {
+  padding: 16px;
+}
+
+.table {
+  grid-area: table;
+  /* background-color: yellow; */
+}
+
+.stats {
+  grid-area: stats;
+  /* background-color: red; */
+}
+
+.head {
+  grid-area: head;
+  /* background-color: blue; */
+}
