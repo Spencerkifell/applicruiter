@@ -46,6 +46,7 @@ import { OrganizationModalComponent } from './Components/organization-modal/orga
 import { organizationsReducer } from './Store/Organizations/organizations.reducer';
 import { jobsReducer } from './Store/Jobs/jobs.reducer';
 import { JobsTableComponent } from './Components/jobs-table/jobs-table.component';
+import { GenericTableComponent } from './Components/generic-table/generic-table.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { JobsTableComponent } from './Components/jobs-table/jobs-table.component
     DashboardComponent,
     OrganizationModalComponent,
     JobsTableComponent,
+    GenericTableComponent,
   ],
   imports: [
     BrowserModule,

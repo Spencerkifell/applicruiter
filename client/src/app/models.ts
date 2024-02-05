@@ -43,3 +43,14 @@ export interface User {
   updated_at: string | null;
   deleted_at: string | null;
 }
+
+export interface TableData {
+  name: string;
+  store: string;
+  columns: ColumnData[];
+}
+
+export interface ColumnData {
+  key: string;
+  name: string;
+}
