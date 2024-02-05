@@ -113,3 +113,8 @@ export function createJobPostings(data: any): JobPosting[] {
     };
   });
 }
+
+export function validateExpiration(exp: number): boolean {
+  const now = new Date().getTime() / 1000;
+  return now < exp;
+}

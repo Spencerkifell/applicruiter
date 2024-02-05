@@ -6,6 +6,7 @@ import { EmployerComponent } from './Pages/employer/employer.component';
 import { OrganizationsComponent } from './Pages/organizations/organizations.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { AuthGuard } from './Guards/auth.guard';
+import { PostingComponent } from './Pages/posting/posting.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,11 @@ const routes: Routes = [
   {
     path: 'employer/:id',
     component: EmployerComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'employer/:id/post/:id',
+    component: PostingComponent,
     canActivate: [AuthGuard],
   },
   {

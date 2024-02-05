@@ -10,17 +10,11 @@ export const updateCurrentJobs = createAction(
   props<{ jobs: any }>()
 );
 
-// prettier-ignore
-export const clearJobs = createAction(
-    '[Jobs] Clear Current Jobs'
-);
-
 export const setCurrentJob = createAction(
   '[Jobs] Set Current Job',
   props<{ job: any }>()
 );
 
-// prettier-ignore
-export const clearCurrentJob = createAction(
-  '[Jobs] Clear Current Job'
-);
+export const clearJobs = createAction('[Jobs] Clear Current Jobs');
+
+export const clearCurrentJob = createAction('[Jobs] Clear Current Job');

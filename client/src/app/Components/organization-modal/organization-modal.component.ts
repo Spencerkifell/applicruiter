@@ -55,6 +55,7 @@ export class OrganizationModalComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   onClick(): void {

@@ -88,7 +88,6 @@ export class EmployerComponent {
         })
       )
       .subscribe((response) => {
-        debugger;
         const { status, error } = response;
 
         if (status == 404) return (this.contentLoaded = true);

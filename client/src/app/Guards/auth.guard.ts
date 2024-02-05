@@ -9,6 +9,7 @@ import { Observable, catchError, of, switchMap } from 'rxjs';
 export class AuthGuard implements CanActivate {
   constructor(private _authService: AuthService, private _router: Router) {}
 
+  // TODO - Fix so that if the token is valid they aren't just redirected to the home page
   canActivate(): Observable<boolean> {
     return this._authService.getUser().pipe(
       switchMap((user) => {

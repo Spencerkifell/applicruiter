@@ -25,10 +25,6 @@ export class DataService {
 
   constructor() {}
 
-  // updateContentLoaded(data: boolean) {
-  // this.contentLoaded.next(data);
-  // }
-
   updateJobList(data: any) {
     this.jobList.next(data);
   }

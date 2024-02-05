@@ -1,4 +1,8 @@
 <div class="tw-flex tw-justify-center tw-h-full" *ngIf="!contentLoaded">
   <mat-spinner class="tw-self-center"></mat-spinner>
 </div>
-<app-jobs-table *ngIf="contentLoaded"></app-jobs-table>
+
+<div class="tw-h-full tw-flex tw-flex-col">
+  <app-employer-header></app-employer-header>
+  <app-jobs-table class="tw-flex-1" *ngIf="contentLoaded"></app-jobs-table>
+</div>

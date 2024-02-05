@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { RestService } from 'src/app/Services/rest/rest.service';
-import { DataService } from 'src/app/Services/data/data.service';
 import { filterMultiInput } from 'src/app/form-utils';
 import { getAuthHeaderParams, instantiateNewJob } from 'src/app/utils';
 import { Subscription, combineLatest } from 'rxjs';
@@ -10,7 +9,6 @@ import { Store, select } from '@ngrx/store';
 import { selectCurrentOrganization } from 'src/app/Store/Organizations/organizations.selectors';
 import { Organization } from 'src/app/models';
 import * as jobActions from '../../Store/Jobs/jobs.actions';
-import { Router } from '@angular/router';
 import { ModalService } from 'src/app/Services/modal/modal.service';
 
 @Component({
@@ -40,7 +38,6 @@ export class JobModalComponent implements OnDestroy {
   constructor(
     private _formBuilder: FormBuilder,
     private _restService: RestService,
-    private _dataService: DataService,
     private _auth0Service: Auth0Service,
     private _store: Store<any>,
     private _modalService: ModalService

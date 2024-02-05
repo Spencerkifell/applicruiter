@@ -3,13 +3,15 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, skip } from 'rxjs';
-import { Router } from '@angular/router';
 import { ModalService } from 'src/app/Services/modal/modal.service';
-import { JobPosting } from 'src/app/models';
+import { JobPosting, Organization } from 'src/app/models';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.state';
 import { selectCurrentJobs } from 'src/app/Store/Jobs/jobs.selectors';
+import { selectCurrentOrganization } from 'src/app/Store/Organizations/organizations.selectors';
 import { JobModalComponent } from '../job-modal/job-modal.component';
+import { Router } from '@angular/router';
+import { setCurrentJob } from 'src/app/Store/Jobs/jobs.actions';
 
 @Component({
   selector: 'app-jobs-table',
@@ -22,6 +24,9 @@ export class JobsTableComponent implements AfterViewInit, OnDestroy {
   private jobSubscription: Subscription;
   jobCollection: JobPosting[] = [];
 
+  private organizationSubscription: Subscription;
+  currentOrganization: Organization | null = null;
+
   private modalStatusSubscription: Subscription | undefined;
   jobModalRef: any = null;
 
@@ -32,7 +37,14 @@ export class JobsTableComponent implements AfterViewInit, OnDestroy {
     name: 'tw-px-6 tw-py-4 tw-font-medium tw-whitespace-nowrap tw-text-white tw-font-sans',
   };
 
-  displayedColumns: string[] = ['id', 'title', 'level', 'country', 'city'];
+  displayedColumns: string[] = [
+    'id',
+    'title',
+    'level',
+    'country',
+    'city',
+    'createdAt',
+  ];
 
   dataSource = new MatTableDataSource<JobPosting>(this.jobCollection);
 
@@ -43,9 +55,9 @@ export class JobsTableComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private _store: Store<AppState>,
-    private _router: Router,
     private _modalService: ModalService,
-    private _matSnackBar: MatSnackBar
+    private _matSnackBar: MatSnackBar,
+    private _router: Router
   ) {
     this.jobSubscription = this._store
       .select(selectCurrentJobs)
@@ -57,6 +69,11 @@ export class JobsTableComponent implements AfterViewInit, OnDestroy {
         if (this.dataSource.paginator)
           this.dataSource.paginator.pageSize = size;
       });
+    this.organizationSubscription = this._store
+      .select(selectCurrentOrganization)
+      .subscribe((organization) => {
+        this.currentOrganization = organization;
+      });
   }
 
   ngAfterViewInit(): void {
@@ -65,6 +82,7 @@ export class JobsTableComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.jobSubscription.unsubscribe();
+    this.organizationSubscription.unsubscribe();
     this.modalStatusSubscription?.unsubscribe();
   }
 
@@ -85,9 +103,11 @@ export class JobsTableComponent implements AfterViewInit, OnDestroy {
 
   jobClicked(job: JobPosting) {
     // TODO - Finish this method
-    alert('Organization Clicked');
     // if (organization.id == null) return;
-    // this._router.navigate([`/employer/${organization.id}`]);
+    this._store.dispatch(setCurrentJob({ job: job }));
+    this._router.navigate([
+      `/employer/${this.currentOrganization!.id}/post/${job.id}`,
+    ]);
   }
 
   createSnackBar(message: string): void {

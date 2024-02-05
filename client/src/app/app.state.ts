@@ -6,4 +6,5 @@ export interface AppState {
   auth: AuthState;
   organizations: OrganizationsState;
   jobs: JobsState;
+  [key: string]: any;
 }
